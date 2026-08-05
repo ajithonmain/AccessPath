@@ -1,0 +1,5 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap');
+@import './app/a11y-effects.css';
+
+body { margin: 0; }

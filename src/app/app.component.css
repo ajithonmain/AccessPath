@@ -1,0 +1,89 @@
+.demo-page {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.demo-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.demo-toolbar h1 { font-size: 18px; margin: 0; }
+.demo-toolbar-actions { display: flex; gap: 8px; }
+.demo-toolbar-actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d8;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Theme tokens the accessibility panel reads via var(--x, fallback).
+   Swap these for your own design system's tokens. */
+.demo-widget {
+  --brand: #5154EB;
+  --brand-soft: rgba(81,84,235,0.07);
+  --brand-border: rgba(81,84,235,0.2);
+  --tx: #111111;
+  --tm: #555555;
+  --mu: #999999;
+  --bd: rgba(0,0,0,0.08);
+  --sf: #ffffff;
+  --sf2: #f4f4f8;
+  --sf3: #e8e8f4;
+
+  position: relative;
+  min-height: 420px;
+  border-radius: 16px;
+  border: 1px solid var(--bd);
+  background: var(--sf2);
+  padding: 16px;
+  overflow: hidden;
+}
+.demo-widget.dark {
+  --tx: #f0f0f5;
+  --tm: #b8b8c8;
+  --mu: #8a8a9a;
+  --bd: rgba(255,255,255,0.12);
+  --sf: #1a1a2e;
+  --sf2: #14141f;
+  --sf3: #232338;
+  background: var(--sf2);
+}
+
+.demo-msg {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--tx);
+}
+.demo-msg.bot { background: var(--sf); border: 1px solid var(--bd); }
+.demo-msg.user { background: var(--brand); color: #fff; margin-left: auto; }
+
+.demo-card {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+  color: var(--tx);
+}
+.demo-card h3 { margin: 0 0 4px; font-size: 15px; }
+.demo-card p { margin: 0 0 8px; font-size: 13px; color: var(--tm); }
+.demo-card-row { display: flex; align-items: center; justify-content: space-between; }
+.demo-price { font-weight: 700; color: var(--tx); }
+.demo-card-row button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
