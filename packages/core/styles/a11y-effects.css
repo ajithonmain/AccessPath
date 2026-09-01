@@ -1,0 +1,340 @@
+/* =========================================
+   Accessibility modifier classes
+   Applied to whatever element you pass as the container to
+   createPanel()/AccessPathState. Generic selectors below cover
+   standard text/interactive elements — add your own app-specific
+   selectors alongside them (see chip/card examples, commented).
+   ========================================= */
+
+/* Text Size — continuous intensity (0-100, Quick Adjustments slider), same
+   formula/shape as Contrast below: 0 -> --a11y-s: 1 (no-op), 100 -> --a11y-s: 2
+   (double size). */
+.a11y-target { --a11y-s: 1; --a11y-fontsize-level: 0; --a11y-spacing-level: 0; --a11y-lh-level: 0; --a11y-contrast-level: 0; --a11y-saturation-level: 0; }
+.a11y-target.a11y-fontsize { --a11y-s: calc(1 + var(--a11y-fontsize-level) / 100); }
+
+/* Font scale — each element keeps its own base size × --a11y-s, true leaves
+   only (:not(:has(*))). An earlier version of this rule also matched elements
+   whose only children were "simple inline-formatting tags" (span/a/strong/
+   etc.), to cover headings/paragraphs with a highlighted word or inline link.
+   That heuristic couldn't reliably tell inline TEXT formatting apart from a
+   <span> being used as an icon/badge substitute (e.g. a two-letter glyph
+   chip) — the icon-substitute case got scaled as if it were prose, visibly
+   exploding relative to sibling components built with an <svg> icon instead
+   (which correctly stayed excluded). Reverted to strict leaf-only rather than
+   keep patching component-specific exclusions for an unreliable heuristic;
+   paragraphs/headings containing inline markup go back to not scaling via
+   this rule (same limitation the original leaf-only design always had).
+   h1-h6 are explicitly excluded here even though a childless heading also
+   technically qualifies as a leaf — they're scaled from JS instead (see
+   below), and letting this CSS rule ALSO touch them raced with that JS: the
+   class below gets toggled on before syncHeadingScale() runs, so this rule
+   would already be scaling the heading (using the wrong PARENT-relative `em`
+   math) by the time the JS reads getComputedStyle() to cache the "original"
+   size — poisoning the cache with an already-wrong value on first read. */
+.a11y-target.a11y-fontsize :not(:has(*)):not(:is(h1, h2, h3, h4, h5, h6)) {
+  font-size: calc(1em * var(--a11y-s)) !important;
+}
+/* h1-h6 are scaled from JS instead of a CSS em-multiplier (see
+   syncHeadingScale() in heading-scale.ts, invoked from apply-classes.ts).
+   `em` in a font-size declaration always resolves against the PARENT's
+   computed font-size, never "this element's own other specified size" — so
+   no fixed multiplier here (2em, 1em, anything) can correctly preserve an
+   arbitrary custom-sized heading (e.g. a clamp()-based hero title). JS reads
+   and caches each heading's real original computed size once, then scales
+   from that cached value — the only way to get this right for headings
+   with page-specific custom sizing rather than a browser-default size. */
+
+/* Example of app-specific selectors — copy this pattern for your own components:
+.a11y-target.a11y-fontsize .chip-name  { font-size: calc(14px * var(--a11y-s)) !important; }
+.a11y-target.a11y-fontsize .chip-price { font-size: calc(12px * var(--a11y-s)) !important; }
+*/
+
+/* Pause animations */
+.a11y-target.a11y-no-motion *,
+.a11y-target.a11y-no-motion *::before,
+.a11y-target.a11y-no-motion *::after { animation: none !important; transition: none !important; }
+
+/* Contrast — continuous intensity (0-100, Quick Adjustments slider), 0 -> filter no-op
+   100% -> filter: contrast(200%). Combined into the single filter declaration below
+   alongside saturate/grayscale/invert so they all stack instead of one clobbering the
+   others (the `filter` property isn't additive across separate rules). */
+.a11y-target.a11y-contrast { --a11y-contrast: calc(1 + var(--a11y-contrast-level) / 100); }
+
+/* Text spacing — continuous intensity (0-100), 0 -> no-op, 100 -> 0.15em/0.3em. */
+.a11y-target.a11y-spacing {
+  letter-spacing: calc(var(--a11y-spacing-level) * 0.0015em);
+  word-spacing: calc(var(--a11y-spacing-level) * 0.003em);
+}
+
+/* Line height — continuous intensity (0-100), 0 -> 1.5 (readable default), 100 -> 2.3. */
+.a11y-target.a11y-lh { line-height: calc(1.5 + (var(--a11y-lh-level) / 100) * 0.8) !important; }
+.a11y-target.a11y-lh * { line-height: inherit; }
+
+/* Dyslexia friendly — OpenDyslexic (SIL OFL-1.1, free incl. commercial use; import
+   the face in your global styles, e.g.
+   @import url('https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/index.css');).
+   Its heavy-weighted bottoms are the whole point (meant to stop letters flipping/
+   swapping when read), so the effect is visible on font-family alone — the spacing
+   and line-height bumps here just push it further, matching the wide-tracking
+   guidance OpenDyslexic itself recommends. */
+.a11y-target.a11y-dyslexia,
+.a11y-target.a11y-dyslexia * {
+  font-family: 'OpenDyslexic', sans-serif !important;
+  letter-spacing: 0.02em;
+  word-spacing: 0.14em;
+  line-height: 1.7 !important;
+}
+
+/* Saturation, Invert & Contrast — one CSS variable filter system (stackable), gated
+   behind :is() so `filter` is only ever declared when at least one is active. Any
+   `filter` value (even a visual no-op like `contrast(1)`) creates a new containing
+   block for position:fixed descendants — leaving it permanently declared would risk
+   breaking position:fixed content a host page keeps inside its own [container], even
+   while no accessibility effect is toggled on. Combined into one declaration since the
+   `filter` property isn't additive across separate rules — the last one wins outright,
+   dropping whatever an earlier rule set.
+
+   Saturation is continuous and centered on zero (-100 to 100, Quick Adjustments
+   slider): 0 -> saturate(100%), i.e. unchanged/normal; -100 -> saturate(0%), fully
+   desaturated/grayscale (no separate grayscale() function needed); 100 ->
+   saturate(200%), a strong boost. */
+.a11y-target {
+  --a11y-saturate: 1;
+  --a11y-invert: 0;
+  --a11y-contrast: 1;
+  /* Monochrome and the color-blindness simulation (below) fold into this same
+     declaration too, for the identical non-additive-filter reason. */
+  --a11y-grayscale: 0;
+  --a11y-cb-filter: saturate(1); /* no-op filter *function* — "none" can't be mixed
+                                     into a filter list alongside other functions. */
+}
+.a11y-target.a11y-saturation { --a11y-saturate: calc(100% + var(--a11y-saturation-level) * 1%); }
+.a11y-target.a11y-invert     { --a11y-invert: 1; }
+.a11y-target.a11y-monochrome { --a11y-grayscale: 1; }
+.a11y-target:is(.a11y-saturation, .a11y-invert, .a11y-contrast, .a11y-monochrome, .a11y-cb-sim) {
+  filter: saturate(var(--a11y-saturate)) invert(var(--a11y-invert)) contrast(var(--a11y-contrast))
+    grayscale(var(--a11y-grayscale)) var(--a11y-cb-filter);
+}
+
+/* Highlight links */
+.a11y-target.a11y-highlight-links a {
+  outline: 2px solid #ffd400 !important;
+  outline-offset: 1px;
+  background: rgba(255, 212, 0, 0.18) !important;
+  text-decoration: underline !important;
+}
+
+/* Highlight titles/headings */
+.a11y-target.a11y-highlight-titles :is(h1, h2, h3, h4, h5, h6, [role="heading"]) {
+  outline: 2px solid #ffd400 !important;
+  outline-offset: 1px;
+  background: rgba(255, 212, 0, 0.12) !important;
+}
+
+/* Highlight hover/focus — pure CSS pseudo-classes, no JS side effects needed. */
+.a11y-target.a11y-highlight-hover *:hover {
+  outline: 2px dashed #6d8fe8 !important;
+  outline-offset: 1px;
+}
+.a11y-target.a11y-highlight-focus *:focus-visible {
+  outline: 3px solid #6d8fe8 !important;
+  outline-offset: 2px;
+}
+
+/* Background / Text / Title color overrides — set via CSS custom properties from
+   apply-classes.ts (a raw color value, not a class-per-value scheme, since any color
+   is possible from the native <input type="color"> picker). Text-color scoping mirrors
+   the leaf-only pattern used by font scale/text-align above; title-color is the
+   heading-only complement so the two overrides never fight. */
+.a11y-target { --a11y-bg-color: ; --a11y-text-color: ; --a11y-title-color: ; }
+.a11y-target.a11y-bg-custom { background-color: var(--a11y-bg-color) !important; }
+.a11y-target.a11y-text-custom :not(:has(*)):not(:is(h1, h2, h3, h4, h5, h6)) {
+  color: var(--a11y-text-color) !important;
+}
+.a11y-target.a11y-title-custom :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--a11y-title-color) !important;
+}
+
+/* Hide images */
+.a11y-target.a11y-hide-images img,
+.a11y-target.a11y-hide-images picture,
+.a11y-target.a11y-hide-images [style*="background-image"] { visibility: hidden !important; }
+
+/* Big cursor — oversized SVG arrow, falls back to auto. The url()+hotspot fragment
+   itself (--a11y-cursor-url) is generated in JS (cursor-color.ts, set from
+   apply-classes.ts) rather than hardcoded here, since the fill color is a user
+   choice (cursorColor: 'black' | 'white') and `cursor` can't reference a plain
+   color via var() the way e.g. `background` can — only the whole url()+hotspot
+   value is swappable this way. */
+.a11y-target.a11y-big-cursor,
+.a11y-target.a11y-big-cursor * {
+  cursor: var(--a11y-cursor-url), auto !important;
+}
+
+/* Text align override — leaf elements only, same scoping as font scale */
+.a11y-target.a11y-align-left   :not(:has(*)) { text-align: left !important; }
+.a11y-target.a11y-align-center :not(:has(*)) { text-align: center !important; }
+.a11y-target.a11y-align-right  :not(:has(*)) { text-align: right !important; }
+
+/* Dictionary popover — created by dictionary.ts, appended to the panel's own root */
+.a11y-dict-popover {
+  position: fixed;
+  z-index: 2147483003; /* above the drawer (2147483002), backdrop (2147483001) and trigger (2147483000) */
+  max-width: 260px;
+  background: var(--ap-sf, #fff);
+  color: var(--ap-tx, #111);
+  border: 1px solid var(--ap-bd, rgba(0,0,0,0.12));
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.a11y-dict-word { font-weight: 700; margin-bottom: 4px; text-transform: capitalize; }
+.a11y-dict-def { color: var(--ap-tm, #555); }
+
+/* Reading Guide — host-page-level overlay, not scoped to .a11y-target since it dims the
+   whole viewport regardless of which element the panel's other effects target.
+   z-index sits in the same ladder as the rest of the panel's fixed-position pieces —
+   trigger (2147483000) < backdrop (2147483001) < drawer (2147483002) — one below the
+   trigger, so the panel stays fully usable while the guide is active. A plain 998 (the
+   old value) sat under any host sticky header with a z-index >= 999, which is common
+   enough on real sites that the guide would visibly render behind page chrome instead of
+   dimming it. pointer-events: none throughout means it never blocks clicks meant for the
+   page or the panel. */
+.a11y-reading-guide-band {
+  position: fixed;
+  left: 0; right: 0;
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  z-index: 2147482999;
+}
+.a11y-reading-guide-band--top { top: 0; height: 0; }
+.a11y-reading-guide-band--bottom { bottom: 0; top: 100vh; }
+.a11y-reading-guide-band--smooth { transition: height 0.08s linear, top 0.08s linear; }
+
+/* Virtual Keyboard — host-page-level overlay, mounted at document.documentElement (same
+   reasoning as the panel root: must never be filtered by applyClasses, see CLAUDE.md).
+   Sits just below the drawer (2147483002) so it stays usable while the panel is open.
+   Sized as a fraction of the viewport (clamp()) rather than a fixed pixel width, so it
+   reads as a real keyboard on a real screen instead of a tiny fixed-size box. */
+.a11y-vkb {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 2147483001;
+  width: clamp(300px, 44vw, 520px);
+  max-width: calc(100vw - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  background: #1c1c22;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  font-family: system-ui, sans-serif;
+}
+.a11y-vkb-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d4d4dc;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 2px 2px;
+}
+.a11y-vkb-hint { flex: 1; color: #f0a04b; font-weight: 500; }
+.a11y-vkb-close {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: #33333c;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.a11y-vkb-close:hover { background: #45454f; }
+.a11y-vkb-row { display: flex; gap: 4px; justify-content: center; }
+.a11y-vkb-key {
+  flex: 1;
+  min-width: 0;
+  height: clamp(28px, 3.6vw, 36px);
+  padding: 0 4px;
+  border: none;
+  border-radius: 6px;
+  background: #33333c;
+  color: #fff;
+  font-size: clamp(12px, 1.3vw, 14px);
+  cursor: pointer;
+}
+.a11y-vkb-key:hover { background: #45454f; }
+.a11y-vkb-key.act { background: #6d8fe8; }
+.a11y-vkb-key--space { flex: 4; }
+.a11y-vkb-key--back { flex: 1.6; font-size: clamp(14px, 1.6vw, 16px); }
+.a11y-vkb-key--enter { flex: 1.8; }
+.a11y-vkb-key--shift { flex: 1.3; }
+.a11y-vkb-key--caps { flex: 1.3; }
+
+/* Accessibility Checker "Show on page" highlight — applied by highlightScanNode()
+   (a11y-scanner.ts) directly to whichever host element a scan flagged, then removed
+   after ~2s. Not scoped to .a11y-target: a scan can flag any element inside the scanned
+   container regardless of whether the visitor has any other a11y-* effect switched on. */
+.a11y-scan-highlight {
+  outline: 3px solid #E8702A !important;
+  outline-offset: 2px !important;
+  border-radius: 2px;
+}
+
+/* Voice Over (A11yPrefs.voiceOver) — createVoiceOver() in voice-over.ts.
+   .a11y-vo-reading marks the block currently being spoken; not scoped to .a11y-target
+   since the reader works whether or not any other a11y-* effect is on.
+   .a11y-voiceover-bar is the fixed play/pause/restart/stop control, mounted on <body>
+   below the drawer (2147483002) so the panel stays usable. */
+.a11y-vo-reading {
+  background: rgba(232, 112, 42, 0.18) !important;
+  box-shadow: 0 0 0 2px rgba(232, 112, 42, 0.55) !important;
+  border-radius: 3px;
+}
+.a11y-voiceover-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 2147483001;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #1c1c22;
+  border-radius: 999px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  font-family: system-ui, sans-serif;
+}
+.a11y-voiceover-btn {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: #33333c;
+  color: #fff;
+  cursor: pointer;
+}
+.a11y-voiceover-btn:hover { background: #45454f; }
+.a11y-voiceover-btn svg { width: 18px; height: 18px; }
+.a11y-voiceover-status {
+  min-width: 46px;
+  padding: 0 4px;
+  text-align: center;
+  color: #d4d4dc;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}

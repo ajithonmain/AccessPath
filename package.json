@@ -1,14 +1,21 @@
 {
-  "name": "accessibility",
+  "name": "accesspath",
   "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "npm run dev:site",
+    "build:core": "npm run build -w @accesspath/core",
+    "build:embed": "npm run build -w @accesspath/embed",
+    "build:react": "npm run build -w @accesspath/react",
+    "build:angular-lib": "ng build accesspath-angular",
+    "build:site": "npm run build -w @accesspath/site",
+    "dev:site": "npm run dev -w @accesspath/site",
+    "build:all": "npm run build:core && npm run build:embed && npm run build:react && npm run build:angular-lib && npm run build:site"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^16.2.0",
     "@angular/common": "^16.2.0",
@@ -26,13 +33,8 @@
     "@angular-devkit/build-angular": "^16.2.16",
     "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.2.0",
-    "@types/jasmine": "~4.3.0",
-    "jasmine-core": "~4.6.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.1.3"
+    "ng-packagr": "^16.2.3",
+    "typescript": "~5.1.3",
+    "vite": "^5.4.0"
   }
 }

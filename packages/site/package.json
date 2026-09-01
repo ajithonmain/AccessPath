@@ -1,0 +1,19 @@
+{
+  "name": "@accesspath/site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-embed": "node scripts/sync-embed.mjs",
+    "dev": "npm run sync-embed && vite",
+    "build": "npm run sync-embed && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@accesspath/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "~5.1.3",
+    "vite": "^5.4.0"
+  }
+}

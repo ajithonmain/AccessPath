@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AccessPath Integration Guide</title>
+<meta name="description" content="Learn how to add AccessPath, the free web accessibility widget, to your site. This integration guide covers the vanilla JavaScript embed, the React component and hook, and the Angular component, with every prop, input, and configuration option explained.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://accesspath.dev/integration-guide.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/src/style.css">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html" style="text-decoration:none;color:inherit;">
+      <span class="nav-logo" aria-hidden="true">
+        <img src="/images/logo.png" width="28" height="27" alt="">
+      </span>
+      AccessPath
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="index.html#profiles-showcase">Profiles</a>
+      <a href="index.html#install-quickstart-v2">Integrations</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="integration-guide.html">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <button type="button" class="btn btn-secondary btn-sm nav-star-btn" disabled title="Not published yet">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+        Star on GitHub
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm nav-npm-btn" disabled title="Not published yet">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H3.999v-4H2.665v4h-1.33V8.667h5.33v5.331zm4.001 0H8.001V8.667h4v1.336h-1.334v4.001h-.001v.001zm.001-4H12v-1.332h-1.332v1.332zm8.001 4h-2.667v-4h-1.335v4h-1.332V8.667h5.334v5.331z"/></svg>
+        npm
+      </button>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <svg class="nav-toggle-icon nav-toggle-icon-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="nav-toggle-icon nav-toggle-icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="docs-page">
+    <div class="docs-shell">
+      <div class="docs-hero">
+        <a class="docs-back" href="index.html">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to AccessPath
+        </a>
+        <span class="docs-eyebrow">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Developer docs
+        </span>
+        <h1 class="docs-title">Integration Guide</h1>
+        <p class="docs-sub">A complete walkthrough of every integration option for adding AccessPath to your website: the vanilla JavaScript embed, the React component and hook, and the Angular component, all built on one shared accessibility core.</p>
+      </div>
+
+      <div class="docs-tabs" role="tablist" aria-label="Documentation section">
+        <button class="docs-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-vanilla" data-docs-tab="vanilla">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
+          Vanilla JS / HTML
+          </button>
+        <button class="docs-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-react" data-docs-tab="react">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></svg>
+          React
+          </button>
+        <button class="docs-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-angular" data-docs-tab="angular">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16.712 17.711H7.288l-1.204 2.916L12 24l5.916-3.373-1.204-2.916ZM14.692 0l7.832 16.855.814-12.856L14.692 0ZM9.308 0 .662 3.999l.814 12.856L9.308 0Zm-.405 13.93h6.198L12 6.396 8.903 13.93Z"/></svg>
+          Angular
+          </button>
+        <button class="docs-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-reference" data-docs-tab="reference">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Reference
+        </button>
+      </div>
+
+      <div class="docs-body">
+
+      <article class="docs-content">
+
+        <div class="docs-tabpanel is-active" id="panel-vanilla" data-docs-panel="vanilla" role="tabpanel">
+
+        <section class="docs-section" id="vanilla">
+          <div class="docs-section-head">
+            <span class="docs-section-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
+            </span>
+            <h2>Vanilla JS / HTML</h2>
+          </div>
+
+          <h3 id="vanilla-overview">Overview<a class="docs-anchor" href="#vanilla-overview" aria-label="Link to this section">#</a></h3>
+          <p class="docs-lede">Add AccessPath to any website by dropping in a single script tag. It works on WordPress, Shopify, a static HTML site, or anywhere you can paste a snippet of HTML. The script reads its own <code>data-*</code> attributes, mounts a floating trigger and drawer inside a Shadow DOM root, and injects both core stylesheets automatically, so there is no separate CSS file to include.</p>
+          <div class="docs-callout">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8z"/></svg>
+            <p>Wrap the part of the page you want AccessPath to affect in a <code>container</code> element. It defaults to <code>&lt;body&gt;</code>, or you can point it at a different element with <code>data-target</code>. This container is what receives the <code>a11y-*</code> effect classes. The panel and floating trigger always mount at the document root, outside that container, so effects like saturation or color inversion never visually apply to the panel's own interface.</p>
+          </div>
+
+          <h3 id="vanilla-install">Installation<a class="docs-anchor" href="#vanilla-install" aria-label="Link to this section">#</a></h3>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">HTML</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>&lt;script src="/embed.js"
+        data-theme="light"
+        data-storage-key="accesspath-prefs"
+        data-position="bottom-right"
+        data-shape="circle"
+        data-icon="accessibility"
+        data-draggable="true"
+        data-brand="#4928F3"&gt;
+&lt;/script&gt;</code></pre>
+          </div>
+
+          <h3 id="vanilla-attributes">data-* attributes<a class="docs-anchor" href="#vanilla-attributes" aria-label="Link to this section">#</a></h3>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Attribute</th><th>Values</th><th>Default</th><th>Does</th></tr>
+              <tr><td><code>data-theme</code></td><td><code>light</code> / <code>dark</code></td><td><code>light</code></td><td>Drawer chrome theme.</td></tr>
+              <tr><td><code>data-storage-key</code></td><td>any string</td><td><code>accesspath-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
+              <tr><td><code>data-target</code></td><td>CSS selector</td><td><code>document.body</code></td><td>Element the <code>a11y-*</code> classes apply to.</td></tr>
+              <tr><td><code>data-position</code></td><td><code>bottom-right</code> / <code>bottom-left</code> / <code>top-right</code> / <code>top-left</code></td><td><code>bottom-right</code></td><td>Corner the floating trigger docks to.</td></tr>
+              <tr><td><code>data-shape</code></td><td><code>circle</code> / <code>rounded-square</code> / <code>pill</code></td><td><code>circle</code></td><td>Trigger button shape.</td></tr>
+              <tr><td><code>data-icon</code></td><td><code>accessibility</code> / <code>motion</code> / <code>contrast</code> / <code>spacing</code> / <code>motor</code> / <code>badge</code> / <code>logo</code></td><td><code>accessibility</code></td><td>Trigger button icon. If you need a custom SVG icon, use the core, React, or Angular integration instead, since a DOM element cannot travel through a data attribute.</td></tr>
+              <tr><td><code>data-draggable</code></td><td><code>true</code> / <code>false</code></td><td><code>false</code></td><td>Lets the visitor drag the trigger; its dropped position is remembered per <code>storageKey</code>.</td></tr>
+              <tr><td><code>data-brand</code></td><td>hex color</td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set.</td></tr>
+              <tr><td><code>data-profiles</code></td><td>comma list of profile keys</td><td>all 6</td><td>Restricts which preset profile pills render.</td></tr>
+              <tr><td><code>data-sections</code></td><td>comma list: <code>profiles,quick,controls,actions</code></td><td>all 4, that order</td><td>Which top-level drawer sections render, and in what order.</td></tr>
+              <tr><td><code>data-control-categories</code></td><td>comma list: <code>vision,content,motion,reading,navigation</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
+              <tr><td><code>data-locale</code></td><td><code>en</code> / <code>es</code> / <code>fr</code> / <code>de</code> / <code>pt</code></td><td><code>en</code></td><td>Bundled translation set for every panel string.</td></tr>
+              <tr><td><code>data-labels</code></td><td>JSON object</td><td>None</td><td>Per-string overrides layered on top of <code>data-locale</code>. Same nested shape as the <code>Labels</code> type.</td></tr>
+              <tr><td><code>data-actions</code></td><td>JSON array of <code>{"id","label","icon?","ariaLabel?"}</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
+              <tr><td><code>data-hide-trigger</code></td><td><code>true</code> / <code>false</code></td><td><code>false</code></td><td>Skips the floating trigger. Open the drawer from your own button via <code>window.AccessPath</code> below.</td></tr>
+            </table>
+          </div>
+
+          <h3 id="vanilla-scripting">Scripting &amp; events<a class="docs-anchor" href="#vanilla-scripting" aria-label="Link to this section">#</a></h3>
+          <p>The embed exposes one page-global for hosts that want to open the drawer from their own UI, or listen for custom action clicks:</p>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">JS</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>window.AccessPath.open();
+window.AccessPath.close();
+window.AccessPath.toggle();
+
+// data-actions='[{"id":"support","label":"Contact support"}]'
+document.body.addEventListener('accesspath:action', (e) =&gt; {
+  if (e.detail.id === 'support') { /* ... */ }
+});</code></pre>
+          </div>
+          <p>The event fires on whatever element <code>data-target</code> resolves to, which is <code>document.body</code> by default. Listen for it there, not on <code>window.AccessPath</code> itself.</p>
+        </section>
+
+        </div>
+
+        <div class="docs-tabpanel" id="panel-react" data-docs-panel="react" role="tabpanel" hidden>
+
+        <section class="docs-section" id="react">
+          <div class="docs-section-head">
+            <span class="docs-section-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278z"/></svg>
+            </span>
+            <h2>React</h2>
+          </div>
+
+          <h3 id="react-overview">Overview<a class="docs-anchor" href="#react-overview" aria-label="Link to this section">#</a></h3>
+          <p class="docs-lede">The React integration ships from <code>@accesspath/core</code>, which owns all state through <code>AccessPathState</code> and builds the panel's DOM. <code>&lt;AccessPathPanel&gt;</code> is a thin wrapper around that shared core.</p>
+          <div class="docs-callout">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8z"/></svg>
+            <p>Wrap the part of the page you want AccessPath to affect in a <code>container</code> using the <code>container</code> prop, which defaults to <code>document.body</code>. This is what receives the <code>a11y-*</code> effect classes. The panel and floating trigger always mount at <code>document.documentElement</code>, outside that container, so effects like saturation or color inversion never visually apply to the panel's own interface.</p>
+          </div>
+
+          <h3 id="react-install">Installation<a class="docs-anchor" href="#react-install" aria-label="Link to this section">#</a></h3>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">Bash</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>npm install @accesspath/react</code></pre>
+          </div>
+
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">TSX</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>import { AccessPathPanel } from '@accesspath/react';
+import '@accesspath/core/styles/a11y-effects.css';
+import '@accesspath/core/styles/panel.css';
+
+function App() {
+  const containerRef = useRef&lt;HTMLDivElement&gt;(null);
+  return (
+    &lt;div ref={containerRef} className="a11y-target"&gt;
+      &lt;AccessPathPanel container={containerRef.current} storageKey="accesspath-prefs" /&gt;
+      {/* rest of your app */}
+    &lt;/div&gt;
+  );
+}</code></pre>
+          </div>
+          <p><code>&lt;AccessPathPanel&gt;</code> renders nothing itself, since it simply returns <code>null</code>. It creates the panel once on mount and appends it to <code>document.documentElement</code>, outside your component tree, so it is never a descendant of <code>container</code>.</p>
+
+          <h3 id="react-props">Component props<a class="docs-anchor" href="#react-props" aria-label="Link to this section">#</a></h3>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Prop</th><th>Type</th><th>Default</th><th>Does</th></tr>
+              <tr><td><code>container</code></td><td><code>HTMLElement | null</code></td><td><code>document.body</code></td><td>Element the <code>a11y-*</code> classes apply to.</td></tr>
+              <tr><td><code>isDarkTheme</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Drawer chrome theme. Live-updatable after mount.</td></tr>
+              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>a11y-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
+              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 6</td><td>Restricts which preset profile buttons render.</td></tr>
+              <tr><td><code>brandColor</code></td><td><code>string</code></td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set.</td></tr>
+              <tr><td><code>actions</code></td><td><code>CustomActionConfig[]</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
+              <tr><td><code>onAction</code></td><td><code>(id: string) =&gt; void</code></td><td>None</td><td>Fires when a custom action button is clicked. Sugar over listening for <code>accesspath:action</code> on <code>container</code> yourself.</td></tr>
+              <tr><td><code>locale</code></td><td><code>LocaleKey</code></td><td><code>en</code></td><td>Bundled translation set.</td></tr>
+              <tr><td><code>labels</code></td><td><code>LabelOverrides</code></td><td>None</td><td>Per-string overrides on top of <code>locale</code>.</td></tr>
+              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order.</td></tr>
+              <tr><td><code>controlCategories</code></td><td><code>ControlCategoryKey[]</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
+              <tr><td><code>customSections</code></td><td><code>CustomSectionConfig[]</code></td><td>None</td><td>Host-supplied sections with a <code>render(el)</code> callback, same chrome as built-ins.</td></tr>
+            </table>
+          </div>
+          <p><code>profiles</code>, <code>storageKey</code>, <code>actions</code>, <code>sections</code>, <code>controlCategories</code>, and <code>customSections</code> are only read once, at mount time. The panel is not recreated if these change identity later. Only <code>isDarkTheme</code> is live-bindable.</p>
+
+          <h3 id="react-ref">Imperative handle (ref)<a class="docs-anchor" href="#react-ref" aria-label="Link to this section">#</a></h3>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">TSX</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>const panelRef = useRef&lt;AccessPathPanelHandle&gt;(null);
+
+&lt;AccessPathPanel ref={panelRef} /&gt;
+
+panelRef.current?.open();
+panelRef.current?.close();
+panelRef.current?.reset();</code></pre>
+          </div>
+
+          <h3 id="react-hook">useAccessPath() hook<a class="docs-anchor" href="#react-hook" aria-label="Link to this section">#</a></h3>
+          <p>For driving the panel from your own UI (e.g. a nav bar button, a settings page) without mounting <code>&lt;AccessPathPanel&gt;</code> at all, or reading live prefs to adapt your own components:</p>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">TSX</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>import { useAccessPath } from '@accesspath/react';
+
+function MyToolbarButton() {
+  const { open, isOpen, prefs, activeProfiles } = useAccessPath('accesspath-prefs');
+  return &lt;button onClick={open}&gt;Accessibility{isOpen ? ' (open)' : ''}&lt;/button&gt;;
+}</code></pre>
+          </div>
+          <p>Pass the same <code>storageKey</code> you used for <code>&lt;AccessPathPanel&gt;</code> so both read/write the same shared <code>AccessPathState</code> instance. Returns <code>open()</code>, <code>close()</code>, <code>reset()</code>, <code>isOpen</code>, <code>prefs</code> (the full <code>A11yPrefs</code> object), and <code>activeProfiles</code> (more than one profile can be active at once).</p>
+        </section>
+
+        </div>
+
+        <div class="docs-tabpanel" id="panel-angular" data-docs-panel="angular" role="tabpanel" hidden>
+
+        <section class="docs-section" id="angular">
+          <div class="docs-section-head">
+            <span class="docs-section-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M16.712 17.711H7.288l-1.204 2.916L12 24l5.916-3.373-1.204-2.916ZM14.692 0l7.832 16.855.814-12.856L14.692 0ZM9.308 0 .662 3.999l.814 12.856L9.308 0Zm-.405 13.93h6.198L12 6.396 8.903 13.93Z"/></svg>
+            </span>
+            <h2>Angular</h2>
+          </div>
+
+          <h3 id="angular-overview">Overview<a class="docs-anchor" href="#angular-overview" aria-label="Link to this section">#</a></h3>
+          <p class="docs-lede">The Angular integration ships from <code>@accesspath/core</code>, which owns all state through <code>AccessPathState</code> and builds the panel's DOM. <code>AccessibilityPanelComponent</code> is a thin wrapper around that shared core.</p>
+          <div class="docs-callout">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8z"/></svg>
+            <p>Wrap the part of the page you want AccessPath to affect in a <code>container</code> using the <code>container</code> input, which defaults to <code>document.body</code>. This is what receives the <code>a11y-*</code> effect classes. The panel and floating trigger always mount at <code>document.documentElement</code>, outside that container, so effects like saturation or color inversion never visually apply to the panel's own interface.</p>
+          </div>
+
+          <h3 id="angular-install">Installation<a class="docs-anchor" href="#angular-install" aria-label="Link to this section">#</a></h3>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">Bash</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>npm install @accesspath/angular</code></pre>
+          </div>
+
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">TypeScript</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>import { AccessibilityPanelComponent } from '@accesspath/angular';
+
+@Component({
+  standalone: true,
+  imports: [AccessibilityPanelComponent],
+  template: `
+    &lt;div #root class="a11y-target"&gt;
+      &lt;app-accessibility-panel
+        [container]="root"
+        storageKey="accesspath-prefs"
+        (action)="onAction($event)"&gt;
+      &lt;/app-accessibility-panel&gt;
+      &lt;!-- rest of your app --&gt;
+    &lt;/div&gt;
+  `,
+})
+export class AppComponent {
+  onAction(id: string) { /* ... */ }
+}</code></pre>
+          </div>
+          <p><code>AccessibilityPanelComponent</code> is a standalone component with an empty template. It renders nothing into the DOM tree itself, and instead appends the real panel to <code>document.documentElement</code> inside <code>ngOnInit</code>, the same mount-outside-container pattern used by the React and embed integrations.</p>
+
+          <h3 id="angular-inputs">Inputs<a class="docs-anchor" href="#angular-inputs" aria-label="Link to this section">#</a></h3>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Input</th><th>Type</th><th>Default</th><th>Does</th></tr>
+              <tr><td><code>container</code></td><td><code>HTMLElement</code></td><td><code>document.body</code></td><td>Element the <code>a11y-*</code> classes apply to.</td></tr>
+              <tr><td><code>isDarkTheme</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Drawer chrome theme. Live-updatable after init.</td></tr>
+              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>a11y-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
+              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 6</td><td>Restricts which preset profile buttons render.</td></tr>
+              <tr><td><code>brandColor</code></td><td><code>string</code></td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set. Set once, at init.</td></tr>
+              <tr><td><code>actions</code></td><td><code>CustomActionConfig[]</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
+              <tr><td><code>locale</code></td><td><code>LocaleKey</code></td><td><code>en</code></td><td>Bundled translation set.</td></tr>
+              <tr><td><code>labels</code></td><td><code>LabelOverrides</code></td><td>None</td><td>Per-string overrides on top of <code>locale</code>.</td></tr>
+              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order.</td></tr>
+              <tr><td><code>controlCategories</code></td><td><code>ControlCategoryKey[]</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
+              <tr><td><code>customSections</code></td><td><code>CustomSectionConfig[]</code></td><td>None</td><td>Host-supplied sections with a <code>render(el)</code> callback, same chrome as built-ins.</td></tr>
+            </table>
+          </div>
+          <p>The same one-shot rule from React applies here too. Everything except <code>isDarkTheme</code> is only read inside <code>ngOnInit</code>, so changing <code>profiles</code>, <code>storageKey</code>, or the other inputs later will not recreate the panel.</p>
+
+          <h3 id="angular-methods">Output &amp; public methods<a class="docs-anchor" href="#angular-methods" aria-label="Link to this section">#</a></h3>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Output</th><th>Payload</th><th>Fires when</th></tr>
+              <tr><td><code>action</code></td><td><code>string</code> (the action's <code>id</code>)</td><td>A custom action button is clicked.</td></tr>
+            </table>
+          </div>
+          <p>Grab a template reference to call these methods directly. It plays the same role that <code>ref</code> plays in React:</p>
+          <div class="code-panel" data-code-panel>
+            <div class="code-panel-head">
+              <span class="code-panel-lang">HTML</span>
+              <button class="code-copy-btn" type="button" aria-label="Copy code"></button>
+            </div>
+            <pre class="code-block is-active"><code>&lt;app-accessibility-panel #panel [container]="root"&gt;&lt;/app-accessibility-panel&gt;
+&lt;button (click)="panel.open()"&gt;Open&lt;/button&gt;</code></pre>
+          </div>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Method</th><th>Does</th></tr>
+              <tr><td><code>open()</code></td><td>Opens the drawer.</td></tr>
+              <tr><td><code>close()</code></td><td>Closes the drawer.</td></tr>
+              <tr><td><code>reset()</code></td><td>Resets all preferences and active profiles to defaults.</td></tr>
+            </table>
+          </div>
+        </section>
+
+        </div>
+
+        <div class="docs-tabpanel" id="panel-reference" data-docs-panel="reference" role="tabpanel" hidden>
+
+        <section class="docs-section" id="reference">
+          <div class="docs-section-head">
+            <span class="docs-section-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+            <h2>Shared config reference</h2>
+          </div>
+          <p class="docs-lede">These types are shared across all three integrations, whether you set them as <code>data-*</code> attributes on the embed or pass them directly as props and inputs on React and Angular.</p>
+
+          <h3 id="ref-architecture">Architecture<a class="docs-anchor" href="#ref-architecture" aria-label="Link to this section">#</a></h3>
+          <p>All three integrations ship from <code>@accesspath/core</code>, which owns all state through <code>AccessPathState</code> and builds the panel's DOM with <code>createPanel()</code>. <code>@accesspath/embed</code>, <code>@accesspath/react</code>, and <code>@accesspath/angular</code> are thin wrappers around that same core, so they offer the same options and the same behavior, just a different surface for wiring them up. Two instances that share a <code>storageKey</code> automatically share state, even across different frameworks on the same page.</p>
+
+          <h3 id="ref-profiles">Profiles (ProfileKey)<a class="docs-anchor" href="#ref-profiles" aria-label="Link to this section">#</a></h3>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <tr><th>Key</th><th>Label</th><th>Turns on</th></tr>
+              <tr><td><code>low-vision</code></td><td>Low Vision</td><td>Larger text, pause animations, higher saturation</td></tr>
+              <tr><td><code>dyslexia</code></td><td>Dyslexia</td><td>Dyslexia-friendly font, wider spacing, taller line height</td></tr>
+              <tr><td><code>seizure</code></td><td>Seizure Safe</td><td>Pause animations, reduced saturation</td></tr>
+              <tr><td><code>motor</code></td><td>Motor Impaired</td><td>Larger text, pause animations</td></tr>
+              <tr><td><code>colorblind</code></td><td>Color Blind</td><td>Desaturated colors, higher contrast, wider spacing</td></tr>
+              <tr><td><code>adhd</code></td><td>ADHD</td><td>Pause animations, wider spacing</td></tr>
+            </table>
+          </div>
+
+          <h3 id="ref-sections">Sections &amp; control categories<a class="docs-anchor" href="#ref-sections" aria-label="Link to this section">#</a></h3>
+          <p><strong>SectionKey</strong> accepts <code>'profiles'</code>, <code>'quick'</code>, <code>'controls'</code>, or <code>'actions'</code>, or a custom id from <code>customSections</code>. Custom section ids only work with the core, React, or Angular integration, since the embed can't carry a render callback through a data attribute.</p>
+          <p><strong>ControlCategoryKey</strong> accepts <code>'vision'</code>, <code>'content'</code>, <code>'motion'</code>, <code>'reading'</code>, or <code>'navigation'</code>, the 5 collapsible groups inside the "controls" section.</p>
+
+          <h3 id="ref-locales">Locales (LocaleKey)<a class="docs-anchor" href="#ref-locales" aria-label="Link to this section">#</a></h3>
+          <p><code>'en' | 'es' | 'fr' | 'de' | 'pt'</code>. For any other language, use <code>labels</code> / <code>data-labels</code> to override every string yourself.</p>
+
+          <h3 id="ref-theming">Theming tokens<a class="docs-anchor" href="#ref-theming" aria-label="Link to this section">#</a></h3>
+          <p>All colors read from namespaced <code>--ap-*</code> CSS custom properties, never bare tokens like <code>--brand</code>, so AccessPath never collides with a host page's own design system. Set them on <code>:root</code>, or pass <code>brandColor</code> or <code>data-brand</code> for a quick one-line override of just the brand color. You can find the full token table on the <a href="index.html#install-quickstart-v2">home page's Customize tab</a>.</p>
+
+          <h3 id="ref-state">Where state lives<a class="docs-anchor" href="#ref-state" aria-label="Link to this section">#</a></h3>
+          <p>AccessPath never sends anything to a server. Every accessibility preference is saved to the visitor's own browser storage under <code>storageKey</code>, and it loads back automatically the next time they visit your site. Read the <a href="privacy.html">Privacy Policy</a> and the <a href="accessibility-guide.html">Accessibility Guide</a> for the full picture of what this web accessibility widget does, and does not, do.</p>
+        </section>
+
+        </div>
+
+      </article>
+
+      <aside class="docs-onpage" aria-label="On this page">
+        <p class="docs-onpage-title">On this page</p>
+        <nav class="docs-onpage-links" id="docs-onpage-links"></nav>
+      </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer">
+    <div class="section-inner footer-inner">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html" style="text-decoration:none;color:inherit;">
+            <span class="footer-logo-mark" aria-hidden="true">
+              <img src="/images/logo.png" width="30" height="29" alt="">
+            </span>
+            AccessPath
+          </a>
+          <p class="footer-tagline">A free, open-source accessibility widget that puts more control in the hands of your users.</p>
+        </div>
+        <nav class="footer-col" aria-label="Product">
+          <h3>Product</h3>
+          <a href="index.html#tools">Features</a>
+          <a href="index.html#install-quickstart-v2">Install &amp; Customize</a>
+          <a href="index.html#faq">FAQ</a>
+        </nav>
+        <nav class="footer-col" aria-label="Resources">
+          <h3>Resources</h3>
+          <a href="accessibility-guide.html">Accessibility Guide</a>
+          <a href="integration-guide.html">Integration Guide</a>
+        </nav>
+        <nav class="footer-col" aria-label="Legal">
+          <h3>Legal</h3>
+          <a href="license.html">MIT License</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Use</a>
+        </nav>
+      </div>
+      <div class="footer-legal">
+        <span>&copy; 2026 AccessPath. Built for a more accessible web.</span>
+        <span>Made with
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.4 1.1 4.5 2.7C11.1 6.1 12.5 5 14.5 5 18 5 19.6 8.6 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+          by the community</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script type="module" src="/src/main.ts"></script>
+<script type="module" src="/src/docs.ts"></script>
+</body>
+</html>

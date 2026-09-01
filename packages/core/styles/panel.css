@@ -1,0 +1,912 @@
+/* Panel chrome — shared visual styles for the accesspath panel across every wrapper
+   (embed, react, angular). The wrapper element created by createPanel() carries the
+   class `.accesspath-panel` — this stands in for Angular's old `:host()` selector.
+
+   Layout: a viewport-edge-anchored sliding drawer (position: fixed, full height),
+   not a bottom sheet — no positioned ancestor is required for the backdrop/drawer to
+   size correctly, unlike the panel's previous bottom-sheet incarnation.
+
+   Palette follows docs/brand.md — AccessPath Violet #4928F3 as the sole brand accent
+   (~7% of the interface by design), warm neutrals for everything else, and the six
+   profile accent colors used only on their own profile card. */
+
+/* Floating trigger button — created by createTriggerButton(), unscoped since it lives
+   outside .accesspath-panel wherever the caller appends it. */
+.accesspath-trigger {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ap-brand, #4928F3);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    /* --ap-brand-border / --ap-brand-soft, not a literal rgba(73, 40, 243, ...) — a
+       custom brandColor (createPanel/createTriggerButton, brand-color.ts) recolors
+       --ap-brand itself but previously left this glow hardcoded to default Violet,
+       so a custom-colored trigger still glowed violet. */
+    box-shadow: 0 8px 24px var(--ap-brand-border, rgba(73, 40, 243, 0.25)), 0 0 0 8px var(--ap-brand-soft, rgba(73, 40, 243, 0.08));
+    z-index: 2147483000;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+/* fill: #fff (not currentColor) — explicit so the icon stays white regardless of
+   this specific element's own computed color, matching how .accesspath-trigger's
+   background is a solid --ap-brand fill, not a light surface. Safe against the
+   motion/contrast/spacing trigger icon choices too: each of their own shapes now
+   carries its own explicit fill (icons.ts), so this only ever sets the fallback on
+   the un-attributed root <svg> itself, not anything that depends on inheriting
+   fill:none for line art. */
+.accesspath-trigger svg { width: 26px; height: 26px; fill: #fff; }
+/* accessPathLogoIcon() (icons.ts) is the one icon backed by a raster <image>, not a
+   currentColor path — fill:#fff above can't recolor it the way it recolors every
+   other icon here. Its source PNG is solid brand violet on transparent, which
+   disappears against this button's own violet background, so it needs an explicit
+   filter to render as the white mark brand.md specifies for the trigger. Scoped to
+   this selector only — other .accessPathLogoIcon() consumers (e.g. the panel's own
+   action-button icons) sit on light surfaces and want the true violet, not white. */
+.accesspath-trigger svg image { filter: brightness(0) invert(1); }
+.accesspath-trigger:hover { transform: scale(1.06); box-shadow: 0 10px 28px var(--ap-brand-border, rgba(73, 40, 243, 0.3)), 0 0 0 8px var(--ap-brand-soft, rgba(73, 40, 243, 0.1)); }
+.accesspath-trigger:active { transform: scale(0.98); }
+.accesspath-trigger:focus-visible { outline: 2px solid var(--ap-brand, #4928F3); outline-offset: 3px; }
+.accesspath-trigger--rounded-square { border-radius: 16px; }
+.accesspath-trigger--draggable { cursor: grab; }
+.accesspath-trigger--draggable:active { cursor: grabbing; }
+.accesspath-trigger--pill { width: auto; padding: 0 20px; border-radius: 999px; }
+
+/* One-shot first-paint pulse — class is added by createTriggerButton() only when
+   prefers-reduced-motion doesn't ask otherwise, and removed after this single run. */
+@keyframes accesspath-trigger-pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+.accesspath-trigger--pulse { animation: accesspath-trigger-pulse 0.6s ease; }
+
+/* Backdrop — kept nearly transparent on purpose: the point of opening the drawer is to
+   see the host page's own content change live as prefs are toggled, not to obscure it.
+   It still exists (rather than being removed) so click-outside-to-close keeps working. */
+.accesspath-panel .a11y-bd {
+    position: fixed; inset: 0;
+    background: rgba(4, 13, 41, 0);
+    pointer-events: none;
+    transition: background 0.25s;
+    /* Must outrank .accesspath-trigger (2147483000) — the trigger's own huge z-index is
+       tuned to float above arbitrary host-page content, but with a bottom-right trigger
+       and a right-anchored drawer the two occupy the same corner, so the backdrop/drawer
+       need to explicitly win the stacking order or the trigger visibly pokes through the
+       open drawer (an actual bug, not just a theoretical one). */
+    z-index: 2147483001;
+}
+.accesspath-panel .a11y-bd.show {
+    background: rgba(4, 13, 41, 0.04);
+    pointer-events: all;
+}
+
+/* Drawer shell — anchored to the right edge by default; .a11y-pnl--left flips it */
+.accesspath-panel .a11y-pnl {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(440px, 100vw);
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background: var(--ap-sf, #FFFFFF);
+    box-shadow: -18px 0 50px rgba(4, 13, 41, 0.10);
+    z-index: 2147483002; /* above .a11y-bd (2147483001) and .accesspath-trigger (2147483000) */
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    font-family: Geist, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.accesspath-panel .a11y-pnl--left {
+    right: auto; left: 0;
+    box-shadow: 18px 0 50px rgba(4, 13, 41, 0.10);
+    transform: translateX(-100%);
+}
+.accesspath-panel .a11y-pnl.open { transform: translateX(0); }
+
+/* Dark theme — redefines the --ap-* surface/text/border tokens on the drawer root, so
+   every descendant rule below (all written as var(--ap-sf, ...), var(--ap-tx, ...) etc.)
+   picks the dark value automatically via normal CSS custom-property inheritance, with
+   no need to hand-write a .dark variant of each individual rule. --ap-brand/--ap-brand-2
+   deliberately aren't overridden here — the brand color is a user choice (brandColor),
+   not something that should flip with light/dark. --strong-bd is the one non-ap-*
+   token this panel reads (hover borders, scrollbar thumb) — it needs the same
+   treatment or it stays pinned to its light-mode fallback (#D8D7E2, a near-white gray)
+   and reads as washed-out/invisible against the dark surface. */
+.accesspath-panel .a11y-pnl.dark {
+    --ap-sf: #1a1a2e;
+    --ap-sf2: #242440;
+    --ap-tx: #f5f5fa;
+    --ap-tm: #c7c9db;
+    --ap-mu: #9296b3;
+    --strong-bd: #4a4a70;
+    --ap-bd: #34345a;
+    --ap-brand-soft: rgba(73, 40, 243, 0.18);
+    /* --ap-brand itself deliberately stays untouched (see note above) — it's still
+       needed at full saturation everywhere it's a *background* under white text
+       (header gradient, active toggles/segments, trigger button): lightening it
+       would drop those below 3:1. --ap-brand-text exists only for the opposite case
+       — --ap-brand used as *text/icon color directly on a surface* (Reset link,
+       card icons, chevrons, chips, footer mark) — at full saturation those measured
+       ~2.3:1 against the dark surface (audited with real contrast math, not
+       eyeballed), so every such site below reads var(--ap-brand-text, var(--ap-brand,
+       ...)) instead of var(--ap-brand, ...) directly. Undefined in light mode, so the
+       fallback chain resolves straight through to --ap-brand there, unchanged. */
+    --ap-brand-text: #9d8cf7;
+}
+
+@media (max-width: 480px) {
+    .accesspath-panel .a11y-pnl { width: 100vw; }
+}
+
+/* Header — a single brand-gradient band: title + shortcut hint left, close X right. */
+.accesspath-panel .a11y-hdr {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    padding: 14px 16px;
+    background: linear-gradient(90deg, var(--ap-brand, #4928F3), var(--ap-brand-2, #4636DF));
+}
+.accesspath-panel .a11y-hdr-title {
+    font-size: 14.5px; font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.005em;
+}
+.accesspath-panel .a11y-hdr-shortcut {
+    font-weight: 600;
+    opacity: 0.75;
+}
+.accesspath-panel .a11y-hdr-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.accesspath-panel .a11y-side-btn,
+.accesspath-panel .a11y-theme-btn,
+.accesspath-panel .a11y-close-btn {
+    width: 26px; height: 26px;
+    border-radius: 50%; border: none;
+    background: rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-side-btn svg,
+.accesspath-panel .a11y-theme-btn svg,
+.accesspath-panel .a11y-close-btn svg { width: 15px; height: 15px; }
+.accesspath-panel .a11y-side-btn:hover,
+.accesspath-panel .a11y-theme-btn:hover,
+.accesspath-panel .a11y-close-btn:hover { background: rgba(255, 255, 255, 0.28); }
+
+/* Body — scrolls between the fixed header and footer */
+.accesspath-panel .a11y-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 18px 20px;
+    display: flex; flex-direction: column; gap: 22px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--strong-bd, #D8D7E2) transparent;
+}
+.accesspath-panel .a11y-body::-webkit-scrollbar { width: 6px; }
+.accesspath-panel .a11y-body::-webkit-scrollbar-track { background: transparent; }
+.accesspath-panel .a11y-body::-webkit-scrollbar-thumb {
+    background: var(--strong-bd, #D8D7E2);
+    border-radius: 999px;
+}
+.accesspath-panel .a11y-body::-webkit-scrollbar-thumb:hover { background: var(--ap-mu, #6F7580); }
+
+/* Top-level sections (Profiles, Quick Adjustments, All Controls) — always expanded */
+.accesspath-panel .a11y-top-section {
+    display: flex; flex-direction: column; gap: 12px;
+}
+.accesspath-panel .a11y-top-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+}
+.accesspath-panel .a11y-top-title {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700;
+    color: var(--ap-mu, #6F7580);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.accesspath-panel .a11y-info-icon {
+    display: inline-flex; color: var(--ap-mu, #6F7580);
+    cursor: help;
+}
+.accesspath-panel .a11y-info-icon svg { width: 13px; height: 13px; }
+.accesspath-panel .a11y-top-action {
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 12.5px; font-weight: 600;
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    padding: 2px;
+    transition: opacity 0.15s;
+}
+.accesspath-panel .a11y-top-action:hover { opacity: 0.7; }
+
+/* Profile card grid — 3 columns, icon in a profile-colored circle, label below */
+.accesspath-panel .a11y-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+@media (max-width: 480px) {
+    .accesspath-panel .a11y-profile-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.accesspath-panel .a11y-profile-card {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 18px 8px 14px;
+    border-radius: 18px;
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    background: var(--ap-sf, #fff);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.accesspath-panel .a11y-profile-card:hover {
+    border-color: var(--strong-bd, #D8D7E2);
+    box-shadow: 0 4px 20px rgba(4, 13, 41, 0.045);
+}
+.accesspath-panel .a11y-profile-dot {
+    position: absolute;
+    top: 10px; left: 10px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ap-brand, #4928F3);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.accesspath-panel .a11y-profile-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--profile-soft, #F0EDFF);
+    color: var(--profile-accent, #4928F3);
+}
+.accesspath-panel .a11y-profile-icon svg { width: 23px; height: 23px; }
+.accesspath-panel .a11y-profile-icon .a11y-df-icon { color: var(--profile-accent, #4928F3); font-size: 17px; }
+.accesspath-panel .a11y-profile-label {
+    font-size: 12.5px; font-weight: 700;
+    color: var(--ap-tx, #040D29);
+    text-align: center;
+    line-height: 1.25;
+}
+.accesspath-panel .a11y-profile-card.act {
+    border-color: var(--ap-brand, #4928F3);
+    background: var(--ap-brand-soft, #F0EDFF);
+    box-shadow: 0 2px 12px rgba(73, 40, 243, 0.12);
+}
+.accesspath-panel .a11y-profile-card.act .a11y-profile-dot { opacity: 1; }
+
+/* Color Blind card doubles as the toggle for its own dropdown menu (see
+   attachDropdownToCard() in panel-dom.ts) — the corner chevron is decorative only
+   (aria-hidden, no listener of its own), positioned relative to the card itself
+   since it's a child of the card <button>, not a sibling in a separate wrapping
+   element. An earlier design gave the chevron its own interactive trigger button
+   (needing its own wrapping <div>, since a <button> can't contain another
+   interactive <button>) — that wrapper stretched to the full grid-column width via
+   the grid, but the card <button> inside it didn't reliably follow (a <button>'s
+   width:auto shrinks to content even with display:flex/block overridden, unlike a
+   plain <div>), so the corner trigger floated off to the side of the visibly-
+   narrower card. `display:flex; flex-direction:column` on the wrap is kept below for
+   the same reason — flex's stretch default is what actually makes the card fill the
+   wrap's full grid-stretched width, sidestepping that mismatch. */
+.accesspath-panel .a11y-profile-card-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.accesspath-panel .a11y-profile-card-dd-indicator {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--profile-accent, var(--ap-tm, #3C4255));
+    pointer-events: none;
+}
+.accesspath-panel .a11y-profile-card-dd-chevron { width: 11px; height: 11px; transform: rotate(90deg); transition: transform 0.15s; }
+.accesspath-panel .a11y-profile-card-wrap.open .a11y-profile-card-dd-chevron { transform: rotate(-90deg); }
+/* Left-aligned to the wrap (not right-anchored or centered like the base
+   .a11y-custom-select-menu) — centering clipped past the panel's left edge on
+   narrow/mobile widths when the card sits in the grid's left column, since the
+   popover (min-width 180px) is wider than a single grid column. Left-alignment
+   keeps it growing rightward, safely inside the drawer at every width tested. */
+.accesspath-panel .a11y-profile-card-dd-menu { left: 0; right: auto; top: calc(100% + 6px); }
+
+/* Quick-adjustment rows — icon, label, control (segmented or switch) */
+.accesspath-panel .a11y-qrow {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    min-height: 32px;
+}
+.accesspath-panel .a11y-qrow-main {
+    display: flex; align-items: center; gap: 10px;
+    min-width: 0;
+}
+.accesspath-panel .a11y-qrow-icon {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ap-tm, #3C4255);
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-qrow-icon svg { width: 17px; height: 17px; }
+.accesspath-panel .a11y-qrow-label {
+    font-size: 13.5px; font-weight: 500;
+    color: var(--ap-tx, #040D29);
+}
+
+/* Switch — used for Quick Adjustments' on/off controls */
+.accesspath-panel .a11y-switch {
+    width: 40px; height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: var(--strong-bd, #D8D7E2);
+    cursor: pointer;
+    padding: 3px;
+    display: flex; align-items: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+.accesspath-panel .a11y-switch-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(4, 13, 41, 0.25);
+    transition: transform 0.15s;
+}
+.accesspath-panel .a11y-switch.act { background: var(--ap-brand, #4928F3); }
+.accesspath-panel .a11y-switch.act .a11y-switch-thumb { transform: translateX(16px); }
+
+/* Wraps the range input + its numeric readout as one flex item, so
+   .a11y-qrow's own justify-content: space-between still resolves to exactly
+   two groups (label on the left, slider+value on the right) rather than
+   spreading three items across the full row width. */
+.accesspath-panel .a11y-qrow-controls {
+    display: flex; align-items: center; gap: 10px;
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-qrow-value {
+    min-width: 34px;
+    text-align: right;
+    font-size: 12px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ap-tm, #3C4255);
+}
+
+/* Range slider — real draggable/keyboard-operable native <input type="range">, used for
+   Contrast/Spacing/Line Height (continuous 0-100 values, unlike Motion's plain switch).
+   --val is kept in sync with .value by rangeRow()'s 'input' listener and render()'s
+   setRangeValue(), since Firefox fills the track natively (::-moz-range-progress) but
+   WebKit/Blink don't, so the fill has to be painted manually via a background gradient
+   driven by --val. */
+.accesspath-panel .a11y-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 128px; height: 20px;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-range::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(
+        to right,
+        var(--ap-brand, #4928F3) calc(var(--val, 0) * 1%),
+        var(--strong-bd, #D8D7E2) calc(var(--val, 0) * 1%)
+    );
+}
+.accesspath-panel .a11y-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    margin-top: -6.5px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(4, 13, 41, 0.3);
+    cursor: pointer;
+}
+.accesspath-panel .a11y-range::-moz-range-track {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--strong-bd, #D8D7E2);
+}
+.accesspath-panel .a11y-range::-moz-range-progress {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--ap-brand, #4928F3);
+}
+.accesspath-panel .a11y-range::-moz-range-thumb {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(4, 13, 41, 0.3);
+    cursor: pointer;
+}
+.accesspath-panel .a11y-range:focus-visible { outline: 2px solid var(--ap-brand-border, rgba(73, 40, 243, 0.3)); outline-offset: 3px; }
+
+/* Card grid — used inside All Controls categories, 3 columns desktop, 2 narrow */
+.accesspath-panel .a11y-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+@media (max-width: 480px) {
+    .accesspath-panel .a11y-cards { grid-template-columns: repeat(2, 1fr); }
+}
+.accesspath-panel .a11y-card {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 14px 6px 12px;
+    border-radius: 14px;
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    background: var(--ap-sf2, #F4F1F9);
+    cursor: pointer;
+    font-size: 11px; font-weight: 600;
+    color: var(--ap-tm, #3C4255);
+    font-family: inherit; text-align: center;
+    line-height: 1.2;
+    transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.accesspath-panel .a11y-card:hover {
+    border-color: var(--strong-bd, #D8D7E2);
+    box-shadow: 0 4px 20px rgba(4, 13, 41, 0.045);
+}
+.accesspath-panel .a11y-card-icon {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--ap-brand-soft, #F0EDFF);
+    transition: background 0.15s;
+}
+.accesspath-panel .a11y-card-icon svg {
+    width: 18px; height: 18px;
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+}
+.accesspath-panel .a11y-df-icon {
+    font-family: 'OpenDyslexic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: inherit;
+    line-height: 1;
+}
+.accesspath-panel .a11y-card-icon .a11y-df-icon { color: var(--ap-brand-text, var(--ap-brand, #4928F3)); }
+.accesspath-panel .a11y-card.act .a11y-card-icon { background: var(--ap-brand, #4928F3); }
+.accesspath-panel .a11y-card.act .a11y-card-icon svg,
+.accesspath-panel .a11y-card.act .a11y-card-icon .a11y-df-icon { color: #fff; }
+.accesspath-panel .a11y-card.act {
+    border-color: var(--ap-brand, #4928F3);
+    background: var(--ap-brand-soft, #F0EDFF);
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    box-shadow: 0 2px 10px rgba(73, 40, 243, 0.14);
+}
+.accesspath-panel .a11y-card-label { display: block; }
+.accesspath-panel .a11y-card:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Plain row (used for segmented-control rows without an icon, inside categories) */
+.accesspath-panel .a11y-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 30px;
+}
+.accesspath-panel .a11y-lbl {
+    font-size: 13px; font-weight: 500;
+    color: var(--ap-tx, #040D29);
+}
+
+/* Voice Over voice picker — native <select>, styled to match the panel chrome */
+.accesspath-panel .a11y-voice-select {
+    flex-shrink: 0;
+    max-width: 60%;
+    padding: 5px 9px;
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    border-radius: 8px;
+    background: var(--ap-sf, #fff);
+    color: var(--ap-tx, #040D29);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.accesspath-panel .a11y-voice-select:focus-visible {
+    outline: 2px solid var(--ap-brand-border, rgba(73, 40, 243, 0.3));
+    outline-offset: 2px;
+}
+.accesspath-panel .a11y-voice-select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Segmented control */
+.accesspath-panel .a11y-seg {
+    display: flex;
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-seg-btn {
+    padding: 5px 11px;
+    background: transparent; border: none;
+    cursor: pointer; font-family: inherit;
+    font-weight: 700; color: var(--ap-tm, #3C4255);
+    font-size: 12px;
+    transition: background 0.15s, color 0.15s;
+}
+.accesspath-panel .a11y-seg-btn:hover:not(.act) { background: rgba(4, 13, 41, 0.04); }
+.accesspath-panel .a11y-seg-btn.act { background: var(--ap-brand, #4928F3); color: #fff; }
+
+/* Custom dropdown popover — used where a segmented row's options would overflow the
+   drawer width (e.g. the 5-way color-blindness simulation picker, whose labels are
+   long). A native <select>'s own menu is rendered by the OS/browser and can't be
+   restyled to match the rest of the panel, hence this instead. */
+.accesspath-panel .a11y-custom-select-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 5;
+    min-width: 180px;
+    max-width: min(240px, calc(100vw - 40px));
+    padding: 6px;
+    background: var(--ap-sf, #fff);
+    border: 1px solid var(--ap-bd, rgba(0,0,0,0.12));
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+}
+/* :not([hidden]), not a bare "display: flex" above — the JS toggles the `hidden`
+   attribute to open/close this (see openMenu()/closeMenu() in panel-dom.ts), but a
+   class selector has HIGHER specificity than the browser's own bare-attribute
+   `[hidden] { display: none }` rule, so a plain "display: flex" on this class would
+   permanently win that fight and show the menu regardless of the `hidden` attribute.
+   Matching :not([hidden]) instead means this rule simply doesn't apply while hidden
+   is present, leaving the browser's own [hidden] rule to actually take effect. This
+   was a real bug here — the dropdown never actually hid. */
+.accesspath-panel .a11y-custom-select-menu:not([hidden]) { display: flex; }
+.accesspath-panel .a11y-custom-select-option {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    width: 100%;
+    padding: 7px 9px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ap-tx, #040D29);
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+.accesspath-panel .a11y-custom-select-option:hover:not(.act) { background: rgba(4, 13, 41, 0.05); }
+.accesspath-panel .a11y-custom-select-option.act { background: var(--ap-brand-soft, #F0EDFF); color: var(--ap-brand, #4928F3); font-weight: 600; }
+.accesspath-panel .a11y-custom-select-option svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* Native <input type="color"> — used for the Background/Text/Title color overrides. */
+.accesspath-panel .a11y-color-input {
+    width: 32px; height: 26px;
+    padding: 0;
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    border-radius: 6px;
+    cursor: pointer;
+    background: none;
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-color-input::-webkit-color-swatch-wrapper { padding: 2px; }
+.accesspath-panel .a11y-color-input::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+/* All Controls — expandable category rows, no card borders, just hairline dividers */
+.accesspath-panel .a11y-categories {
+    display: flex; flex-direction: column;
+}
+.accesspath-panel .a11y-category {
+    border-bottom: 1px solid var(--ap-bd, #E8E7ED);
+}
+.accesspath-panel .a11y-category:last-child { border-bottom: none; }
+.accesspath-panel .a11y-category-hdr {
+    width: 100%;
+    display: flex; align-items: center; gap: 14px;
+    background: none; border: none; cursor: pointer;
+    padding: 16px 4px;
+    font-family: inherit;
+    text-align: left;
+}
+.accesspath-panel .a11y-category-hdr:hover .a11y-category-title { color: var(--ap-brand-text, var(--ap-brand, #4928F3)); }
+.accesspath-panel .a11y-category-hdr:not([aria-expanded="true"]):hover .a11y-category-chevron { transform: translateX(2px); }
+.accesspath-panel .a11y-category-icon-box {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--ap-sf2, #F4F1F9);
+    flex-shrink: 0;
+}
+.accesspath-panel .a11y-category-icon-box svg { width: 18px; height: 18px; color: var(--ap-tm, #3C4255); }
+.accesspath-panel .a11y-category-text {
+    display: flex; flex-direction: column; gap: 3px;
+    min-width: 0; flex: 1;
+}
+.accesspath-panel .a11y-category-title {
+    font-size: 14.5px; font-weight: 700;
+    color: var(--ap-tx, #040D29);
+}
+.accesspath-panel .a11y-category-desc {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ap-mu, #6F7580);
+}
+.accesspath-panel .a11y-category-chevron {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+.accesspath-panel .a11y-category-chevron svg { width: 15px; height: 15px; }
+.accesspath-panel .a11y-category-hdr[aria-expanded="true"] .a11y-category-chevron { transform: rotate(90deg); }
+.accesspath-panel .a11y-category-body {
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+}
+.accesspath-panel .a11y-category-body-inner {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 2px 4px 18px;
+}
+
+/* Page Structure Navigator — read-only heading jump list. Card-row treatment
+   (level badge + truncated label + jump chevron) matches the rest of the
+   panel's control language instead of the plain bordered text rows this
+   used to be — those had no visual hierarchy beyond a bare margin-left per
+   level and no clear "this is clickable" affordance. */
+.accesspath-panel .a11y-heading-list {
+    display: flex; flex-direction: column; gap: 5px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+.accesspath-panel .a11y-heading-item {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%;
+    text-align: left;
+    background: var(--ap-sf2, #F4F1F9);
+    border: 1.5px solid var(--ap-bd, #E8E7ED);
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: var(--ap-tx, #040D29);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.accesspath-panel .a11y-heading-item:hover {
+    border-color: var(--ap-brand, #4928F3);
+    background: var(--ap-brand-soft, #F0EDFF);
+    box-shadow: 0 4px 16px rgba(4, 13, 41, 0.06);
+}
+.accesspath-panel .a11y-heading-item:active { transform: scale(0.98); }
+.accesspath-panel .a11y-heading-item:hover .a11y-heading-chevron { opacity: 1; transform: translateX(2px); }
+.accesspath-panel .a11y-heading-level {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 18px;
+    padding: 0 4px;
+    border-radius: 5px;
+    background: var(--ap-brand-soft, #F0EDFF);
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    font-size: 10px; font-weight: 700;
+}
+.accesspath-panel .a11y-heading-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.accesspath-panel .a11y-heading-chevron {
+    flex-shrink: 0;
+    display: flex;
+    color: var(--ap-brand, #4928F3);
+    opacity: 0.5;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.accesspath-panel .a11y-heading-chevron svg { width: 13px; height: 13px; }
+.accesspath-panel .a11y-heading-h2 .a11y-heading-text { padding-left: 10px; }
+.accesspath-panel .a11y-heading-h3 .a11y-heading-text { padding-left: 20px; }
+.accesspath-panel .a11y-heading-h4 .a11y-heading-text { padding-left: 30px; }
+.accesspath-panel .a11y-heading-h5 .a11y-heading-text { padding-left: 40px; }
+.accesspath-panel .a11y-heading-h6 .a11y-heading-text { padding-left: 50px; }
+.accesspath-panel .a11y-heading-empty {
+    font-size: 12.5px;
+    color: var(--ap-mu, #6F7580);
+    margin: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+    .accesspath-panel .a11y-heading-item,
+    .accesspath-panel .a11y-heading-item:active,
+    .accesspath-panel .a11y-heading-chevron {
+        transition: none !important;
+        transform: none !important;
+    }
+}
+
+/* Accessibility Checker (audit section) — compact summary only. Clicking "Scan Page"
+   immediately opens a full-viewport in-page overlay (report-page.ts owns its own
+   styling) which shows a live progress loader while this window drives the scan —
+   the drawer itself never renders the check-by-check breakdown, it has no room to do
+   that justice. */
+.accesspath-panel .a11y-audit-results {
+    display: flex; flex-direction: column; gap: 10px;
+}
+.accesspath-panel .a11y-audit-empty {
+    font-size: 12.5px;
+    color: var(--ap-mu, #6F7580);
+    margin: 0;
+}
+.accesspath-panel .a11y-audit-summary {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--ap-tx, #040D29);
+    margin: 0;
+}
+.accesspath-panel .a11y-audit-checked {
+    font-size: 12px;
+    color: var(--ap-mu, #6F7580);
+    margin: 0;
+}
+
+/* Active adjustments band — hidden entirely when nothing is set */
+.accesspath-panel .a11y-active-band {
+    display: none;
+    flex-direction: column; gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--ap-brand-soft, #F0EDFF);
+}
+.accesspath-panel .a11y-active-band.show { display: flex; }
+.accesspath-panel .a11y-active-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+}
+.accesspath-panel .a11y-active-count {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--ap-tx, #040D29);
+}
+.accesspath-panel .a11y-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.accesspath-panel .a11y-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 6px 5px 10px;
+    border-radius: 999px;
+    background: var(--ap-sf, #fff);
+    border: 1px solid var(--ap-brand-border, rgba(73, 40, 243, 0.25));
+    font-size: 11.5px; font-weight: 600;
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+}
+.accesspath-panel .a11y-chip-remove {
+    width: 15px; height: 15px;
+    border-radius: 50%; border: none;
+    background: var(--ap-brand-soft, #F0EDFF);
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    font-size: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+}
+.accesspath-panel .a11y-chip-remove:hover { background: var(--strong-bd, #D8D7E2); }
+
+/* Footer — fixed to bottom. One status line (synced indicator + a real Reset button,
+   not a look-alike row) plus a small brand credit underneath. */
+.accesspath-panel .a11y-ftr {
+    flex-shrink: 0;
+    padding: 14px 18px 16px;
+    border-top: 1px solid var(--ap-bd, #E8E7ED);
+    background: var(--ap-sf, #fff);
+}
+
+.accesspath-panel .a11y-ftr-status {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+}
+.accesspath-panel .a11y-ftr-status-info {
+    display: flex; align-items: center; gap: 7px;
+    min-width: 0;
+    font-size: 12.5px; font-weight: 500;
+    color: var(--ap-mu, #6F7580);
+}
+.accesspath-panel .a11y-ftr-status-info svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.accesspath-panel .a11y-ftr-reset-btn {
+    display: flex; align-items: center; gap: 5px;
+    flex-shrink: 0;
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--ap-bd, #E8E7ED);
+    background: none;
+    font-family: inherit; font-size: 12.5px; font-weight: 600;
+    color: var(--ap-tm, #3C4255);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+.accesspath-panel .a11y-ftr-reset-btn svg { width: 13px; height: 13px; }
+.accesspath-panel .a11y-ftr-reset-btn:hover {
+    border-color: var(--danger, #D14343);
+    color: var(--danger, #D14343);
+}
+
+.accesspath-panel .a11y-ftr-brand {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    margin-top: 8px;
+    font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ap-mu, #6F7580);
+}
+.accesspath-panel .a11y-ftr-brand-mark {
+    width: 14px; height: 14px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.accesspath-panel .a11y-ftr-statement-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    text-align: center;
+    color: var(--ap-brand, #4928F3);
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.accesspath-panel .a11y-ftr-statement-btn:hover { opacity: 0.75; }
+
+/* Accessibility Statement modal — a lightweight in-panel overlay (not a separate
+   browser dialog), positioned absolute within .a11y-pnl (which is itself
+   position:fixed, so it establishes the containing block this needs). Escape
+   closes this before it closes the whole panel — see the focus trap's onEscape
+   in panel-dom.ts. */
+.accesspath-panel .a11y-statement-modal {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: none; flex-direction: column;
+    background: var(--ap-sf, #fff);
+}
+.accesspath-panel .a11y-statement-modal:not([hidden]) {
+    display: flex;
+}
+.accesspath-panel .a11y-statement-modal-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ap-bd, #E8E7ED);
+}
+.accesspath-panel .a11y-statement-modal-title {
+    font-size: 15px; font-weight: 700;
+    color: var(--ap-tx, #040D29);
+}
+.accesspath-panel .a11y-statement-modal-close {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: var(--ap-sf2, #F4F1F9);
+    color: var(--ap-tm, #3C4255);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s;
+}
+.accesspath-panel .a11y-statement-modal-close:hover { background: var(--ap-brand-soft, #F0EDFF); color: var(--ap-brand, #4928F3); }
+.accesspath-panel .a11y-statement-modal-close svg { width: 15px; height: 15px; }
+.accesspath-panel .a11y-statement-modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px;
+    font-size: 13.5px; line-height: 1.6;
+    color: var(--ap-tm, #3C4255);
+}
+.accesspath-panel .a11y-statement-modal-body h2 { font-size: 16px; font-weight: 700; color: var(--ap-tx, #040D29); margin: 0 0 10px; }
+.accesspath-panel .a11y-statement-modal-body h3 { font-size: 13px; font-weight: 700; color: var(--ap-tx, #040D29); margin: 18px 0 8px; }
+.accesspath-panel .a11y-statement-modal-body p { margin: 0 0 12px; }
+.accesspath-panel .a11y-statement-modal-body ul { margin: 0 0 12px; padding-left: 20px; }
+.accesspath-panel .a11y-statement-modal-body li { margin-bottom: 4px; }
+
+/* Note: the panel deliberately does NOT self-respond to the a11y-* effect classes.
+   Toggling a preference only changes the host page's own content (via `container` in
+   applyClasses()) — the drawer's own chrome always renders at its fixed brand style,
+   regardless of what's toggled. `panel.root` is intentionally not passed to
+   applyClasses() by any wrapper (embed/react/angular) for this reason. */

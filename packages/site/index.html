@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AccessPath: Free, Open-Source Accessibility Widget for Any Website</title>
+<meta name="description" content="Free, open-source accessibility widget for any website. 6 preset profiles, 13+ assistive tools, self-hosted in one line of code. MIT licensed, no tracking.">
+<meta name="keywords" content="accessibility widget, ADA compliance widget, WCAG accessibility tool, web accessibility overlay, accessibility panel, screen reader friendly, open source accessibility, self-hosted accessibility widget, React accessibility component, Angular accessibility component">
+<meta name="robots" content="index, follow">
+<meta name="author" content="AccessPath">
+<link rel="canonical" href="https://accesspath.dev/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AccessPath">
+<meta property="og:title" content="AccessPath: Free, Open-Source Accessibility Widget for Any Website">
+<meta property="og:description" content="6 preset profiles, 13+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
+<meta property="og:url" content="https://accesspath.dev/">
+<meta property="og:image" content="https://accesspath.dev/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AccessPath: Free, Open-Source Accessibility Widget for Any Website">
+<meta name="twitter:description" content="6 preset profiles, 13+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
+<meta name="twitter:image" content="https://accesspath.dev/og-image.svg">
+
+<meta name="theme-color" content="#4928F3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/src/style.css">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AccessPath",
+  "url": "https://accesspath.dev/",
+  "description": "A framework-agnostic accessibility control panel with 6 preset profiles and 13+ assistive tools covering vision, motion, reading, navigation, and focus. Ships as a script tag, a React component, or an Angular component from one shared core.",
+  "applicationCategory": "WebApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "softwareVersion": "0.0.0",
+  "featureList": [
+    "Low Vision profile",
+    "Dyslexia profile",
+    "Seizure Safe profile",
+    "Motor Impaired profile",
+    "Color Blind profile",
+    "ADHD profile",
+    "Text size and contrast controls",
+    "Reading guide",
+    "Page structure navigator",
+    "Read aloud",
+    "Dictionary lookup"
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html" style="text-decoration:none;color:inherit;">
+      <span class="nav-logo" aria-hidden="true">
+        <img src="/images/logo.png" width="28" height="27" alt="">
+      </span>
+      AccessPath
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="#profiles-showcase">Profiles</a>
+      <a href="#install-quickstart-v2">Integrations</a>
+      <a href="#faq">FAQ</a>
+      <a href="integration-guide.html">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <button type="button" class="btn btn-secondary btn-sm nav-star-btn" disabled title="Not published yet">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+        Star on GitHub
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm nav-npm-btn" disabled title="Not published yet">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H3.999v-4H2.665v4h-1.33V8.667h5.33v5.331zm4.001 0H8.001V8.667h4v1.336h-1.334v4.001h-.001v.001zm.001-4H12v-1.332h-1.332v1.332zm8.001 4h-2.667v-4h-1.335v4h-1.332V8.667h5.334v5.331z"/></svg>
+        npm
+      </button>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <svg class="nav-toggle-icon nav-toggle-icon-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="nav-toggle-icon nav-toggle-icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- No .a11y-target class needed here: the embed script defaults its container to
+     document.documentElement (<html>), so the whole page is already covered. -->
+<main>
+
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 2 14 9.5 21.5 11 14 12.5 12 20 10 12.5 2.5 11 10 9.5z"/></svg>
+          OPEN SOURCE &nbsp;&middot;&nbsp; SELF-HOSTED &nbsp;&middot;&nbsp; PRIVACY FIRST
+        </span>
+        <h1>The web,<br>on <span class="hl hl-grad">your</span> terms.</h1>
+        <p class="hero-sub">
+          AccessPath is a free, open-source accessibility widget that lets visitors adapt any
+          website to how they see, read and navigate: real controls, not a canned overlay.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#hero-demo" class="btn btn-primary">Try it on this page
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+          <a href="integration-guide.html" class="btn btn-secondary"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Read Docs</a>
+        </div>
+
+        <p class="hero-status hero-status-live">
+          <span class="status-dot" aria-hidden="true"></span>
+          The AccessPath button is active on this page. Try it anytime.
+        </p>
+        <p class="hero-status hero-status-fallback" hidden>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="currentColor" stroke="none"/></svg>
+          The live widget script didn't load. Try the controls to the right, which run the
+          same <code>@accesspath/core</code> code directly.
+        </p>
+      </div>
+
+      <div class="hero-demo" id="hero-demo" tabindex="-1">
+        <div class="demo-annotation demo-annotation-controls" aria-hidden="true">
+          <span>Try these controls<br>to feel the difference</span>
+          <svg viewBox="0 0 40 32" width="32" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2c3 11 11 19 29 21"/><path d="m33 23-6.5-4"/><path d="m33 23-7.5 3"/></svg>
+        </div>
+
+        <div class="control-strip" role="group" aria-label="Preview AccessPath controls on the demo panel below">
+          <button type="button" class="control-btn is-active" id="ctrl-text-size" aria-pressed="false">
+            <span class="control-icon control-icon-text" aria-hidden="true">A<sup>+</sup></span>
+            <span>Text Size</span>
+          </button>
+          <button type="button" class="control-btn" id="ctrl-contrast" aria-pressed="false">
+            <span class="control-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+            </span>
+            <span>Contrast</span>
+          </button>
+          <button type="button" class="control-btn" id="ctrl-dyslexia" aria-pressed="false">
+            <span class="control-icon control-icon-text" aria-hidden="true">Aa</span>
+            <span>Dyslexia Font</span>
+          </button>
+          <button type="button" class="control-btn" id="ctrl-line-height" aria-pressed="false">
+            <span class="control-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="20" y2="5"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="19" x2="20" y2="19"/></svg>
+            </span>
+            <span>Line Height</span>
+          </button>
+        </div>
+
+        <div class="demo-panel" id="demo-panel">
+          <div class="demo-split">
+            <div class="demo-pane demo-pane-before">
+              <span class="demo-pane-label">Before AccessPath</span>
+              <p class="demo-pane-title">Designing for everyone.</p>
+              <p>The web is full of potential, but not everyone experiences it the same way.</p>
+              <a href="#" class="demo-link" onclick="return false;">Learn more &rarr;</a>
+            </div>
+            <div class="demo-pane demo-pane-after" id="demo-pane-after">
+              <span class="demo-pane-label demo-pane-label-act">
+                With AccessPath
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+              <p class="demo-pane-title">Designing for everyone.</p>
+              <p>The web is full of potential, but not everyone experiences it the same way.</p>
+              <a href="#" class="demo-link" onclick="return false;">Learn more &rarr;</a>
+            </div>
+            <span class="demo-split-divider" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 5 6-5 6"/><path d="m13 6 5 6-5 6"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-extra">
+      <div class="principles-card">
+        <div class="principles-row">
+          <div class="principle-item">
+            <span class="principle-icon principle-icon-violet" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15.5 17.5 21 12 15.5 6.5"/><polyline points="8.5 6.5 3 12 8.5 17.5"/></svg></span>
+            <div class="principle-text">
+              <p class="principle-title">Real Controls</p>
+              <p>Change text, colors, motion and more. Instantly.</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <span class="principle-icon principle-icon-green" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="2.5" fill="currentColor" stroke="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="14.6" r="1.3" fill="#fff" stroke="none"/><path d="M12 15.6v1.6" stroke="#fff" stroke-width="1.6"/></svg></span>
+            <div class="principle-text">
+              <p class="principle-title">Self-Hosted</p>
+              <p>Host it anywhere. You're in control.</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <span class="principle-icon principle-icon-peach" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5z"/><path d="m9 11.6 2.2 2.2 4-4.2"/></svg></span>
+            <div class="principle-text">
+              <p class="principle-title">Privacy First</p>
+              <p>No tracking. Everything stays on your site.</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <span class="principle-icon principle-icon-blue" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 4 15.5 4 9.5C4 6.5 6.5 4 9.5 4C11 4 12 4.8 12 4.8C12 4.8 13 4 14.5 4C17.5 4 20 6.5 20 9.5C20 15.5 12 21 12 21Z"/></svg></span>
+            <div class="principle-text">
+              <p class="principle-title">Open Source</p>
+              <p>Transparent by design. Built for the community.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="stack-heading"><span class="stack-heading-rule" aria-hidden="true"></span>Works with any website or stack<span class="stack-heading-rule" aria-hidden="true"></span></p>
+      <div class="stack-logos">
+        <span class="stack-logo" title="WordPress"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0"/></svg></span>
+        <span class="stack-logo" title="Shopify"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg></span>
+        <span class="stack-logo" title="Wix"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z"/></svg></span>
+        <span class="stack-logo" title="React"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></svg></span>
+        <span class="stack-logo" title="Angular"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M16.712 17.711H7.288l-1.204 2.916L12 24l5.916-3.373-1.204-2.916ZM14.692 0l7.832 16.855.814-12.856L14.692 0ZM9.308 0 .662 3.999l.814 12.856L9.308 0Zm-.405 13.93h6.198L12 6.396 8.903 13.93Z"/></svg></span>
+        <span class="stack-logo" title="Vue"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M24,1.61H14.06L12,5.16,9.94,1.61H0L12,22.39ZM12,14.08,5.16,2.23H9.59L12,6.41l2.41-4.18h4.43Z"/></svg></span>
+        <span class="stack-logo" title="HTML5"><svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pt2" id="profiles-showcase" aria-labelledby="pt2-heading">
+    <div class="pt2-top">
+      <div class="section-inner pt2-inner">
+        <span class="pt2-badge">9 PROFILES &middot; 30+ TOOLS</span>
+        <h2 id="pt2-heading" class="pt2-headline">One tap reconfigures the page</h2>
+        <p class="pt2-sub">Start with an accessibility profile built for low vision, dyslexia,
+          ADHD, motor impairments or seizure safety, or fine-tune any setting yourself.</p>
+
+      </div>
+    </div>
+
+    <!-- Auto-scrolling infinite-loop slider, replacing the earlier fixed 3x3 grid.
+         The track holds two BYTE-IDENTICAL sets of the 9 cards back to back — the
+         second set has aria-hidden="true" so screen readers only ever hear the real
+         9, not 18. Cards are pinned to an exact width (280px, --pt2-slider-card-w
+         below) and gap (20px) so the CSS keyframe's translateX distance is an exact
+         pixel constant equal to one full set's width — that's what makes the loop
+         seamless (a percentage-based translateX(-50%) is NOT exact here: with 18
+         flex items and 17 gaps, half the total width and the position of the 10th
+         item differ by half a gap). See the matching comment in style.css's
+         `.pt2-slider-track` / `@keyframes pt2-slide` for the other half of this.
+         Ships with hover/focus-pause AND an explicit pause/play button (not just
+         hover) since a keyboard-only visitor can't hover, and any auto-moving
+         content needs a way to stop it per WCAG 2.2.2 — a hard requirement for a
+         product whose whole pitch is accessibility. prefers-reduced-motion turns
+         this into a plain manually-scrollable strip with the duplicate set hidden
+         and no animation at all (see style.css). -->
+    <div class="pt2-slider-wrap">
+      <div class="pt2-slider" id="pt2-slider">
+        <div class="pt2-slider-track" id="pt2-slider-track" role="list" aria-label="Accessibility profiles">
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#6B55F2;--pt2-tint:#F0EDFF">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h3>Low Vision</h3>
+            <p>Enhances visibility with larger text, higher contrast and clearer focus.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#2F6FED;--pt2-tint:#EAF1FE">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h13"/></svg></span>
+            <h3>Dyslexia</h3>
+            <p>Dyslexia-friendly fonts, wider spacing and cleaner reading flow.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#E63D6F;--pt2-tint:#FDEAF0">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>
+            <h3>Seizure Safe</h3>
+            <p>Reduces motion and removes distractions that may trigger seizures.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#F2A63C;--pt2-tint:#FDF3E3">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><circle cx="18" cy="4" r="2"/><path d="m17.836 12.014-4.345.725 3.29-4.113a1 1 0 0 0-.227-1.457l-6-4a.999.999 0 0 0-1.262.125l-4 4 1.414 1.414 3.42-3.42 2.584 1.723-2.681 3.352a5.913 5.913 0 0 0-5.5.752l1.451 1.451A3.972 3.972 0 0 1 8 12c2.206 0 4 1.794 4 4 0 .739-.216 1.425-.566 2.02l1.451 1.451A5.961 5.961 0 0 0 14 16c0-.445-.053-.878-.145-1.295L17 14.181V20h2v-7a.998.998 0 0 0-1.164-.986zM8 20c-2.206 0-4-1.794-4-4 0-.739.216-1.425.566-2.02l-1.451-1.451A5.961 5.961 0 0 0 2 16c0 3.309 2.691 6 6 6 1.294 0 2.49-.416 3.471-1.115l-1.451-1.451A3.972 3.972 0 0 1 8 20z"/></svg></span>
+            <h3>Motor Impaired</h3>
+            <p>Simplifies interaction with bigger targets and easier navigation.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#22A06B;--pt2-tint:#E7F7EF">
+            <span class="pt2-icon pt2-icon-solid" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
+            <h3>Color Blind</h3>
+            <p>Optimized contrast and patterns so colors are never the only cue.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#5B4FE0;--pt2-tint:#EEECFC">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.4"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg></span>
+            <h3>ADHD</h3>
+            <p>Reduces clutter and highlights what matters most.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#1FA6D6;--pt2-tint:#E7F6FC">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17.5 8.5a5 5 0 0 1 0 7"/><path d="M20.5 5.5a9 9 0 0 1 0 13"/></svg></span>
+            <h3>Voice Over</h3>
+            <p>Reads the whole page aloud, block by block, so you can listen instead of read.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#C97A2B;--pt2-tint:#FBF0E4">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="5" r="2.2" fill="currentColor" stroke="none"/><path d="M13 7c-2.5 1.8-5.5 4-6 7.5"/><path d="M7 14.5 6 20.5"/><path d="M7 14.5 8.5 20.5"/><path d="M9.5 11.5 13.5 13"/><path d="M13.5 13h6.5"/><path d="M13.5 13v7.5"/><path d="M20 13v5.2"/><circle cx="20" cy="19.6" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+            <h3>Elderly</h3>
+            <p>Bigger text, a larger cursor and stronger contrast, all at once.</p>
+          </article>
+          <article class="pt2-card" role="listitem" style="--pt2-accent:#3FA7A0;--pt2-tint:#E9F7F6">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 1.2-.8 1.7-1.2 2.6-.2.4-.3.9-.3 1.4"/><line x1="12" y1="16.5" x2="12" y2="16.51"/></svg></span>
+            <h3>Cognitive &amp; Learning</h3>
+            <p>Cuts distractions and adds spacing and focus cues for easier reading.</p>
+          </article>
+
+          <!-- Duplicate set — aria-hidden, exact copy, no role/listitem (kept out of the
+               accessibility tree entirely so AT users only ever encounter the 9 real
+               cards above, not a confusing repeat). -->
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#6B55F2;--pt2-tint:#F0EDFF">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h3>Low Vision</h3>
+            <p>Enhances visibility with larger text, higher contrast and clearer focus.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#2F6FED;--pt2-tint:#EAF1FE">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h13"/></svg></span>
+            <h3>Dyslexia</h3>
+            <p>Dyslexia-friendly fonts, wider spacing and cleaner reading flow.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#E63D6F;--pt2-tint:#FDEAF0">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>
+            <h3>Seizure Safe</h3>
+            <p>Reduces motion and removes distractions that may trigger seizures.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#F2A63C;--pt2-tint:#FDF3E3">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><circle cx="18" cy="4" r="2"/><path d="m17.836 12.014-4.345.725 3.29-4.113a1 1 0 0 0-.227-1.457l-6-4a.999.999 0 0 0-1.262.125l-4 4 1.414 1.414 3.42-3.42 2.584 1.723-2.681 3.352a5.913 5.913 0 0 0-5.5.752l1.451 1.451A3.972 3.972 0 0 1 8 12c2.206 0 4 1.794 4 4 0 .739-.216 1.425-.566 2.02l1.451 1.451A5.961 5.961 0 0 0 14 16c0-.445-.053-.878-.145-1.295L17 14.181V20h2v-7a.998.998 0 0 0-1.164-.986zM8 20c-2.206 0-4-1.794-4-4 0-.739.216-1.425.566-2.02l-1.451-1.451A5.961 5.961 0 0 0 2 16c0 3.309 2.691 6 6 6 1.294 0 2.49-.416 3.471-1.115l-1.451-1.451A3.972 3.972 0 0 1 8 20z"/></svg></span>
+            <h3>Motor Impaired</h3>
+            <p>Simplifies interaction with bigger targets and easier navigation.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#22A06B;--pt2-tint:#E7F7EF">
+            <span class="pt2-icon pt2-icon-solid" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
+            <h3>Color Blind</h3>
+            <p>Optimized contrast and patterns so colors are never the only cue.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#5B4FE0;--pt2-tint:#EEECFC">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.4"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg></span>
+            <h3>ADHD</h3>
+            <p>Reduces clutter and highlights what matters most.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#1FA6D6;--pt2-tint:#E7F6FC">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17.5 8.5a5 5 0 0 1 0 7"/><path d="M20.5 5.5a9 9 0 0 1 0 13"/></svg></span>
+            <h3>Voice Over</h3>
+            <p>Reads the whole page aloud, block by block, so you can listen instead of read.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#C97A2B;--pt2-tint:#FBF0E4">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="5" r="2.2" fill="currentColor" stroke="none"/><path d="M13 7c-2.5 1.8-5.5 4-6 7.5"/><path d="M7 14.5 6 20.5"/><path d="M7 14.5 8.5 20.5"/><path d="M9.5 11.5 13.5 13"/><path d="M13.5 13h6.5"/><path d="M13.5 13v7.5"/><path d="M20 13v5.2"/><circle cx="20" cy="19.6" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+            <h3>Elderly</h3>
+            <p>Bigger text, a larger cursor and stronger contrast, all at once.</p>
+          </article>
+          <article class="pt2-card" aria-hidden="true" style="--pt2-accent:#3FA7A0;--pt2-tint:#E9F7F6">
+            <span class="pt2-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 1.2-.8 1.7-1.2 2.6-.2.4-.3.9-.3 1.4"/><line x1="12" y1="16.5" x2="12" y2="16.51"/></svg></span>
+            <h3>Cognitive &amp; Learning</h3>
+            <p>Cuts distractions and adds spacing and focus cues for easier reading.</p>
+          </article>
+        </div>
+      </div>
+
+      <button type="button" class="pt2-slider-toggle" id="pt2-slider-toggle" aria-pressed="false">
+        <svg id="pt2-slider-toggle-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+        <span id="pt2-slider-toggle-label">Pause</span>
+      </button>
+    </div>
+
+    <div class="pt-tools" id="tools">
+      <div class="section-inner pt2-inner">
+        <div class="pt-tools-head reveal">
+          <h3>Or fine-tune anything, individually</h3>
+          <p>30+ accessibility tools, including text size, contrast, dyslexia font and
+            reading guide, so you can shape the page exactly how you need it.</p>
+        </div>
+
+        <div class="pt-chips reveal">
+          <div class="pt-chip-row">
+            <span class="pt-chip" style="--chip-accent:#4928F3"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17 8 6l5 11"/><path d="M4.3 14h7.4"/><path d="M14 17v-7a2.5 2.5 0 0 1 5 0v7"/><path d="M14 13.5h5"/></svg>Text Size</span>
+            <span class="pt-chip" style="--chip-accent:#2F6FED"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>Contrast</span>
+            <span class="pt-chip" style="--chip-accent:#22A06B"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6.5 6.94 6.5 11.25a6.5 6.5 0 0 1-13 0C5.5 9.94 12 3 12 3z"/></svg>Saturation</span>
+            <span class="pt-chip" style="--chip-accent:#E63D6F"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="5" x2="4" y2="19"/><line x1="20" y1="5" x2="20" y2="19"/><path d="M8 12h8"/><path d="m9 9-3 3 3 3"/><path d="m15 9 3 3-3 3"/></svg>Spacing</span>
+            <span class="pt-chip" style="--chip-accent:#F2A63C"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="13" y2="6"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="3" y1="18" x2="13" y2="18"/><path d="m18 8 3-3 3 3"/><line x1="21" y1="5" x2="21" y2="19"/><path d="m18 16 3 3 3-3"/></svg>Line Height</span>
+            <span class="pt-chip" style="--chip-accent:#5B4FE0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="17" y2="18"/></svg>Text Align</span>
+            <span class="pt-chip" style="--chip-accent:#4928F3"><span class="pt-chip-glyph" aria-hidden="true">Df</span>Dyslexia Font</span>
+          </div>
+          <div class="pt-chip-row">
+            <span class="pt-chip" style="--chip-accent:#2F6FED"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/></svg>Pause Animations</span>
+            <span class="pt-chip" style="--chip-accent:#22A06B"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3 19 11 12 12.5 9.5 20 4 3z"/></svg>Big Cursor</span>
+            <span class="pt-chip" style="--chip-accent:#E63D6F"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15a5 5 0 0 1 0-7l2-2a5 5 0 0 1 7 7l-1 1"/><path d="M15 9a5 5 0 0 1 0 7l-2 2a5 5 0 0 1-7-7l1-1"/></svg>Highlight Links</span>
+            <span class="pt-chip" style="--chip-accent:#F2A63C"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="m4 18 5-5 4 4 3-3 4 4"/><line x1="3" y1="21" x2="21" y2="3"/></svg>Hide Images</span>
+            <span class="pt-chip" style="--chip-accent:#5B4FE0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/><rect x="3" y="10" width="18" height="4" rx="1" fill="currentColor" stroke="none" opacity="0.14"/></svg>Reading Guide</span>
+            <span class="pt-chip" style="--chip-accent:#4928F3"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2"/><line x1="3.5" y1="9" x2="20.5" y2="9"/><line x1="10.5" y1="9" x2="10.5" y2="20"/></svg>Page Structure</span>
+            <span class="pt-chip" style="--chip-accent:#2F6FED"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17.5 8.5a5 5 0 0 1 0 7"/><path d="M20.5 5.5a9 9 0 0 1 0 13"/></svg>Read Aloud</span>
+            <span class="pt-chip" style="--chip-accent:#22A06B"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="10.5" x2="14" y2="10.5"/></svg>Dictionary</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wap2" id="why-accesspath-2">
+    <div class="wap2-inner">
+      <div class="wap2-head reveal">
+        <div class="wap2-head-row">
+          <h2 class="wap2-headline">Accessibility<br>done <em>the right way.</em></h2>
+          <span class="wap2-head-divider" aria-hidden="true"></span>
+          <p class="wap2-head-sub">AccessPath applies <span class="wap2-underline">real,
+            user-controlled</span> changes to your site: no overlays, no guesswork, no
+            compromises.</p>
+        </div>
+      </div>
+
+      <div class="wap2-split">
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <defs>
+            <clipPath id="wap2-seam" clipPathUnits="objectBoundingBox">
+              <path d="M0.14,0 L1,0 L1,1 L0,1 L0.083,0.06 Q0.09,0 0.14,0 Z"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <div class="wap2-dark reveal-left">
+          <div class="wap2-panel-label">
+            <span class="wap2-label-chip wap2-label-chip-purple" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z"/></svg>
+            </span>
+            <span class="wap2-label-text wap2-label-text-purple">HOW IT WORKS</span>
+          </div>
+
+          <h3 class="wap2-panel-heading">Real changes.<br>On the real page.</h3>
+          <p class="wap2-panel-sub">We interact with your site the way assistive technology
+            should.</p>
+
+          <div class="wap2-tiles">
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 8 6l5 11"/><path d="M4.3 14h7.4"/><path d="M14 17v-7a2.5 2.5 0 0 1 5 0v7"/><path d="M14 13.5h5"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Smart text scaling</p>
+                <p>Scales text and UI proportionally.</p>
+              </div>
+            </div>
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5h4"/><path d="M20 9V5h-4"/><path d="M4 15v4h4"/><path d="M20 15v4h-4"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Focus that stays</p>
+                <p>Visible focus trap. Works as expected.</p>
+              </div>
+            </div>
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="12" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="17" y2="18"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Real structure</p>
+                <p>Uses actual headings and landmarks.</p>
+              </div>
+            </div>
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Reading guide</p>
+                <p>Follows your cursor. Stays out of the way.</p>
+              </div>
+            </div>
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="10.5" x2="14" y2="10.5"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Instant lookup</p>
+                <p>Dictionary on any word.</p>
+              </div>
+            </div>
+            <div class="wap2-tile">
+              <span class="wap2-tile-icon wap2-tile-icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17.5 8.5a5 5 0 0 1 0 7"/><path d="M20.5 5.5a9 9 0 0 1 0 13"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Read aloud</p>
+                <p>Natural voices. No tracking. No uploads.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wap2-light-wrap reveal-right">
+        <div class="wap2-light">
+          <div class="wap2-panel-label">
+            <span class="wap2-label-chip wap2-label-chip-green" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5v5c0 4.7 3 8.3 7 9.5 4-1.2 7-4.8 7-9.5v-5z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <span class="wap2-label-text wap2-label-text-green">WHY TEAMS TRUST IT</span>
+          </div>
+
+          <h3 class="wap2-panel-heading wap2-panel-heading-light">Built on principles.<br>Made for the long run.</h3>
+          <p class="wap2-panel-sub wap2-panel-sub-light">No vendor to depend on, no license to renew.</p>
+
+          <div class="wap2-trust">
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Preferences that stick</p>
+                <p>Saved to the visitor's browser, so they keep their settings next time.</p>
+              </div>
+            </div>
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Multi-language ready</p>
+                <p>Five bundled languages, or override any label yourself.</p>
+              </div>
+            </div>
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c0-7 4-14 15-15 1 10-6 15-15 15z"/><path d="M4 20c2-4 5-7 9-9"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Lightweight</p>
+                <p>Tiny payload. Zero dependencies.</p>
+              </div>
+            </div>
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 8.5 15.5"/><path d="M9 15 18.5 5.5a1.7 1.7 0 0 1 2.4 2.4L11 17.5"/><path d="M9 15c1.2 0 2 .8 2 2s-.8 2.5-2 2.5-2.2-1-3.5-1c-.8 0-1.5.3-1.5.3"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Themeable</p>
+                <p>Match your brand. Your way.</p>
+              </div>
+            </div>
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="12" rx="2"/><circle cx="7" cy="10" r="0.6" fill="currentColor"/><circle cx="10.3" cy="10" r="0.6" fill="currentColor"/><circle cx="13.6" cy="10" r="0.6" fill="currentColor"/><circle cx="17" cy="10" r="0.6" fill="currentColor"/><line x1="7" y1="14" x2="17" y2="14"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">Keyboard first</p>
+                <p>Designed for keyboard users from the ground up.</p>
+              </div>
+            </div>
+            <div class="wap2-trust-item">
+              <span class="wap2-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>
+              </span>
+              <div>
+                <p class="wap2-card-title">One core. Any stack.</p>
+                <p>Same engine across HTML, React, Angular and more.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="wap2-badge" aria-hidden="true">
+          <span class="wap2-badge-outer">
+            <span class="wap2-badge-grip"></span>
+            <span class="wap2-badge-inner">
+              <svg viewBox="0 0 512 512" width="26" height="26" fill="#fff"><path d="M448,112c-66.82,17.92-119.55,32-192,32S130.82,129.92,64,112L48,163c48,20.53,96.71,35.16,147.2,53.2L144,496l56.4,16L246,336h20l45.6,176L368,496,316.8,216.2C367.26,199.93,416,183.53,464,164Z"/><path d="M256,112a56,56,0,1,1,56-56A56.06,56.06,0,0,1,256,112Z"/></svg>
+            </span>
+          </span>
+        </div>
+
+        <div class="wap2-privacy">
+          <span class="wap2-privacy-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><circle cx="12" cy="15.2" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <span class="wap2-privacy-text">No collection. No analytics. <span class="wap2-privacy-hl">No third-party calls.</span></span>
+          <span class="wap2-privacy-divider" aria-hidden="true"></span>
+          <span class="wap2-privacy-text wap2-privacy-text-muted">Visitor preferences stay on their device.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="qc" id="install-quickstart-v2">
+    <div class="qc-inner">
+      <div class="qc-header reveal">
+        <span class="qc-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 7 4 12 9 17"/><line x1="10.5" y1="19" x2="13.5" y2="5"/><polyline points="15 7 20 12 15 17"/></svg>
+          One snippet &middot; complete control
+        </span>
+
+        <h2 class="qc-headline">Start simple. <span class="qc-headline-hl">Make it yours.</span></h2>
+        <p class="qc-sub">Add this accessibility widget to your website in seconds (plain HTML, WordPress, Shopify, React or Angular), then customize colors, icon and placement to match your brand.</p>
+
+        <div class="qc-tabswitch" id="customize" role="tablist" aria-label="Install method">
+          <button class="qc-tab" type="button" role="tab" aria-selected="false" aria-controls="qc-panel-quickstart" id="qc-tabbtn-quickstart" data-qc-tab="quickstart">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+            Quick start
+          </button>
+          <button class="qc-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="qc-panel-customize" id="qc-tabbtn-customize" data-qc-tab="customize">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="currentColor" stroke="none"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="currentColor" stroke="none"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="currentColor" stroke="none"/></svg>
+            Customize
+          </button>
+        </div>
+      </div>
+
+      <div class="qc-card">
+        <div class="qc-panel is-active" id="qc-panel-customize" role="tabpanel" aria-labelledby="qc-tabbtn-customize">
+          <div class="builder" id="qc-builder">
+            <div class="builder-controls">
+              <section class="qc-section">
+                <h3 class="qc-section-title">Brand &amp; Appearance</h3>
+
+                <div class="builder-group">
+                  <span class="builder-label">Brand color</span>
+                  <div class="swatch-row" id="qc-builder-swatches">
+                    <button class="swatch is-active" type="button" style="--sw: #4928F3" data-color="#4928F3" aria-label="AccessPath Violet (default)"></button>
+                    <button class="swatch" type="button" style="--sw: #16a34a" data-color="#16a34a" aria-label="Green"></button>
+                    <button class="swatch" type="button" style="--sw: #db2777" data-color="#db2777" aria-label="Pink"></button>
+                    <button class="swatch" type="button" style="--sw: #d97706" data-color="#d97706" aria-label="Amber"></button>
+                    <button class="swatch" type="button" style="--sw: #0891b2" data-color="#0891b2" aria-label="Cyan"></button>
+                    <label class="swatch swatch-custom" aria-label="Custom color">
+                      <input type="color" id="qc-builder-color-input" value="#4928F3">
+                    </label>
+                  </div>
+                </div>
+
+                <div class="qc-row-2">
+                  <div class="builder-group builder-group-embed-only">
+                    <span class="builder-label">Trigger shape</span>
+                    <div class="seg-row" id="qc-builder-shape" role="group" aria-label="Trigger shape">
+                      <button class="seg-btn is-active" type="button" data-shape="circle">Circle</button>
+                      <button class="seg-btn" type="button" data-shape="rounded-square">Square</button>
+                      <button class="seg-btn" type="button" data-shape="pill">Pill</button>
+                    </div>
+                  </div>
+
+                  <div class="builder-group builder-group-embed-only">
+                    <span class="builder-label">Trigger icon</span>
+                    <div class="icon-btn-row" id="qc-builder-icon" role="group" aria-label="Trigger icon">
+                      <button class="icon-btn is-active" type="button" data-icon="accessibility" aria-label="Accessibility icon" title="Accessibility">
+                        <svg viewBox="0 0 512 512" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M448,112c-66.82,17.92-119.55,32-192,32S130.82,129.92,64,112L48,163c48,20.53,96.71,35.16,147.2,53.2L144,496l56.4,16L246,336h20l45.6,176L368,496,316.8,216.2C367.26,199.93,416,183.53,464,164Z"/><path d="M256,112a56,56,0,1,1,56-56A56.06,56.06,0,0,1,256,112Z"/></svg>
+                      </button>
+                      <button class="icon-btn" type="button" data-icon="motor" aria-label="Motor impaired icon" title="Motor Impaired">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="18" cy="4" r="2"/><path d="m17.836 12.014-4.345.725 3.29-4.113a1 1 0 0 0-.227-1.457l-6-4a.999.999 0 0 0-1.262.125l-4 4 1.414 1.414 3.42-3.42 2.584 1.723-2.681 3.352a5.913 5.913 0 0 0-5.5.752l1.451 1.451A3.972 3.972 0 0 1 8 12c2.206 0 4 1.794 4 4 0 .739-.216 1.425-.566 2.02l1.451 1.451A5.961 5.961 0 0 0 14 16c0-.445-.053-.878-.145-1.295L17 14.181V20h2v-7a.998.998 0 0 0-1.164-.986zM8 20c-2.206 0-4-1.794-4-4 0-.739.216-1.425.566-2.02l-1.451-1.451A5.961 5.961 0 0 0 2 16c0 3.309 2.691 6 6 6 1.294 0 2.49-.416 3.471-1.115l-1.451-1.451A3.972 3.972 0 0 1 8 20z"/></svg>
+                      </button>
+                      <button class="icon-btn" type="button" data-icon="badge" aria-label="Accessibility badge icon" title="Badge">
+                        <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8ZM9.25 3.75C9.25 4.44036 8.69036 5 8 5C7.30964 5 6.75 4.44036 6.75 3.75C6.75 3.05964 7.30964 2.5 8 2.5C8.69036 2.5 9.25 3.05964 9.25 3.75ZM12 8H9.41901L11.2047 13H9.081L8 9.97321L6.91901 13H4.79528L6.581 8H4V6H12V8Z"/></svg>
+                      </button>
+                      <button class="icon-btn" type="button" data-icon="logo" aria-label="AccessPath logo icon" title="AccessPath logo">
+                        <img src="/images/logo.png" width="18" height="18" alt="" aria-hidden="true">
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <span class="qc-field-hint builder-group-embed-only">
+                  Need your own icon? Pass a real <code>SVGElement</code> as <code>icon</code> in code
+                  (core/React/Angular only; the script embed can't carry a DOM element through a
+                  data-* attribute).
+                </span>
+              </section>
+
+              <section class="qc-section">
+                <h3 class="qc-section-title">Placement &amp; Behavior</h3>
+
+                <div class="builder-group builder-group-embed-only">
+                  <span class="builder-label">Position on screen</span>
+                  <div class="seg-row" id="qc-builder-position" role="group" aria-label="Trigger corner">
+                    <button class="seg-btn is-active" type="button" data-position="bottom-right">Bottom right</button>
+                    <button class="seg-btn" type="button" data-position="bottom-left">Bottom left</button>
+                    <button class="seg-btn" type="button" data-position="top-right">Top right</button>
+                    <button class="seg-btn" type="button" data-position="top-left">Top left</button>
+                  </div>
+                </div>
+
+                <label class="builder-field builder-group">
+                  <span class="builder-label">Storage key</span>
+                  <input type="text" id="qc-builder-storage-key" value="accesspath-prefs" spellcheck="false">
+                  <span class="qc-field-hint">This key is used to save user preferences.</span>
+                </label>
+
+                <div class="builder-group">
+                  <span class="builder-label">Trigger behavior</span>
+                  <div class="qc-toggle-row">
+                    <label class="builder-toggle">
+                      <input type="checkbox" id="qc-builder-dark">
+                      <span class="toggle-track" aria-hidden="true"></span>
+                      <span class="builder-label">Dark theme</span>
+                    </label>
+                    <label class="builder-toggle builder-group-embed-only">
+                      <input type="checkbox" id="qc-builder-draggable" checked>
+                      <span class="toggle-track" aria-hidden="true"></span>
+                      <span class="builder-label">Draggable trigger</span>
+                    </label>
+                    <label class="builder-toggle builder-group-embed-only">
+                      <input type="checkbox" id="qc-builder-hide-trigger">
+                      <span class="toggle-track" aria-hidden="true"></span>
+                      <span class="builder-label">Hide floating trigger</span>
+                    </label>
+                  </div>
+                  <span class="qc-field-hint builder-group-embed-only">
+                    Open it yourself with <code>window.AccessPath.open()</code> from your own button instead.
+                  </span>
+                </div>
+              </section>
+
+              <section class="qc-section">
+                <h3 class="qc-section-title">Accessibility Profiles</h3>
+
+                <div class="builder-group">
+                  <div class="check-row" id="qc-builder-profiles">
+                    <!-- Icon paths kept in sync with PROFILE_ICON_MARKUP in packages/core/src/icons.ts
+                         (24x24 viewBox, same stroke attrs) so these chips match the real drawer's
+                         profile icons, not stand-ins. -->
+                    <label class="check-chip"><input type="checkbox" value="low-vision" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Low Vision</span></label>
+                    <label class="check-chip"><input type="checkbox" value="dyslexia" checked><span class="check-chip-df" aria-hidden="true">Df</span><span>Dyslexia</span></label>
+                    <label class="check-chip"><input type="checkbox" value="seizure" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg><span>Seizure Safe</span></label>
+                    <label class="check-chip"><input type="checkbox" value="motor" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><circle cx="18" cy="4" r="2"/><path d="m17.836 12.014-4.345.725 3.29-4.113a1 1 0 0 0-.227-1.457l-6-4a.999.999 0 0 0-1.262.125l-4 4 1.414 1.414 3.42-3.42 2.584 1.723-2.681 3.352a5.913 5.913 0 0 0-5.5.752l1.451 1.451A3.972 3.972 0 0 1 8 12c2.206 0 4 1.794 4 4 0 .739-.216 1.425-.566 2.02l1.451 1.451A5.961 5.961 0 0 0 14 16c0-.445-.053-.878-.145-1.295L17 14.181V20h2v-7a.998.998 0 0 0-1.164-.986zM8 20c-2.206 0-4-1.794-4-4 0-.739.216-1.425.566-2.02l-1.451-1.451A5.961 5.961 0 0 0 2 16c0 3.309 2.691 6 6 6 1.294 0 2.49-.416 3.471-1.115l-1.451-1.451A3.972 3.972 0 0 1 8 20z"/></svg><span>Motor Impaired</span></label>
+                    <label class="check-chip"><input type="checkbox" value="colorblind" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="1.8"/></svg><span>Color Blind</span></label>
+                    <label class="check-chip"><input type="checkbox" value="adhd" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ADHD</span></label>
+                    <label class="check-chip"><input type="checkbox" value="voice-over" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M17.5 8.5a5 5 0 0 1 0 7"/><path d="M20.5 5.5a9 9 0 0 1 0 13"/></svg><span>Voice Over</span></label>
+                    <label class="check-chip"><input type="checkbox" value="elderly" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="5" r="2.2" fill="currentColor" stroke="none"/><path d="M13 7c-2.5 1.8-5.5 4-6 7.5"/><path d="M7 14.5 6 20.5"/><path d="M7 14.5 8.5 20.5"/><path d="M9.5 11.5 13.5 13"/><path d="M13.5 13h6.5"/><path d="M13.5 13v7.5"/><path d="M20 13v5.2"/><circle cx="20" cy="19.6" r="1.2" fill="currentColor" stroke="none"/></svg><span>Elderly</span></label>
+                    <label class="check-chip"><input type="checkbox" value="cognitive" checked><svg class="check-chip-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 1.2-.8 1.7-1.2 2.6-.2.4-.3.9-.3 1.4"/><line x1="12" y1="16.5" x2="12" y2="16.51"/></svg><span>Cognitive &amp; Learning</span></label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="qc-section">
+                <h3 class="qc-section-title">Language</h3>
+
+                <div class="builder-group">
+                  <div class="seg-row" id="qc-builder-locale" role="group" aria-label="Language">
+                    <button class="seg-btn is-active" type="button" data-locale="en">English</button>
+                    <button class="seg-btn" type="button" data-locale="es">Español</button>
+                    <button class="seg-btn" type="button" data-locale="fr">Français</button>
+                    <button class="seg-btn" type="button" data-locale="de">Deutsch</button>
+                    <button class="seg-btn" type="button" data-locale="pt">Português</button>
+                    <button class="seg-btn" type="button" data-locale="other">Other</button>
+                  </div>
+                  <span class="qc-field-hint">Translates every label in the panel.</span>
+                  <p class="qc-field-hint qc-other-lang-note" id="qc-builder-other-lang-note" hidden>
+                    Language not listed? Use the <code>labels</code> prop to override any string yourself.
+                    See the docs.
+                  </p>
+                </div>
+              </section>
+
+              <section class="qc-section">
+                <h3 class="qc-section-title">Sections Shown</h3>
+
+                <div class="builder-group">
+                  <div class="check-row" id="qc-builder-sections">
+                    <label class="check-chip"><input type="checkbox" value="profiles" checked><span>Profiles</span></label>
+                    <label class="check-chip"><input type="checkbox" value="quick" checked><span>Quick Adjustments</span></label>
+                    <label class="check-chip"><input type="checkbox" value="controls" checked><span>All Controls</span></label>
+                    <label class="check-chip"><input type="checkbox" value="actions" checked><span>Actions</span></label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="qc-section">
+                <h3 class="qc-section-title">Custom Action Buttons</h3>
+
+                <div class="builder-group">
+                  <div class="qc-action-rows" id="qc-builder-actions"></div>
+                  <button class="qc-add-action-btn" type="button" id="qc-builder-add-action">+ Add action button</button>
+                  <span class="qc-field-hint">Rendered in the drawer's Actions section. Clicking one dispatches an <code>accesspath:action</code> event with its id. Wire up what happens in your own code.</span>
+                </div>
+              </section>
+            </div>
+
+            <div class="builder-output">
+              <span class="builder-label">Generated code</span>
+              <div class="code-panel">
+                <div class="code-panel-head">
+                  <div class="code-panel-tabs" role="tablist" aria-label="Target platform">
+                    <button class="code-panel-tab is-active" type="button" role="tab" aria-selected="true" data-platform="html">
+                      <svg class="code-panel-tab-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
+                      HTML
+                    </button>
+                    <button class="code-panel-tab" type="button" role="tab" aria-selected="false" data-platform="react">
+                      <svg class="code-panel-tab-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></svg>
+                      React
+                    </button>
+                    <button class="code-panel-tab" type="button" role="tab" aria-selected="false" data-platform="angular">
+                      <svg class="code-panel-tab-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M16.712 17.711H7.288l-1.204 2.916L12 24l5.916-3.373-1.204-2.916ZM14.692 0l7.832 16.855.814-12.856L14.692 0ZM9.308 0 .662 3.999l.814 12.856L9.308 0Zm-.405 13.93h6.198L12 6.396 8.903 13.93Z"/></svg>
+                      Angular
+                    </button>
+                  </div>
+                  <button class="code-copy-btn" type="button" id="qc-builder-copy" aria-label="Copy code">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+                  </button>
+                </div>
+                <pre class="code-block" id="qc-builder-code"><code id="qc-builder-code-inner"></code></pre>
+              </div>
+
+              <div class="builder-preview-head">
+                <span class="builder-label">Live preview</span>
+              </div>
+              <div class="live-demo" id="qc-builder-preview">
+                <div class="qc-preview-window" id="qc-builder-preview-frame">
+                  <div class="qc-preview-chrome" aria-hidden="true">
+                    <span class="qc-preview-dot"></span><span class="qc-preview-dot"></span><span class="qc-preview-dot"></span>
+                  </div>
+                  <div class="qc-preview-body" id="qc-builder-preview-body">
+                    <h3 class="qc-preview-heading">Your Website</h3>
+                    <div class="qc-preview-content">
+                      <div class="qc-preview-bars">
+                        <span class="qc-preview-bar" style="width:88%"></span>
+                        <span class="qc-preview-bar" style="width:74%"></span>
+                        <span class="qc-preview-bar" style="width:62%"></span>
+                        <span class="qc-preview-bar" style="width:44%"></span>
+                      </div>
+                      <div class="qc-preview-image" aria-hidden="true">
+                        <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" width="70%" height="70%"><circle cx="72" cy="16" r="7" fill="currentColor" opacity="0.4"/><path d="M0 46 L26 20 L46 40 L64 24 L100 50 L100 60 L0 60 Z" fill="currentColor" opacity="0.4"/></svg>
+                      </div>
+                    </div>
+                    <div class="qc-preview-content qc-preview-content-reverse">
+                      <div class="qc-preview-image" aria-hidden="true">
+                        <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" width="70%" height="70%"><circle cx="72" cy="16" r="7" fill="currentColor" opacity="0.4"/><path d="M0 46 L26 20 L46 40 L64 24 L100 50 L100 60 L0 60 Z" fill="currentColor" opacity="0.4"/></svg>
+                      </div>
+                      <div class="qc-preview-bars">
+                        <span class="qc-preview-bar" style="width:80%"></span>
+                        <span class="qc-preview-bar" style="width:68%"></span>
+                        <span class="qc-preview-bar" style="width:56%"></span>
+                        <span class="qc-preview-bar" style="width:38%"></span>
+                      </div>
+                    </div>
+                    <div class="qc-preview-bars">
+                      <span class="qc-preview-bar" style="width:100%"></span>
+                      <span class="qc-preview-bar" style="width:94%"></span>
+                      <span class="qc-preview-bar" style="width:70%"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qc-panel" id="qc-panel-quickstart" role="tabpanel" aria-labelledby="qc-tabbtn-quickstart" hidden>
+          <p class="tab-note">Pick your stack: copy, paste, publish.</p>
+          <div class="tabs" role="tablist" aria-label="Integration platform">
+            <button class="qc-platform-tab is-active" role="tab" aria-selected="true" aria-controls="qc-tab-html" id="qc-tabbtn-html" data-qc-platform="html">HTML / WordPress</button>
+            <button class="qc-platform-tab" role="tab" aria-selected="false" aria-controls="qc-tab-react" id="qc-tabbtn-react" data-qc-platform="react">React</button>
+            <button class="qc-platform-tab" role="tab" aria-selected="false" aria-controls="qc-tab-angular" id="qc-tabbtn-angular" data-qc-platform="angular">Angular</button>
+          </div>
+
+          <div class="qc-platform-panel is-active" id="qc-tab-html" role="tabpanel" aria-labelledby="qc-tabbtn-html">
+            <pre class="code-block" data-lang="html"><code>&lt;script src="/embed.js"
+        data-theme="light"
+        data-storage-key="accesspath-prefs"
+        data-position="bottom-right"&gt;
+&lt;/script&gt;</code></pre>
+          </div>
+          <div class="qc-platform-panel" id="qc-tab-react" role="tabpanel" aria-labelledby="qc-tabbtn-react" hidden>
+            <pre class="code-block" data-lang="bash"><code>npm install @accesspath/react</code></pre>
+            <pre class="code-block" data-lang="tsx"><code>import { AccessPathPanel } from '@accesspath/react';
+import '@accesspath/core/styles/a11y-effects.css';
+import '@accesspath/core/styles/panel.css';
+
+&lt;div className="a11y-target"&gt;
+  &lt;AccessPathPanel storageKey="accesspath-prefs" /&gt;
+&lt;/div&gt;</code></pre>
+          </div>
+          <div class="qc-platform-panel" id="qc-tab-angular" role="tabpanel" aria-labelledby="qc-tabbtn-angular" hidden>
+            <pre class="code-block" data-lang="bash"><code>npm install @accesspath/angular</code></pre>
+            <pre class="code-block" data-lang="html"><code>&lt;div #root class="a11y-target"&gt;
+  &lt;app-accessibility-panel [container]="root" [storageKey]="'accesspath-prefs'"&gt;
+  &lt;/app-accessibility-panel&gt;
+&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <details class="qc-tokens">
+        <summary>
+          <span class="qc-tokens-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.9 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.9-1.8H16.5A4.5 4.5 0 0 0 21 10.2C21 6.2 16.9 3 12 3Z"/><circle cx="7.3" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.3" cy="7.2" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.7" cy="7.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.8" cy="11" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <span class="qc-tokens-text">
+            <strong>All CSS theming tokens</strong>
+            <span>Customize every color, radius, shadow and more.</span>
+          </span>
+          <span class="qc-tokens-cta">
+            Explore tokens
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </span>
+        </summary>
+        <div class="token-table">
+          <div class="token-row token-row-head"><span>Variable</span><span>Used for</span></div>
+          <div class="token-row"><span><code>--ap-brand</code></span><span>Header band, active states, floating trigger</span></div>
+          <div class="token-row"><span><code>--ap-brand-soft</code></span><span>Icon chip backgrounds, soft active fills</span></div>
+          <div class="token-row"><span><code>--ap-brand-border</code></span><span>Segmented control &amp; hover borders</span></div>
+          <div class="token-row"><span><code>--ap-tx</code> / <code>--ap-tm</code> / <code>--ap-mu</code></span><span>Primary / secondary / muted text</span></div>
+          <div class="token-row"><span><code>--ap-bd</code></span><span>Borders and dividers</span></div>
+          <div class="token-row"><span><code>--ap-sf</code> / <code>--ap-sf2</code></span><span>Panel surface / control-group surface</span></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="section-inner faq-inner">
+      <div class="faq-grid">
+        <div class="faq-intro reveal-left">
+          <h2 class="faq-headline">Short answers.<br><span class="faq-headline-hl">Real clarity.</span></h2>
+          <p class="faq-sub">The most common questions we get from developers and website owners.</p>
+          <div class="faq-illustration" aria-hidden="true">
+            <img src="/images/faq-bubble.png" alt="" width="300" height="200">
+          </div>
+        </div>
+
+        <div class="faq-list stagger" id="faq-list" role="presentation">
+          <div class="faq-item is-open reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Does AccessPath make my site compliant?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-1" role="region" aria-labelledby="faq-q-1">
+              <p>AccessPath is a user-controlled accessibility layer. It helps visitors customize their experience, but it doesn't replace good code, semantic HTML, or legal compliance.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-2" id="faq-q-2">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Will it slow down my website?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-2" role="region" aria-labelledby="faq-q-2" hidden>
+              <p>No. The whole widget is a tiny script that loads asynchronously and makes no external network calls after that, so it won't block or slow down the rest of your page.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-3" id="faq-q-3">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Does it collect or store user data?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-3" role="region" aria-labelledby="faq-q-3" hidden>
+              <p>No analytics and no tracking. Visitor preferences are saved only in their own browser's localStorage, under a storage key you control.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-4" id="faq-q-4">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Can I self-host AccessPath?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-4" role="region" aria-labelledby="faq-q-4" hidden>
+              <p>Yes. AccessPath is open source and MIT licensed, so you can build it yourself and serve the bundle from your own infrastructure, no external dependency required.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-5" id="faq-q-5">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Will it work with my framework or CMS?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-5" role="region" aria-labelledby="faq-q-5" hidden>
+              <p>Yes. A framework-agnostic core ships as a script tag for any HTML site, WordPress, Shopify or Wix, plus dedicated React and Angular components for those stacks.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-6" id="faq-q-6">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">Is AccessPath really free?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-6" role="region" aria-labelledby="faq-q-6" hidden>
+              <p>Yes. Free and MIT licensed, with no per-visitor pricing, paid tiers, or premium features held back.</p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal" data-faq-item>
+            <button type="button" class="faq-item-head" aria-expanded="false" aria-controls="faq-answer-7" id="faq-q-7">
+              <span class="faq-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" class="faq-icon-horiz"/><line x1="12" y1="5" x2="12" y2="19" class="faq-icon-vert"/></svg>
+              </span>
+              <span class="faq-item-q">How is this different from a paid accessibility overlay?</span>
+              <svg class="faq-item-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19"/></svg>
+            </button>
+            <div class="faq-item-answer" id="faq-answer-7" role="region" aria-labelledby="faq-q-7" hidden>
+              <p>Paid overlay widgets run as a hosted, closed-source script and charge per visitor or per month. AccessPath is free, open source, and self-hosted: you own the code, there's no vendor to depend on, and no recurring fee tied to your traffic.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="faq-more reveal">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.3a2.8 2.8 0 1 1 3.8 2.6c-.6.25-1 .8-1 1.5v.3"/><circle cx="12" cy="16.7" r="0.55" fill="currentColor" stroke="none"/></svg>
+        Still have a question?
+        <button type="button" class="faq-more-link" disabled title="Not published yet">Open an issue on GitHub
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
+      </p>
+    </div>
+  </section>
+
+  <section class="cta-band" id="take-control">
+    <div class="section-inner cta-band-inner reveal">
+      <div class="cta-panel">
+        <div class="cta-left">
+          <h2 class="cta-headline">Give your visitors<br><span class="cta-headline-hl">more control.</span></h2>
+          <p class="cta-sub">A more inclusive experience for them. A better web for everyone.</p>
+        </div>
+
+        <div class="cta-actions">
+          <div class="cta-action">
+            <a href="#install-quickstart-v2" class="cta-btn cta-btn-primary">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg>
+              Get AccessPath
+            </a>
+            <span class="cta-caption">One snippet. Instant impact.</span>
+          </div>
+          <div class="cta-action">
+            <button type="button" class="cta-btn cta-btn-secondary" disabled title="Not published yet">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+              View on GitHub
+            </button>
+            <span class="cta-caption">Open source. MIT licensed.</span>
+          </div>
+        </div>
+
+        <span class="cta-divider" aria-hidden="true"></span>
+
+        <div class="cta-right">
+          <div class="cta-coffee-note" aria-hidden="true">
+            <span class="cta-coffee-script">Buy me<br>a coffee</span>
+            <svg class="cta-coffee-arrow" viewBox="0 0 110 56" width="110" height="56" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 20C30 44 70 48 100 34"/>
+              <path d="M88 26 104 30 94 46"/>
+            </svg>
+          </div>
+          <div class="cta-coffee-cup" aria-hidden="true"></div>
+          <button type="button" class="cta-coffee-btn" disabled title="Not published yet">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h13l-1.2 9.5a2 2 0 0 1-2 1.75H8.2a2 2 0 0 1-2-1.75z"/><path d="M18 10.5h1.5a2.5 2.5 0 0 1 0 5H18"/></svg>
+            Buy me a coffee
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer">
+    <div class="section-inner footer-inner">
+      <div class="footer-main reveal">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html" style="text-decoration:none;color:inherit;">
+            <span class="footer-logo-mark" aria-hidden="true">
+              <img src="/images/logo.png" width="30" height="29" alt="">
+            </span>
+            AccessPath
+          </a>
+          <p class="footer-tagline">A free, open-source accessibility widget that puts more control in the hands of your users.</p>
+          <div class="footer-social">
+            <button type="button" class="footer-social-btn" disabled title="Not published yet" aria-label="AccessPath on GitHub">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+            </button>
+            <button type="button" class="footer-social-btn" disabled title="Not published yet" aria-label="AccessPath on npm">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H3.999v-4H2.665v4h-1.33V8.667h5.33v5.331zm4.001 0H8.001V8.667h4v1.336h-1.334v4.001h-.001v.001zm.001-4H12v-1.332h-1.332v1.332zm8.001 4h-2.667v-4h-1.335v4h-1.332V8.667h5.334v5.331z"/></svg>
+            </button>
+            <a href="https://accesspath.dev" class="footer-social-btn" aria-label="AccessPath website">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <nav class="footer-col" aria-label="Product">
+          <h3>Product</h3>
+          <a href="#tools">Features</a>
+          <a href="#install-quickstart-v2">Install &amp; Customize</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <nav class="footer-col" aria-label="Resources">
+          <h3>Resources</h3>
+          <a href="accessibility-guide.html">Accessibility Guide</a>
+          <a href="integration-guide.html">Integration Guide</a>
+        </nav>
+
+        <nav class="footer-col" aria-label="Legal">
+          <h3>Legal</h3>
+          <a href="license.html">MIT License</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Use</a>
+        </nav>
+      </div>
+
+      <div class="footer-legal">
+        <span>&copy; 2026 AccessPath. Built for a more accessible web.</span>
+        <span>Made with
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.4 1.1 4.5 2.7C11.1 6.1 12.5 5 14.5 5 18 5 19.6 8.6 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+          by the community</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is AccessPath an overlay that replaces real accessibility work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It's a control panel that lets visitors adjust text size, contrast, motion, spacing, and more themselves. It doesn't rewrite your markup or claim WCAG conformance on your behalf. Semantic HTML and proper ARIA on your own components still matter."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it change my page's source code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It toggles a11y-* classes on the elements you pass to applyClasses() (your container and the panel's own root). Your source files stay untouched. Effects apply live in the DOM."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which frameworks does it support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Plain HTML/WordPress/Shopify/Wix via a script tag (@accesspath/embed), React (@accesspath/react), and Angular (@accesspath/angular). All three delegate to the same @accesspath/core, so behavior is identical across them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I theme the panel to match my brand?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Set CSS variables like --ap-brand, --ap-sf, and --ap-bd on your container, plus pick the trigger button's shape, icon, and corner."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it persist a visitor's preferences?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, to localStorage under a configurable storageKey, so repeat visitors keep their settings without re-selecting a profile."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it free and open source?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. MIT licensed, self-hosted, no per-visitor pricing or third-party call-home."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is AccessPath different from a paid accessibility overlay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Paid overlay widgets run as a hosted, closed-source script and charge per visitor or per month. AccessPath is free, open source, and self-hosted: you own the code, there's no vendor to depend on, and no recurring fee tied to your traffic."
+      }
+    }
+  ]
+}
+</script>
+<script src="/embed.js"
+        id="accesspath-embed-script"
+        data-theme="light"
+        data-storage-key="accesspath-site"
+        data-position="bottom-right"
+        data-sections="profiles,quick,controls,actions,audit"
+        onerror="document.body.classList.add('embed-failed')">
+</script>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

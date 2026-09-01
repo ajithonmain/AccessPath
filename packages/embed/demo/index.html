@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AccessPath Embed Demo</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #fafafa; color: #111; }
+  .page { max-width: 640px; margin: 0 auto; padding: 32px 20px; }
+  .card { background: #fff; border: 1px solid #e2e2ea; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .card h3 { margin: 0 0 6px; }
+  .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+  <div class="page" id="demo-target">
+    <h1>AccessPath — zero-build embed demo</h1>
+    <p>This page loads only the <code>&lt;script&gt;</code> tag below — no build step. Click the floating
+       accessibility button (bottom-right) to open the panel.</p>
+
+    <div class="card">
+      <h3>Margherita Pizza</h3>
+      <p>Classic tomato, mozzarella &amp; basil.</p>
+      <div class="price-row">
+        <span>$12.99</span>
+        <button type="button">Add to cart</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Garlic Bread</h3>
+      <p>Toasted, buttery, with a hint of parsley.</p>
+      <div class="price-row">
+        <span>$4.50</span>
+        <button type="button">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../dist/embed.js"
+          data-profiles="low-vision,dyslexia,seizure,motor,colorblind,adhd"
+          data-theme="light"
+          data-storage-key="accesspath-embed-demo"
+          data-position="bottom-right"
+          data-target="#demo-target">
+  </script>
+</body>
+</html>

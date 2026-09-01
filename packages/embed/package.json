@@ -1,0 +1,17 @@
+{
+  "name": "@accesspath/embed",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@accesspath/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "~5.1.3",
+    "vite": "^5.4.0"
+  }
+}

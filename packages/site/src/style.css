@@ -1,0 +1,2242 @@
+/* a11y-effects.css's dyslexia-friendly toggle switches to 'OpenDyslexic' — it was
+   never actually loaded anywhere on this site (only the site's own body font was), so
+   the Dyslexia profile silently fell back to the same font instead of visibly changing
+   anything. SIL OFL-1.1 licensed, served via Fontsource's jsdelivr build. */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/index.css');
+
+:root {
+  /* Brand palette — docs/brand.md: AccessPath Violet as the sole brand accent (~7% of
+     the interface by design), Dark Ink as the near-black text color, and six profile
+     accent colors (their soft variants used for bento-card tinting) instead of a set
+     of unrelated pastels. Icons and text on top of these stay --brand/--tx, never a
+     tint of the accent itself, so contrast stays predictable.
+     These are this SITE's own generic tokens, deliberately separate from the widget's
+     public theming API (packages/core/styles/panel.css reads --ap-brand/--ap-tx/etc,
+     namespaced so a host page's own --brand doesn't collide with the widget's) — see
+     CLAUDE.md. The Customize builder below sets --ap-* directly on its own scoped
+     preview element to demo the real widget styling without touching these. */
+  --brand: #4928F3;        /* AccessPath Violet */
+  --brand-2: #4636DF;      /* Deep Violet — brand gradient's dark end, on-tint text */
+  --brand-soft: #F0EDFF;   /* Soft Violet — pills/selected backgrounds */
+  --brand-tint: #F0EDFF;   /* alias — spec has one "violet-soft" token, not a separate tint */
+  --brand-soft-2: rgba(73, 40, 243, 0.14);
+  --brand-border: rgba(73, 40, 243, 0.25);
+  --brand-glow: #E5DCF9;   /* Violet Glow — soft halos/decorative glow */
+  --tx: #040D29;           /* Ink */
+  --tm: #3C4255;           /* Secondary Ink */
+  --mu: #6F7580;           /* Muted Text */
+  --bd: #E8E7ED;           /* Border */
+  --bd-strong: #D8D7E2;    /* Strong Border */
+  --canvas: #FDFDFD;       /* main page background */
+  --sf: #ffffff;           /* Surface — cards, panels */
+  --sf2: #F4F1F9;          /* Soft Surface — control groups, secondary surfaces */
+  --sf3: #ECEAF2;
+
+  /* Bento accents — the profile-accent soft backgrounds from docs/brand.md sec 4,
+     cycled across profile/tool/feature tiles instead of a set of unrelated pastels.
+     Kept deliberately subtle (soft tints, not saturated fills) per brand.md's "profile
+     colors should remain subtle, never a rainbow interface" rule. */
+  --acc-teal: #EAF8F0;       --acc-teal-ink: #39B77A;   /* Motor Impaired */
+  --acc-cerulean: #EEF3FF;   --acc-cerulean-ink: #6D8FE8; /* Color Blind */
+  --acc-pink: #FCECF4;       --acc-pink-ink: #D94D8B;   /* ADHD */
+  --acc-yellow: #FFF6DF;     --acc-yellow-ink: #F4A90A; /* Seizure Safe */
+
+  /* Rotating hero word + other one-off "pop" moments — a warm accent that reads as
+     confident against the cool violet brand instead of blending into it (previously
+     reused --brand and was indistinguishable from the rest of the h1). Not part of
+     the brand palette itself — used sparingly, on one word. */
+  --accent-pop: #D1461F;
+
+  /* Section bands — alternating light surfaces so sections read as distinct panels
+     stacked on the page instead of transparent content floating over one continuous
+     background wash. */
+  --band-a: var(--sf);
+  --band-b: var(--sf2);
+
+  /* Design tokens shared across the page — a real scale instead of one-off values.
+     Radii follow docs/brand.md's shape language (controls 8-10, buttons 10-12, cards
+     14-18). Shadows are brand.md's exact card/drawer/trigger specs. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --sh-sm: 0 4px 20px rgba(4, 13, 41, 0.045);
+  --sh-md: 0 8px 24px -8px rgba(4, 13, 41, 0.14);
+  --sh-lg: 0 24px 56px -16px rgba(4, 13, 41, 0.18);
+  --sh-brand: 0 12px 28px -10px rgba(73, 40, 243, 0.32);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --max-w: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  position: relative;
+  margin: 0;
+  font-family: Geist, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--tx);
+  background: var(--canvas);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+/* A single soft violet glow behind the hero only, fading to nothing by the time
+   content scrolls into the first section band below — docs/brand.md sec 11's "very
+   subtle violet radial glow", not a multi-color pastel wash competing with the
+   alternating section-band backgrounds further down the page. */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 980px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 700px at 90% -10%, rgba(73, 40, 243, 0.075), transparent 65%),
+    radial-gradient(800px 600px at 108% 40%, rgba(122, 92, 240, 0.05), transparent 65%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+}
+
+/* Default focus ring — visible everywhere by default so any interactive element
+   (buttons, links, controls) gets a consistent brand-colored ring without needing
+   a bespoke rule; component-specific rules below only override where the default
+   outline would clip against a rounded/pill shape. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.hero-demo:focus-visible { outline-offset: 6px; border-radius: var(--r-xl); }
+
+a { color: inherit; }
+code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+h1, h2, h3, h4 { font-family: inherit; }
+::selection { background: var(--brand-soft-2); color: var(--tx); }
+
+.section-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+.eyebrow-center { text-align: center; }
+
+/* Nav — blends into the warm page background instead of a heavy dark bar; the sticky
+   blur keeps it legible over hero content scrolling underneath. */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.nav.is-scrolled {
+  background: rgba(255,255,255,0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: var(--bd);
+}
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 13px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 17px;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+  color: var(--tx);
+}
+.nav-logo { display: flex; color: var(--brand); }
+.nav-links { display: flex; align-items: center; gap: 34px; flex: 1; margin-left: 36px; }
+.nav-links a, .nav-link-disabled {
+  display: inline-flex; align-items: center; gap: 4px;
+  text-decoration: none;
+  font-size: 15px; font-weight: 600;
+  color: var(--tm);
+  transition: color 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+.nav-links a:hover { color: var(--brand); }
+.nav-link-disabled { cursor: not-allowed; }
+.nav-link-disabled:disabled { opacity: 0.55; color: var(--tm); }
+.nav-cta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--sf); transform: none; }
+.btn-secondary:disabled:hover { background: var(--sf); }
+
+/* Mobile nav toggle — hidden above the 700px breakpoint where .nav-links already
+   shows inline; below it, .nav-links itself becomes the toggled dropdown panel
+   (see the 700px media query further down) instead of disappearing with no
+   replacement way to reach in-page sections. */
+.nav-toggle {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  color: var(--tx);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-toggle-icon-close { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon-open { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon-close { display: block; }
+.btn-sm { padding: 8px 18px; font-size: 14px; }
+
+/* Hero — two-column: copy left, live before/after demo right. Faint dotted grid +
+   soft violet/peach glows behind the demo only (docs/brand.md "extremely subtle
+   decorative atmosphere"), no gradients or 3D shapes. */
+.hero {
+  position: relative;
+  padding: 72px 0 76px;
+  color: var(--tx);
+  overflow: hidden;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  color: var(--brand);
+  font-size: 11.5px; font-weight: 650;
+  letter-spacing: 0.06em;
+  margin-bottom: 22px;
+}
+.badge svg { flex-shrink: 0; }
+.hero h1 {
+  font-size: clamp(42px, 5.6vw, 76px);
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 20px;
+  color: var(--tx);
+}
+.hero h1 .hl { color: var(--brand); }
+.hero h1 .hl-grad {
+  background: linear-gradient(90deg, var(--brand) 20%, #C15FD6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-sub {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--tm);
+  max-width: 448px;
+  margin: 0 0 28px;
+}
+
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.hero-cta .btn-primary svg { margin-left: 2px; }
+
+.hero-status {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13.5px; color: var(--tm);
+  max-width: 420px;
+  margin: 0;
+}
+.hero-status code { background: var(--sf2); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22a55f;
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-shadow: 0 0 0 3px rgba(34, 165, 95, 0.18);
+  animation: status-dot-pulse 2s ease-in-out infinite;
+}
+@keyframes status-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.8); }
+}
+.hero-status-live { display: flex; }
+.hero-status-fallback { display: none; color: var(--brand); }
+body.embed-failed .hero-status-live { display: none; }
+body.embed-failed .hero-status-fallback { display: flex; }
+
+/* Right side: control strip + before/after demo panel. Not a browser mockup — an
+   editorial content block that visibly changes when the controls above it are used. */
+.hero-demo {
+  position: relative;
+}
+.hero-demo::before {
+  /* soft violet + warm peach glows, faded to transparent on every edge via the
+     gradients' own falloff — no mask needed, so it never shows a hard rectangle. */
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px; width: 560px; height: 560px;
+  background:
+    radial-gradient(closest-side at 42% 38%, rgba(73,40,243,0.10), transparent),
+    radial-gradient(closest-side at 60% 58%, rgba(240,190,150,0.10), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-demo::after {
+  /* tiny dotted grid, right-side demo only — opacity kept low enough (0.035) that
+     its rectangular bounds never read as a hard edge against the page canvas, so
+     no mask is needed (an earlier masked version rendered as a visible box in some
+     environments). */
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px; bottom: -20px; left: 20%;
+  background: radial-gradient(circle, rgba(4,13,41,0.09) 1px, transparent 1px) 0 0/20px 20px;
+  opacity: 0.35;
+  mask-image: radial-gradient(closest-side at 55% 45%, #000 25%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side at 55% 45%, #000 25%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-demo > * { position: relative; z-index: 1; }
+
+/* Above-the-fold load-in — plays automatically on page load (no scroll trigger, no
+   has-js gate needed: it's a plain CSS animation so it never depends on JS running).
+   Kept short and subtle (300-350ms) since this is the first thing a visitor sees. */
+@keyframes hero-fade-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.hero-content > * { animation: hero-fade-rise 0.32s var(--ease) both; }
+.hero-content > *:nth-child(1) { animation-delay: 0s; }
+.hero-content > *:nth-child(2) { animation-delay: 0.05s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.1s; }
+.hero-content > *:nth-child(4) { animation-delay: 0.15s; }
+.hero-content > *:nth-child(5) { animation-delay: 0.2s; }
+.hero-content > *:nth-child(6) { animation-delay: 0.2s; }
+.hero-demo { animation: hero-fade-rise 0.35s var(--ease) 0.12s both; }
+/* Reduced-motion override lives in the shared prefers-reduced-motion block below
+   (near .reveal), alongside every other new animated property added in this pass. */
+
+.demo-annotation {
+  display: flex; flex-direction: column; align-items: flex-end;
+  position: absolute;
+  top: -34px; left: -20px; right: auto;
+  font-family: Caveat, 'Segoe Script', cursive;
+  font-size: 19px; line-height: 1.15; font-weight: 600;
+  color: var(--brand);
+  transform: rotate(-2deg);
+}
+.demo-annotation span { text-align: right; white-space: nowrap; }
+.demo-annotation svg { flex-shrink: 0; margin: 3px -26px 0 0; }
+
+.control-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 104px));
+  justify-content: end;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.control-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 6px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--bd);
+  background: var(--sf);
+  color: var(--tm);
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s var(--ease);
+}
+.control-btn:hover { border-color: var(--brand-border); color: var(--tx); transform: translateY(-1px); }
+.control-btn:active { transform: translateY(0) scale(0.97); }
+.control-icon { display: flex; color: var(--tm); }
+.control-icon-text {
+  font-size: 14px; font-weight: 700; line-height: 1;
+  font-family: inherit;
+}
+.control-icon-text sup { font-size: 0.65em; }
+.control-btn.is-active {
+  border-color: var(--brand);
+  background: var(--sf);
+  color: var(--brand);
+  box-shadow: 0 4px 14px -6px rgba(73,40,243,0.28);
+}
+.control-btn.is-active .control-icon { color: var(--brand); }
+
+.demo-panel {
+  border-radius: var(--r-xl);
+  background: var(--sf);
+  box-shadow: var(--sh-md);
+  overflow: hidden;
+}
+.demo-split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.demo-pane {
+  position: relative;
+  padding: 32px 28px 34px;
+  min-width: 0;
+  overflow: hidden;
+}
+/* Both halves share the same white surface — the "With AccessPath" side is
+   differentiated by typography only (larger, bolder, higher contrast), never by a
+   tinted panel background. */
+.demo-pane-label {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--sf2);
+  color: var(--tm);
+  margin-bottom: 18px;
+}
+.demo-pane-label-act { background: var(--brand-soft); color: var(--brand); border-color: transparent; }
+.demo-pane .demo-pane-title {
+  margin: 0 0 10px;
+  font-size: 21px; font-weight: 700; line-height: 1.2;
+  color: var(--tx);
+  transition: font-size 0.25s var(--ease);
+}
+.demo-pane p {
+  margin: 0 0 14px;
+  font-size: 13.5px; line-height: 1.5;
+  color: var(--tm);
+  transition: font-size 0.25s var(--ease), line-height 0.25s var(--ease), color 0.25s var(--ease);
+}
+.demo-link { font-size: 13.5px; font-weight: 600; color: var(--brand); text-decoration: none; }
+.demo-link:hover { text-decoration: underline; }
+.demo-split-divider {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  color: var(--mu);
+  box-shadow: var(--sh-sm);
+  z-index: 2;
+}
+
+.demo-pane-before { border-right: 1px solid var(--bd); }
+
+/* Demo-only "with AccessPath" states — driven entirely by the control strip above,
+   scoped to .demo-pane-after so the demo never touches the real drawer/panel.
+   "large" is the always-on baseline (Text Size starts pre-selected, per the
+   reference), so it needs no modifier class of its own — only the xl/normal steps
+   the control cycles to do. */
+.demo-pane-after h3 { font-size: 25px; }
+.demo-pane-after p { font-size: 15.5px; line-height: 1.65; }
+.demo-pane-after.demo-size-xl h3 { font-size: 29px; }
+.demo-pane-after.demo-size-xl p { font-size: 17.5px; line-height: 1.7; }
+.demo-pane-after.demo-size-normal h3 { font-size: 21px; }
+.demo-pane-after.demo-size-normal p { font-size: 13.5px; line-height: 1.5; }
+.demo-pane-after.demo-contrast { background: var(--tx); }
+.demo-pane-after.demo-contrast .demo-pane-label { background: rgba(255,255,255,0.1); color: #fff; border-color: transparent; }
+.demo-pane-after.demo-contrast .demo-pane-label-act { background: var(--brand); color: #fff; }
+.demo-pane-after.demo-contrast h3 { color: #fff; }
+.demo-pane-after.demo-contrast p { color: rgba(255,255,255,0.78); }
+.demo-pane-after.demo-contrast .demo-link { color: #fff; text-decoration: underline; }
+/* Dyslexia Font control — swaps the after-pane into OpenDyslexic (already loaded for
+   the widget's own dyslexia toggle), the same font the real pref applies. */
+.demo-pane-after.demo-dyslexia h3,
+.demo-pane-after.demo-dyslexia p,
+.demo-pane-after.demo-dyslexia .demo-link {
+  font-family: 'OpenDyslexic', Geist, sans-serif;
+}
+
+/* Line Height control — the same effect the widget's Line Height pref applies: the
+   paragraph's line gaps open up so the change is obvious at a glance. */
+.demo-pane-after.demo-line-height h3 {
+  line-height: 1.75;
+}
+.demo-pane-after.demo-line-height p {
+  line-height: 2.15;
+}
+
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 36px; }
+  .control-strip { justify-content: center; }
+  .nav-links { margin-left: 0; }
+  .hero-content { text-align: center; }
+  .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero-cta { justify-content: center; }
+  .hero-status { margin-left: auto; margin-right: auto; }
+  .demo-annotation { display: none; }
+}
+@media (max-width: 640px) {
+  .demo-split { grid-template-columns: 1fr; }
+  .demo-split-divider { transform: translate(-50%, -50%) rotate(90deg); }
+  .demo-pane-before { border-right: none; }
+  .demo-pane-after { border-top: 1px solid var(--bd); }
+  .control-strip { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Hero extra — principles + stack row live inside the hero itself (same section,
+   same canvas background), not a separate page section with its own band. */
+.hero-extra {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 56px auto 0;
+  padding: 0 24px;
+}
+
+/* Principles — four restrained items inside one bordered, shadowed card, separated
+   by whitespace only (no dividers), with per-item soft-tinted icon circles (the same
+   accent tints used on profile/tool cards elsewhere) instead of one flat color. */
+.principles-card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  padding: 24px 28px;
+  margin-bottom: 48px;
+  animation: hero-fade-rise 0.35s var(--ease) 0.18s both;
+}
+.principles-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+.principle-item {
+  display: flex; align-items: center; gap: 16px;
+  /* Opacity-only — the parent .principles-card already animates translateY, so
+     giving items their own transform here would compound into extra motion. */
+  animation: fade-in 0.28s var(--ease) both;
+}
+.principle-item:nth-child(1) { animation-delay: 0.26s; }
+.principle-item:nth-child(2) { animation-delay: 0.31s; }
+.principle-item:nth-child(3) { animation-delay: 0.36s; }
+.principle-item:nth-child(4) { animation-delay: 0.41s; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.principle-item:not(:first-child) {
+  border-left: 1px solid var(--bd);
+  padding-left: 32px;
+}
+.principle-icon {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.principle-icon-violet { background: #EFECFE; color: var(--brand); }
+.principle-icon-green { background: #E6F5EB; color: #27A25C; }
+.principle-icon-peach { background: #FDEFE0; color: #F0872D; }
+.principle-icon-blue { background: #E6EFFD; color: #3D7CF5; }
+.principle-item .principle-title { margin: 0 0 5px; font-size: 16px; font-weight: 650; color: var(--tx); }
+.principle-item p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--tm); }
+@media (max-width: 860px) {
+  .principles-card { padding: 28px; }
+  .principles-row { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .principle-item:not(:first-child) { border-left: none; padding-left: 0; }
+}
+@media (max-width: 560px) {
+  .principles-row { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* Tech stack row — monochrome logos only, brand violet stays the sole accent. */
+.stack-heading {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
+  color: var(--mu);
+  margin: 0 0 30px;
+}
+.stack-heading-rule {
+  flex: 1 1 60px;
+  max-width: 80px;
+  height: 1px;
+  background: var(--bd);
+}
+.stack-logos {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap;
+  gap: 32px 48px;
+  padding-bottom: 8px;
+}
+.stack-logo {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--tx);
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  animation: stack-logo-fade-rise 0.32s var(--ease) both;
+}
+.stack-logo:hover { opacity: 1; }
+/* Part of the hero's own load-in (see hero-fade-rise above), not a separate
+   scroll-triggered reveal — .stack-logos sits inside #hero, so it must settle
+   at the same dimmed 0.6 opacity as its resting state, not the 1 that .reveal
+   would leave behind. */
+@keyframes stack-logo-fade-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 0.6; transform: none; }
+}
+.stack-logos .stack-logo:nth-child(1) { animation-delay: 0.22s; }
+.stack-logos .stack-logo:nth-child(2) { animation-delay: 0.26s; }
+.stack-logos .stack-logo:nth-child(3) { animation-delay: 0.3s; }
+.stack-logos .stack-logo:nth-child(4) { animation-delay: 0.34s; }
+.stack-logos .stack-logo:nth-child(5) { animation-delay: 0.38s; }
+.stack-logos .stack-logo:nth-child(6) { animation-delay: 0.42s; }
+.stack-logos .stack-logo:nth-child(7) { animation-delay: 0.46s; }
+.stack-logo-text {
+  font-size: 13.5px; font-weight: 600;
+  color: var(--mu);
+  opacity: 1;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--r-md);
+  font-size: 14px; font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s var(--ease), box-shadow 0.15s, background 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--brand); color: #fff; box-shadow: var(--sh-brand); }
+.btn-primary:hover { background: var(--brand-2); transform: translateY(-1px); }
+.btn-primary svg { transition: transform 0.15s var(--ease); }
+.btn-primary:hover svg { transform: translateX(3px); }
+.btn-secondary { background: var(--sf); color: var(--tx); border: 1.5px solid var(--bd); }
+.btn-secondary:hover { background: var(--sf2); border-color: var(--brand-border); }
+
+/* Why AccessPath — dark/light split panel with a diagonal seam and a floating
+   accessibility badge (docs/Why_AccessPath-new.png). Self-contained palette, always dark
+   regardless of any future site theme toggle. */
+.wap2 {
+  --w2-bg: #0A0A0D;
+  --w2-panel-dark: linear-gradient(165deg, #101014, #0C0C10);
+  --w2-panel-light: #F7F7F8;
+  --w2-tile: #17171D;
+  --w2-tile-border: rgba(255,255,255,0.07);
+  --w2-tx-dark: #F4F4F6;
+  --w2-tm-dark: #9CA0AA;
+  --w2-tx-light: #111318;
+  --w2-tm-light: #5B606C;
+  --w2-purple: #6D4AFF;
+  --w2-purple-deep: #5B3DF5;
+  /* #8B6BFF (5.31:1) technically clears WCAG's 4.5:1 floor but still reads dim/muddy
+     against near-black in practice — the contrast-ratio formula undersells how weak
+     saturated blue-violet looks perceptually at low luminance. Brightened further for
+     it to actually read clearly at a glance, not just pass a calculator. */
+  --w2-purple-icon: #A78BFA;
+  --w2-green: #22C55E;
+  --w2-green-soft: #E9F9EF;
+  /* --w2-green on --w2-green-soft is only 2.09:1 — fails WCAG non-text contrast (needs
+     3:1) for icons/borders. --w2-green stays for text/accents on the dark panel (7.5:1+
+     there); this darker shade is for anything drawn on the light soft-green tint. */
+  --w2-green-icon: #15803D;
+  position: relative;
+  padding: 72px 0 0;
+  background: var(--w2-bg);
+  color: var(--w2-tx-dark);
+  overflow: hidden;
+}
+.wap2-inner { max-width: 1440px; margin: 0 auto; padding: 0 64px; }
+
+.wap2-head-row { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; margin-bottom: 56px; }
+.wap2-headline {
+  font-size: clamp(30px, 4.2vw, 44px);
+  font-weight: 650;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--w2-tx-dark);
+  flex: 1 1 480px;
+}
+.wap2-headline em {
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  /* The old dark end (#4E35D9, 2.67:1 on this near-black background) made the tail of
+     the word fade to near-illegible. Both stops now clear 4.5:1+ so the whole word
+     stays readable, not just its lighter half. */
+  background: linear-gradient(100deg, #B4A3FF, #9B87FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.wap2-head-divider { width: 1px; height: 92px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
+.wap2-head-sub { font-size: 18px; line-height: 1.6; color: #C6C8D0; max-width: 420px; margin: 0; flex: 1 1 340px; }
+/* A single italic-serif accent (the headline's <em>) already carries emphasis in this
+   header zone, echoing the hero h1's gradient "your" — a second, different accent
+   device (a wavy underline) fighting for attention four words later read as
+   over-decorated, so this stays a plain color+weight lift instead. */
+.wap2-underline {
+  color: var(--w2-green);
+  font-weight: 700;
+}
+
+/* Split panel */
+/* Two separate cards, not one split surface: the dark card is a full-bleed rounded card in
+   normal flow; the white card is a second rounded card absolutely laid OVER its right side,
+   its slanted left edge cut with an SVG clipPath (#wap2-seam, defined inline in index.html)
+   so the diagonal meets the top edge in a real rounded corner like the reference. The
+   privacy pill floats over the bottom of both cards. */
+.wap2-split {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
+  min-height: 620px;
+}
+.wap2-dark {
+  position: relative; z-index: 1;
+  background: var(--w2-panel-dark);
+  border-radius: 28px 28px 0 0;
+  /* .wap2-light-wrap is absolutely positioned to match this panel's rendered height
+     exactly (top:0/bottom:-60 against the shared .wap2-split ancestor) — this panel's
+     own content is shorter than the light panel's (label+heading+subhead+6 trust
+     items), so its bottom padding is what actually sets how much room the light
+     column gets, not the light column's own padding. Too little here and the light
+     column's real content overflows into (and visibly behind) the privacy bar. */
+  padding: 56px 6vw 230px;
+}
+.wap2-light-wrap {
+  position: absolute;
+  top: 0; right: -60px; bottom: -60px;
+  width: 58%;
+  z-index: 2;
+  filter: drop-shadow(-18px 10px 32px rgba(0,0,0,0.45));
+}
+.wap2-light {
+  width: 100%; height: 100%;
+  background: var(--w2-panel-light);
+  color: var(--w2-tx-light);
+  padding: 56px calc(5vw + 60px) 150px 20%;
+  clip-path: url(#wap2-seam);
+  overflow: hidden;
+}
+
+.wap2-panel-label { display: flex; align-items: center; gap: 18px; margin-bottom: 36px; }
+.wap2-label-chip { width: 52px; height: 52px; border-radius: 14px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+/* --w2-purple is only 3.84:1 on this near-black background — fails the 4.5:1 normal-
+   text requirement for the label below, and reads weak/washed out for the icon too.
+   --w2-purple-icon (5.31:1, same brand hue, just lighter) fixes both. */
+.wap2-label-chip-purple { border-color: rgba(109,74,255,0.45); color: var(--w2-purple-icon); }
+.wap2-label-chip-green { border-color: rgba(34,197,94,0.4); background: var(--w2-green-soft); color: var(--w2-green-icon); }
+.wap2-label-text { font-size: 13.5px; font-weight: 700; letter-spacing: 0.16em; white-space: nowrap; }
+.wap2-label-text-purple { color: var(--w2-purple-icon); }
+.wap2-label-text-green { color: var(--w2-green); }
+
+.wap2-panel-heading { font-size: 29px; font-weight: 700; line-height: 1.25; margin: 0 0 12px; color: var(--w2-tx-dark); max-width: 460px; }
+.wap2-panel-heading-light { color: var(--w2-tx-light); margin-bottom: 36px; }
+.wap2-panel-sub { font-size: 16.5px; color: var(--w2-tm-dark); max-width: 340px; margin: 0 0 32px; line-height: 1.5; }
+.wap2-panel-sub-light { color: var(--w2-tm-light); }
+
+.wap2-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 14px; max-width: 480px; }
+.wap2-tile {
+  display: flex; gap: 12px;
+  background: var(--w2-tile);
+  border: 1px solid var(--w2-tile-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+.wap2-tile-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+/* --w2-purple on this tinted chip background is only 3.08:1 — passes the 3:1 floor
+   for graphical objects but reads faint at this icon's stroke weight/size. A lighter
+   shade (already used as the badge gradient's light end, so still on-brand) gets a
+   real 4.26:1 without needing a darker/duller chip fill. */
+.wap2-tile-icon-purple { background: rgba(109,74,255,0.14); color: var(--w2-purple-icon); }
+.wap2-tile .wap2-card-title { font-size: 15px; font-weight: 650; margin: 0 0 3px; color: var(--w2-tx-dark); }
+.wap2-tile p { font-size: 13px; line-height: 1.42; margin: 0; color: var(--w2-tm-dark); }
+
+/* Matches .wap2-tiles on the dark side: a bordered card per item instead of rows
+   split by hairline dividers — same "minimal card" language on both panels. */
+.wap2-trust { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; }
+.wap2-trust-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #fff;
+  border: 1px solid rgba(17,19,24,0.08);
+  border-radius: 14px;
+  padding: 16px;
+}
+.wap2-trust-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--w2-green-soft); color: var(--w2-green-icon); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.wap2-trust-item .wap2-card-title { font-size: 15px; font-weight: 650; margin: 0 0 3px; color: var(--w2-tx-light); }
+.wap2-trust-item p { font-size: 13px; line-height: 1.42; margin: 0; color: var(--w2-tm-light); }
+
+/* Center badge — straddles the seam, absolutely positioned over both panels. Sits below
+   both panel headings (which live in the top ~40% of the split) so it never overlaps text —
+   only the top edge of the first tile/trust row, matching the reference's slight overlap. */
+/* Pushed down from the seam midpoint (was top:52%, which put it squarely over the
+   first trust-item row once that column gained a subhead + a 3-line first item — the
+   badge, opaque and z-index:5, visibly covered that text). 66% clears the taller
+   content on both panels with margin to spare. */
+.wap2-badge {
+  position: absolute;
+  left: 48%; top: 66%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center;
+  z-index: 5;
+  pointer-events: none;
+}
+.wap2-badge-outer {
+  position: relative; z-index: 1;
+  width: 112px; height: 112px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #26262E, #101014 75%);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  animation: wap2-badge-pulse 2.6s ease-in-out infinite;
+}
+/* A slow breathing glow, not a size pulse — scaling the disc itself would also scale
+   its box-shadow/children oddly and read as jumpy at this small size; animating the
+   glow's spread stays calm and draws the eye without motion-sickness risk. */
+@keyframes wap2-badge-pulse {
+  0%, 100% { box-shadow: 0 24px 48px rgba(0,0,0,0.55), 0 0 0 0 rgba(139,107,255,0.35); }
+  50% { box-shadow: 0 24px 48px rgba(0,0,0,0.55), 0 0 0 14px rgba(139,107,255,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wap2-badge-outer { animation: none; }
+}
+.wap2-badge-grip {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 7px;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1.4px);
+  background-size: 5px 4px;
+}
+.wap2-badge-inner {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(160deg, #8B6BFF, #5B3DF5);
+  box-shadow: 0 8px 28px rgba(109,74,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+/* Privacy bar — floats over the bottom of both cards, per the reference */
+.wap2-privacy {
+  position: absolute;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex; align-items: center; gap: 16px;
+  width: max-content;
+  max-width: calc(100% - 48px);
+  background: #141419;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px 24px 10px 10px;
+  flex-wrap: wrap;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+.wap2-privacy-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(34,197,94,0.15); color: var(--w2-green);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.wap2-privacy-text { font-size: 15px; font-weight: 600; color: var(--w2-tx-dark); }
+.wap2-privacy-text-muted { font-weight: 400; color: #A5A8B2; }
+.wap2-privacy-hl { color: var(--w2-green); }
+.wap2-privacy-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.18); }
+
+@media (max-width: 1200px) {
+  .wap2-tiles { grid-template-columns: repeat(2, minmax(0, 200px)); }
+}
+@media (max-width: 1080px) {
+  .wap2-dark { padding-bottom: 56px; border-radius: 28px 28px 0 0; }
+  .wap2-light-wrap { position: static; width: auto; filter: none; }
+  .wap2-light { clip-path: none; height: auto; padding: 56px 6vw 120px; border-top: 1px solid rgba(0,0,0,0.06); }
+  .wap2-badge { position: static; transform: none; margin: -32px auto 32px; }
+  .wap2-tiles { grid-template-columns: 1fr; max-width: 420px; }
+  .wap2-trust { grid-template-columns: 1fr; max-width: 420px; }
+}
+@media (max-width: 640px) {
+  .wap2-inner { padding: 0 24px; }
+  .wap2-head-row { gap: 20px; }
+  .wap2-head-divider { display: none; }
+  .wap2-dark { padding: 40px 28px 56px; }
+  .wap2-light { padding: 40px 28px 130px; }
+  .wap2-privacy { flex-direction: column; align-items: flex-start; width: calc(100% - 48px); }
+  .wap2-privacy-divider { display: none; }
+}
+
+/* Install & Customize (docs/install_quickstart-new.png) — centered header + a
+   single two-column configurator card. The form controls reuse generic classes
+   (.builder-group, .swatch, .seg-btn, .icon-btn, .check-chip, .toggle-track,
+   .token-table, ...) driven by createBuilder() in main.ts — only the section
+   chrome below (.qc-*) is bespoke CSS. */
+.qc { position: relative; padding: 88px 0 96px; background: var(--band-a); border-top: 1px solid var(--bd); }
+.qc-inner { max-width: 1280px; margin: 0 auto; padding: 0 56px; }
+
+.qc-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+.qc-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
+  margin-bottom: 22px;
+}
+.qc-headline { font-size: clamp(30px, 4.2vw, 44px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 14px; color: var(--tx); }
+.qc-headline-hl {
+  background: linear-gradient(90deg, var(--brand) 20%, #8A6DF5 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.qc-sub { font-size: 18px; line-height: 1.55; color: var(--tm); margin: 0 0 28px; }
+
+.qc-tabswitch {
+  display: inline-flex; gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  box-shadow: var(--sh-sm);
+}
+.qc-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 22px;
+  border: none; border-radius: 11px;
+  background: none;
+  font-family: inherit; font-size: 14.5px; font-weight: 600;
+  color: var(--tm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.qc-tab:hover { color: var(--tx); }
+.qc-tab.is-active { background: var(--brand); color: #fff; }
+
+.qc-card {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: var(--r-xl);
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  box-shadow: var(--sh-md);
+}
+.qc-panel { display: none; }
+.qc-panel.is-active { display: block; }
+
+.qc-card .builder { margin: 0; max-width: none; gap: 40px; }
+.qc-card .builder-controls { background: none; border: none; border-radius: 0; box-shadow: none; padding: 0 32px 0 0; border-right: 1px solid var(--bd); }
+.qc-card .builder-output { padding-left: 0; }
+.qc-card .token-details { display: none; } /* superseded by .qc-tokens banner below */
+
+/* Each settings group is a distinct .qc-section instead of a flat run of fields
+   separated by hairline dividers — a hairline top border + generous top/bottom
+   padding gives the same separation with clearer visual grouping. First/last
+   sections don't get the extra edge padding since .builder-controls itself has
+   its own outer padding. */
+.qc-section { display: flex; flex-direction: column; gap: 16px; padding: 22px 0; }
+.qc-section:first-child { padding-top: 0; }
+.qc-section:last-child { padding-bottom: 0; }
+.qc-section:not(:first-child) { border-top: 1px solid var(--bd); }
+.qc-section-title { margin: 0; font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; color: var(--tx); }
+
+.qc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.qc-row-2 .builder-field,
+.qc-row-2 .builder-group { display: flex; flex-direction: column; }
+.qc-field-hint { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--mu); }
+.qc-toggle-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+
+.qc-action-rows { display: flex; flex-direction: column; gap: 8px; }
+.qc-action-row { display: flex; align-items: center; gap: 8px; }
+.qc-action-row .qc-action-label-input { flex: 1; min-width: 0; }
+.qc-action-remove-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; flex-shrink: 0;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tm);
+  font-size: 16px; line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.qc-action-remove-btn:hover { border-color: var(--brand-border); color: var(--tx); }
+.qc-add-action-btn {
+  align-self: flex-start;
+  font-family: inherit;
+  font-size: 12.5px; font-weight: 700;
+  padding: 7px 12px;
+  margin-top: 8px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.qc-add-action-btn:hover { border-color: var(--brand-border); color: var(--tx); }
+
+/* Live preview — browser-chrome window. This mockup stands in for the host page, so
+   it never darkens for data-theme="dark" — that toggle is the widget drawer's own
+   theme, not something AccessPath imposes on the host page. */
+.qc-preview-window {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+  transition: background 0.2s, max-width 0.2s;
+  /* The real drawer/backdrop/trigger (mounted here by createPanel()/createTriggerButton()
+     in main.ts) use inline position:fixed, which normally resolves against the viewport.
+     A transform on this ancestor makes it the containing block for fixed descendants
+     instead, so the real widget renders clipped inside this mockup window rather than
+     covering the whole page — translateZ(0) is a no-op transform used purely for that. */
+  transform: translateZ(0);
+}
+/* Dark theme (data-theme="dark") controls the widget drawer's own chrome, not the
+   host page — this mockup stands in for the host page, so it deliberately doesn't
+   darken when that toggle is on (previously it did, which read as AccessPath forcing
+   a dark host page, which it never does). */
+.qc-preview-chrome {
+  display: flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 14px;
+  background: var(--sf2);
+  border-bottom: 1px solid var(--bd);
+}
+.qc-preview-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bd-strong); }
+.qc-preview-body {
+  position: relative;
+  padding: 26px;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.qc-preview-heading { font-size: 22px; font-weight: 700; color: var(--tx); margin: 0; }
+.qc-preview-content { display: flex; align-items: flex-start; gap: 20px; }
+.qc-preview-content-reverse { flex-direction: row-reverse; }
+.qc-preview-bars { flex: 1 1 auto; display: flex; flex-direction: column; gap: 11px; padding-top: 6px; }
+.qc-preview-bar { display: block; height: 10px; border-radius: 999px; background: var(--sf3); }
+.qc-preview-image {
+  flex: 0 0 38%;
+  display: flex; align-items: center; justify-content: center;
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+  background: var(--sf3);
+  color: var(--bd-strong);
+}
+
+
+.qc-platform-tab {
+  padding: 10px 18px;
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  color: var(--tm);
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.qc-platform-tab:hover { color: var(--tx); }
+.qc-platform-tab.is-active { color: var(--brand); border-bottom-color: var(--brand); }
+.qc-platform-panel { display: none; }
+.qc-platform-panel.is-active { display: block; }
+
+/* Footer banner ("All CSS theming tokens") — a details/summary row instead of the
+   original inline collapsible, matching the mockup's icon + text + CTA layout. */
+.qc-tokens {
+  max-width: 1180px;
+  margin: 24px auto 0;
+  border-radius: var(--r-lg);
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  box-shadow: var(--sh-sm);
+  padding: 0 24px;
+}
+.qc-tokens summary {
+  display: flex; align-items: center; gap: 16px;
+  min-height: 88px; padding: 16px 0;
+  cursor: pointer; list-style: none;
+}
+.qc-tokens summary::-webkit-details-marker { display: none; }
+.qc-tokens-icon {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--brand); color: #fff;
+}
+.qc-tokens-text { display: flex; flex-direction: column; gap: 3px; }
+.qc-tokens-text strong { font-size: 15.5px; font-weight: 700; color: var(--tx); }
+.qc-tokens-text span { font-size: 13.5px; color: var(--mu); }
+.qc-tokens-cta {
+  display: flex; align-items: center; gap: 8px;
+  margin-left: auto;
+  padding: 11px 18px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--brand-border);
+  color: var(--brand);
+  font-size: 14px; font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.qc-tokens summary:hover .qc-tokens-cta { background: var(--brand-soft); }
+.qc-tokens[open] .token-table { margin: 0 0 20px; }
+
+@media (max-width: 860px) {
+  .qc-card .builder { grid-template-columns: 1fr; }
+  .qc-card .builder-controls { border-right: none; border-bottom: 1px solid var(--bd); padding: 0 0 24px; margin-bottom: 24px; }
+}
+@media (max-width: 640px) {
+  .qc-inner { padding: 0 24px; }
+  .qc-row-2 { grid-template-columns: 1fr; }
+  .qc-card { padding: 20px; }
+  .qc-preview-content { flex-direction: column; }
+  .qc-preview-image { width: 100%; flex: none; }
+}
+
+/* Profiles + Tools — one combined section (docs/profile_tools.md / profile_tools.png):
+   editorial copy + 3x2 profile card grid on top, a divider-with-badge, then two
+   centered rows of tool chips underneath. Each card carries its own --pt-accent /
+   --pt-tint pair as local custom properties (style="--pt-accent:...;--pt-tint:...")
+   instead of global tokens, since the six profile colors here are per-card, not
+   reused elsewhere. */
+.pt-tools-head { text-align: center; margin-bottom: 40px; }
+.pt-tools-head h3 { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; color: var(--tx); margin: 0 0 12px; }
+.pt-tools-head p { font-size: 17px; color: var(--tm); margin: 0; }
+
+.pt-chips { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pt-chip-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+  max-width: 1320px;
+}
+.pt-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  height: 44px; padding: 0 16px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  font-size: 14px; font-weight: 600;
+  color: var(--tx);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s var(--ease);
+}
+.pt-chip:hover { border-color: var(--bd-strong); box-shadow: var(--sh-md); transform: translateY(-2px); }
+.pt-chip svg { flex-shrink: 0; color: var(--chip-accent, var(--tx)); }
+.pt-chip-glyph {
+  flex-shrink: 0;
+  font-size: 12px; font-weight: 700;
+  width: 18px; text-align: center;
+  color: var(--chip-accent, var(--tx));
+}
+@media (prefers-reduced-motion: reduce) { .pt-chip:hover { transform: none; } }
+@media (max-width: 640px) {
+  .pt-chip { height: 40px; padding: 0 14px; font-size: 13.5px; }
+}
+
+/* Quick start platform tab bar + code blocks — shared underline-tab styling. */
+.tabs {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--bd);
+  margin-bottom: 24px;
+}
+.tab-note { font-size: 13.5px; color: var(--tm); margin: 0 0 12px; }
+.tab-note-muted { font-size: 13px; color: var(--mu); }
+
+/* Code blocks — the one deliberately dark surface on the page, built as a windowed
+   panel (label + copy button in their own header bar) rather than a flat block of
+   same-color text with a button floating on top of it. Syntax colors (tok-* spans,
+   injected by main.ts's highlightCode()) follow a standard dark-editor palette
+   (pink keywords, cyan tags/attrs, yellow-green strings) instead of one muted hue. */
+.code-panel {
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  margin: 0 0 14px;
+  max-width: 100%;
+  box-shadow: var(--sh-md);
+}
+.code-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 10px 9px 16px;
+  background: #161b26;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.code-panel-lang {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #7c86ac;
+}
+
+/* Generated-code panel's platform switcher — lives in the header bar itself instead
+   of a separate control row above it, so picking HTML/React/Angular reads directly
+   as "this is what changes the code below" rather than an unlabeled third group. */
+.code-panel-tabs { display: flex; align-items: center; gap: 2px; }
+.code-panel-tab {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: inherit;
+  background: none; border: none;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #7c86ac;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.code-panel-tab-icon { flex-shrink: 0; opacity: 0.8; }
+.code-panel-tab.is-active .code-panel-tab-icon { opacity: 1; }
+.code-panel-tab:hover { color: #c7cbe0; }
+.code-panel-tab.is-active { background: rgba(255,255,255,0.1); color: #e7e8f5; }
+.code-panel-tab:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 1px; }
+.code-block {
+  background: transparent;
+  color: #e7e8f5;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+.code-block code { white-space: pre; }
+.tok-comment { color: #6b7394; font-style: italic; }
+.tok-string { color: #d4e88a; }
+.tok-tag { color: #ff9ecb; }
+.tok-attr { color: #7ec8e3; }
+.tok-keyword { color: #d199f0; }
+
+.code-copy-btn {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: #aab0cc;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.code-copy-btn:hover { background: rgba(255,255,255,0.16); color: #e7e8f5; }
+.code-copy-btn.is-copied { background: var(--acc-teal); color: var(--brand-2); }
+
+/* Customize builder — an interactive config replaces a wall of six separate code
+   blocks: pick options on the left, get a live preview + generated code on the right.
+   One thing to copy instead of six things to read. */
+.builder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  max-width: 980px;
+  margin: 0 auto 24px;
+  align-items: start;
+}
+@media (max-width: 860px) { .builder { grid-template-columns: 1fr; } }
+
+.builder-controls {
+  display: flex; flex-direction: column;
+  /* No gap here — each .qc-section owns its own top/bottom padding so the
+     hairline border between sections sits at a consistent, predictable offset
+     regardless of how much content a given section holds. */
+  min-width: 0; /* grid items default to min-width:auto, so long generated-code
+    lines in the sibling .builder-output column (e.g. React/Angular platform
+    output) would otherwise force this 1fr track wider by their min-content and
+    visibly squeeze this column instead of just scrolling inside <pre>. */
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  box-shadow: var(--sh-sm);
+}
+.builder-label {
+  display: block;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--mu);
+  margin-bottom: 8px;
+}
+.swatch-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--sw);
+  border: 2px solid var(--sf);
+  box-shadow: 0 0 0 1.5px var(--bd);
+  cursor: pointer;
+  padding: 0;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.swatch:hover { transform: translateY(-1px); }
+.swatch.is-active { box-shadow: 0 0 0 2px var(--sf), 0 0 0 4px var(--brand); }
+.swatch-custom {
+  position: relative;
+  overflow: hidden;
+  background: conic-gradient(from 0deg, #f43f5e, #f59e0b, #22c55e, #3b82f6, #a855f7, #f43f5e);
+}
+.swatch-custom input[type="color"] {
+  position: absolute; inset: -4px;
+  width: 36px; height: 36px;
+  border: none; padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.seg-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg-btn {
+  font-family: inherit;
+  font-size: 12.5px; font-weight: 700;
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.seg-btn:hover { border-color: var(--brand-border); }
+.seg-btn.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+.icon-btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tx);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s var(--ease);
+}
+.icon-btn:hover { border-color: var(--brand-border); transform: translateY(-1px); }
+.icon-btn:active { transform: translateY(0) scale(0.94); }
+.icon-btn.is-active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+/* The logo option is a raster <img>, not an inline SVG using currentColor like the
+   other three — it can't inherit .icon-btn's color, so without this it would sit at
+   its own fixed brand violet at all times, looking selected even when it isn't.
+   Desaturate + darken to approximate the same "ink" tone the other icons default to,
+   then drop the filter entirely on .is-active so it shows its true color exactly
+   like the others turn violet when selected. */
+.icon-btn img { filter: grayscale(1) brightness(0.4) contrast(1.3); transition: filter 0.15s; }
+.icon-btn.is-active img { filter: none; }
+
+.builder-row-split { display: flex; flex-direction: column; gap: 14px; }
+.builder-field input[type="text"],
+.builder-field select,
+.qc-action-label-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tx);
+}
+.builder-field input[type="text"]:focus,
+.builder-field select:focus,
+.qc-action-label-input:focus { outline: 2px solid var(--brand-border); outline-offset: 1px; }
+
+.builder-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.builder-toggle .builder-label { margin-bottom: 0; text-transform: none; font-size: 13.5px; font-weight: 600; letter-spacing: normal; color: var(--tx); }
+.builder-toggle input[type="checkbox"] { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.toggle-track {
+  position: relative;
+  width: 38px; height: 22px;
+  border-radius: 999px;
+  background: var(--sf3);
+  border: 1px solid var(--bd);
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+.builder-toggle:hover .toggle-track { border-color: var(--brand-border); }
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--sh-sm);
+  transition: transform 0.15s var(--ease);
+}
+.builder-toggle input:checked + .toggle-track { background: var(--brand); border-color: var(--brand); }
+.builder-toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+.builder-toggle input:focus-visible + .toggle-track { outline: 2px solid var(--brand-border); outline-offset: 2px; }
+
+.check-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.check-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--tm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s var(--ease);
+}
+.check-chip:hover { transform: translateY(-1px); }
+.check-chip:active { transform: translateY(0) scale(0.96); }
+.check-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check-chip-icon { flex-shrink: 0; }
+.check-chip-df {
+  flex-shrink: 0;
+  font-family: 'OpenDyslexic', sans-serif;
+  font-size: 11px; font-weight: 700;
+  line-height: 1;
+}
+/* Each profile keeps its own accent (matching the .pt-card accents used for the same
+   six profiles earlier on the page) instead of one uniform violet — set as custom
+   properties here, read by the checked-state rule below. */
+.check-chip:has(input[value="low-vision"]) { --chip-ink: #6B55F2; --chip-tint: #F0EDFF; }
+.check-chip:has(input[value="dyslexia"]) { --chip-ink: #2F6FED; --chip-tint: #EAF1FE; }
+.check-chip:has(input[value="seizure"]) { --chip-ink: #E63D6F; --chip-tint: #FDEAF0; }
+.check-chip:has(input[value="motor"]) { --chip-ink: #F2A63C; --chip-tint: #FDF3E3; }
+.check-chip:has(input[value="colorblind"]) { --chip-ink: #22A06B; --chip-tint: #E7F7EF; }
+.check-chip:has(input[value="adhd"]) { --chip-ink: #5B4FE0; --chip-tint: #EEECFC; }
+.check-chip:has(input:checked) { background: var(--chip-tint, var(--brand-soft)); border-color: var(--chip-ink, var(--brand-border)); color: var(--chip-ink, var(--brand)); }
+.check-chip:has(input:focus-visible) { outline: 2px solid var(--brand-border); outline-offset: 1px; }
+
+/* Live preview — a skeleton page wireframe (nav + hero + text lines) with the real
+   floating trigger overlaid at the selected corner, glowing. */
+.builder-output { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.builder-preview-head { display: flex; align-items: center; justify-content: space-between; }
+.builder-preview-head .builder-label { margin: 0; }
+
+.live-demo { display: flex; justify-content: center; }
+.live-demo-frame {
+  position: relative;
+  width: 100%;
+  min-height: 250px;
+  padding: 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  overflow: hidden;
+  transition: background 0.2s, max-width 0.2s;
+}
+/* Dark theme (data-theme="dark") controls the widget drawer's own chrome, not the
+   host page — this mockup stands in for the host page, so it deliberately doesn't
+   darken when that toggle is on. */
+.live-demo-frame.is-tablet { max-width: 420px; }
+.live-demo-frame.is-mobile { max-width: 240px; }
+
+.live-demo-skel-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+.live-demo-skel { display: inline-block; background: var(--sf3); border-radius: 5px; }
+.live-demo-skel-logo { width: 34px; height: 11px; }
+.live-demo-skel-navitem { width: 30px; height: 8px; }
+.live-demo-skel-navitem:first-of-type { margin-left: auto; }
+.live-demo-skel-byline { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.live-demo-skel-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; }
+.live-demo-skel-title { flex: 1 1 auto; max-width: 55%; height: 10px; }
+.live-demo-skel-hero {
+  display: flex; align-items: center; justify-content: flex-end;
+  width: 100%; height: 110px;
+  border-radius: 10px;
+  background: var(--sf3);
+  color: var(--bd-strong);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.live-demo-skel-line { height: 8px; margin-bottom: 8px; }
+.live-demo-skel-line:last-child { margin-bottom: 0; }
+
+
+/* Generated code — same windowed .code-panel/.code-panel-head design as the static
+   Quick start snippets elsewhere on the page (lang label + icon copy button on a
+   dark surface), not a bespoke style. Only the scroll cap below is specific to the
+   builder's output, since a generated snippet can grow taller than a static one. */
+#qc-builder-code {
+  min-height: 250px;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+#qc-builder-code::-webkit-scrollbar { width: 8px; height: 8px; }
+#qc-builder-code::-webkit-scrollbar-track { background: transparent; }
+#qc-builder-code::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
+#qc-builder-code::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+
+.token-details {
+  max-width: 980px;
+  margin: 0 auto;
+  border: 1px solid var(--bd);
+  border-radius: var(--r-md);
+  background: var(--sf);
+  padding: 4px 18px;
+}
+.token-details summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 0;
+  font-size: 13.5px; font-weight: 700;
+  color: var(--tm);
+}
+.token-details summary::-webkit-details-marker { display: none; }
+.token-details[open] summary { color: var(--tx); }
+.token-details .token-table { margin: 0 0 16px; }
+
+.token-table { border: 1px solid var(--bd); border-radius: var(--r-md); overflow: hidden; background: var(--sf); }
+.token-row { display: grid; grid-template-columns: 200px 1fr; gap: 12px; padding: 10px 16px; font-size: 13.5px; }
+.token-row:not(:last-child) { border-bottom: 1px solid var(--bd); }
+.token-row-head { background: var(--sf2); font-weight: 700; color: var(--mu); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+.token-row code { background: none; padding: 0; }
+
+@media (max-width: 560px) {
+  .nav-star-btn, .nav-npm-btn { display: none; }
+}
+@media (max-width: 700px) {
+  .nav-toggle { display: flex; }
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    margin-left: 0;
+    padding: 10px 24px 18px;
+    background: #fff;
+    border-bottom: 1px solid var(--bd);
+    box-shadow: var(--sh-md);
+  }
+  .nav-links:not(.is-open) { display: none; }
+  .nav-links a, .nav-link-disabled { padding: 12px 4px; font-size: 16px; }
+  .token-row { grid-template-columns: 1fr; }
+}
+
+/* Scroll-in reveal system — hidden state only applies once JS confirms it can also
+   reveal the content (html.has-js), so a JS failure never leaves anything stuck
+   invisible. Respects prefers-reduced-motion by skipping the animated state entirely. */
+.reveal, .reveal-left, .reveal-right {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+html.has-js .reveal { opacity: 0; transform: translateY(28px); }
+html.has-js .reveal-left { opacity: 0; transform: translateX(-32px); }
+html.has-js .reveal-right { opacity: 0; transform: translateX(32px); }
+html.has-js .reveal.is-visible,
+html.has-js .reveal-left.is-visible,
+html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.has-js .reveal, html.has-js .reveal-left, html.has-js .reveal-right {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  .demo-pane .demo-pane-title, .demo-pane p, .control-btn, .stack-logo, .btn-primary svg,
+  .faq-item, .faq-item-icon, .faq-icon-vert, .faq-item-chevron, .faq-item-answer,
+  .check-chip, .icon-btn, .swatch, .toggle-track {
+    transition: none !important;
+  }
+  .status-dot { animation: none !important; }
+  .hero-content > *, .hero-demo { animation: none !important; }
+  .stack-logo, .principles-card, .principle-item { animation: none !important; }
+}
+
+/* Stagger — wrap a grid/list with .stagger so its immediate .reveal children fan in
+   one after another instead of all at once. */
+.stagger > *:nth-child(1) { transition-delay: 0.02s; }
+.stagger > *:nth-child(2) { transition-delay: 0.08s; }
+.stagger > *:nth-child(3) { transition-delay: 0.14s; }
+.stagger > *:nth-child(4) { transition-delay: 0.2s; }
+.stagger > *:nth-child(5) { transition-delay: 0.26s; }
+.stagger > *:nth-child(6) { transition-delay: 0.32s; }
+.stagger > *:nth-child(7) { transition-delay: 0.38s; }
+.stagger > *:nth-child(8) { transition-delay: 0.44s; }
+.stagger > *:nth-child(9) { transition-delay: 0.5s; }
+.stagger > *:nth-child(10) { transition-delay: 0.56s; }
+
+.section-head { margin: 0; }
+
+/* Floating decorative icons — purely ambient, aria-hidden, drift + rotate slowly.
+   Colored with the same pastel accents used everywhere else, never full opacity. */
+.float-icon {
+  position: absolute;
+  color: var(--brand);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: float-drift 7s ease-in-out infinite;
+  z-index: 0;
+}
+.float-icon.fi-teal { color: var(--acc-teal-ink); }
+.float-icon.fi-cerulean { color: var(--acc-cerulean-ink); }
+.float-icon.fi-pink { color: var(--acc-pink-ink); }
+.float-icon.fi-yellow-dk { color: #c9a92a; }
+@keyframes float-drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(8deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-icon { animation: none; }
+}
+@media (max-width: 760px) {
+  .float-icon { display: none; }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- FAQ --------------------------------------------------------------------------- */
+.faq { padding: 72px 0 56px; background: var(--band-b); border-top: 1px solid var(--bd); }
+.faq-grid { display: grid; grid-template-columns: 400px 1fr; gap: 70px; align-items: start; }
+.faq-intro { max-width: 340px; }
+.faq-headline { font-size: clamp(30px, 4.2vw, 44px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 22px; color: var(--tx); }
+.faq-headline-hl { color: var(--brand); }
+.faq-sub { font-size: 17px; line-height: 1.55; color: var(--tm); margin: 0 0 32px; max-width: 260px; }
+.faq-illustration {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 300px;
+}
+.faq-illustration img { display: block; width: 100%; height: auto; }
+
+.faq-list { display: flex; flex-direction: column; gap: 14px; }
+.faq-item {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.faq-item.is-open { background: var(--brand-soft); border-color: var(--brand-border); box-shadow: var(--sh-sm); }
+.faq-item:not(.is-open):hover { border-color: var(--brand-border); box-shadow: var(--sh-sm); }
+.faq-item-head {
+  width: 100%;
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 22px;
+  background: none; border: none;
+  font: inherit; text-align: left;
+  cursor: pointer;
+  color: var(--tx);
+  transition: background-color 0.2s var(--ease);
+}
+/* Deliberately lighter than .is-open's --brand-soft fill, so a hovered-but-closed
+   item still reads as different from the actually-open one. */
+.faq-item:not(.is-open) .faq-item-head:hover { background: color-mix(in srgb, var(--brand) 5%, transparent); }
+.faq-item-icon {
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brand-soft);
+  color: var(--brand);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.faq-item:not(.is-open) .faq-item-head:hover .faq-item-icon { transform: scale(1.08); }
+.faq-item.is-open .faq-item-icon { background: var(--brand); color: #fff; }
+.faq-icon-vert { transition: transform 0.2s var(--ease); transform-origin: center; }
+.faq-item.is-open .faq-icon-vert { transform: rotate(90deg); opacity: 0; }
+.faq-item-q { flex: 1 1 auto; font-size: 16px; font-weight: 700; }
+.faq-item-chevron {
+  flex-shrink: 0; color: var(--brand); opacity: 0.55;
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.faq-item:not(.is-open) .faq-item-head:hover .faq-item-chevron { opacity: 1; transform: translateX(3px); }
+.faq-item.is-open .faq-item-chevron { opacity: 0; transform: translateX(4px); pointer-events: none; }
+/* Max-height expand, animated to a JS-measured exact pixel value (--faq-answer-h,
+   set from scrollHeight in main.ts) rather than the grid-template-rows: 0fr -> 1fr
+   trick this used to be. grid-template-rows forces the browser to re-derive the
+   row's intrinsic content size every animation frame (worse with wrapping text +
+   padding), which visibly hitches in some browsers; a plain pixel-to-pixel
+   max-height transition doesn't have that per-frame recomputation and animates
+   smoothly. `hidden` is still applied by main.ts once the closing transition
+   ends, so collapsed answers stay out of the tab order and the accessibility
+   tree — see setFaqItemOpen. */
+.faq-item-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s var(--ease);
+  padding: 0 22px 0 66px;
+}
+.faq-item.is-open .faq-item-answer { max-height: var(--faq-answer-h, 320px); }
+.faq-item-answer p {
+  overflow: hidden; min-height: 0;
+  margin: 0; padding-bottom: 20px;
+  font-size: 15.5px; line-height: 1.6; color: var(--tm); max-width: 720px; position: relative;
+}
+.faq-item-answer p::before {
+  content: '';
+  position: absolute; left: -30px; top: 3px;
+  width: 3px; height: 100%; max-height: 44px;
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+.faq-more {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 30px 0 0;
+  font-size: 16px; font-weight: 500;
+  color: var(--tx);
+}
+.faq-more svg { color: var(--brand); flex-shrink: 0; }
+.faq-more-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--brand); font-weight: 600;
+  text-decoration: none;
+  background: none; border: none; padding: 0;
+  font-family: inherit; font-size: inherit;
+  cursor: pointer;
+}
+.faq-more-link:hover { text-decoration: underline; }
+.faq-more-link:disabled { opacity: 0.55; cursor: not-allowed; }
+.faq-more-link:disabled:hover { text-decoration: none; }
+
+@media (max-width: 960px) {
+  .faq-grid { grid-template-columns: 1fr; gap: 32px; }
+  .faq-intro { max-width: none; text-align: center; align-items: center; display: flex; flex-direction: column; }
+  .faq-illustration { display: none; }
+}
+@media (max-width: 560px) {
+  .faq { padding: 56px 0 40px; }
+  .faq-item-answer { padding-left: 22px; }
+  .faq-item-answer p::before { display: none; }
+}
+
+/* --- CTA band ------------------------------------------------------------------------ */
+.cta-band { padding: 40px 0 20px; background: var(--band-a); }
+.cta-band-inner { max-width: 1360px; }
+.cta-panel {
+  position: relative;
+  background:
+    radial-gradient(900px 500px at 74% 45%, #13143a 0%, #0a0c22 60%);
+  border-radius: 24px;
+  padding: 24px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  overflow: hidden;
+}
+
+/* Left: badge + two-line headline + subhead. The two action buttons are a
+   separate sibling column (.cta-actions below), sitting beside this text
+   block rather than stacked underneath it. */
+.cta-left { flex: 1 1 auto; min-width: 0; max-width: 300px; }
+.cta-headline { font-size: clamp(26px, 2.6vw, 34px); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 14px; color: #fff; }
+.cta-headline-hl { color: #8c6afa; }
+.cta-sub { font-size: 15.5px; line-height: 1.5; color: #c9c9d6; margin: 0; }
+
+.cta-actions { flex: 0 0 auto; display: flex; align-items: flex-start; gap: 20px; }
+.cta-action { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.cta-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-width: 188px; height: 58px;
+  padding: 0 20px;
+  border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cta-btn-primary {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 30px rgba(91, 62, 240, 0.45);
+}
+.cta-btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: border-color 0.15s, background 0.15s;
+}
+.cta-btn-secondary:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.06); }
+.cta-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.cta-btn-secondary:disabled:hover { border-color: rgba(255,255,255,0.35); background: transparent; }
+.cta-caption { font-size: 14px; color: #b9b9c8; }
+
+.cta-divider { width: 1px; align-self: stretch; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+
+/* Right: a fixed-size stage sized to match the left column's height — deliberately
+   NOT sized to fit the cup. Note, cup, and button are all position: absolute, pinned
+   to exact spots inside this box, so none of them contribute to its size; the box's
+   own height (which drives the panel's height) stays fixed regardless of how big the
+   cup graphic is. The cup is a background-image (not an <img>) precisely so it can
+   be sized bigger than its box and bleed past the box's own top edge — clipped by
+   the panel's overflow: hidden — without the panel growing to fit it.
+   Note + button sit in a column pinned to the left edge of this box; the cup sits
+   pinned to the right edge and bottom-anchored, so its bottom (the coaster) stays in
+   place and only the top bleeds/clips as the cup graphic gets taller. */
+.cta-right {
+  position: relative;
+  flex: 0 0 auto;
+  width: 340px;
+  height: 260px;
+}
+.cta-coffee-note {
+  position: absolute;
+  top: 4px; left: 0;
+  display: flex; flex-direction: column; align-items: flex-start;
+  color: #fff;
+}
+.cta-coffee-script { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 600; line-height: 1.15; }
+.cta-coffee-arrow { color: #fff; opacity: 0.9; margin-left: 10px; margin-top: 2px; transform: rotate(30deg); }
+.cta-coffee-cup {
+  position: absolute;
+  right: 0; bottom: -48px;
+  width: 257px;
+  height: 420px;
+  background-image: url('/images/teacup-cta.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.cta-coffee-btn {
+  position: absolute;
+  left: 0; bottom: 24px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  background: #ffdd7f;
+  color: #16161d;
+  font-size: 16px; font-weight: 700;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  white-space: nowrap;
+}
+.cta-coffee-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+@media (max-width: 1100px) {
+  .cta-panel { flex-wrap: wrap; justify-content: center; padding: 32px; text-align: center; }
+  .cta-left { flex-basis: 100%; max-width: none; }
+  .cta-sub { margin-left: auto; margin-right: auto; }
+  .cta-actions { justify-content: center; }
+  .cta-divider { display: none; }
+  .cta-right { width: 380px; height: 260px; margin: 16px auto 0; }
+  .cta-coffee-cup { width: 240px; height: 300px; }
+  .cta-coffee-btn { bottom: 8px; }
+}
+@media (max-width: 640px) {
+  .cta-actions { flex-direction: column; width: 100%; align-items: stretch; }
+  .cta-action { align-items: center; }
+  .cta-btn { width: 100%; }
+
+  /* Below 640px there's no room for the side-by-side note/cup arrangement — fall
+     back to a simple centered stack: note, then cup, then button. */
+  .cta-right { width: 220px; height: 260px; }
+  .cta-coffee-note { left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
+  .cta-coffee-cup { left: 50%; right: auto; transform: translateX(-50%); width: 190px; height: 250px; }
+  .cta-coffee-btn { left: 50%; transform: translateX(-50%); }
+}
+
+/* --- Footer ---------------------------------------------------------------------------- */
+/* Same background as .cta-band (var(--band-a)) and no border-top — the two are meant to
+   read as one continuous surface, not two sections with a visible seam and a dead gap
+   of empty white space between them. */
+.site-footer { padding: 16px 0 18px; background: var(--band-a); }
+.footer-main {
+  display: grid;
+  grid-template-columns: 320px repeat(3, 1fr);
+  gap: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--bd);
+}
+.footer-brand { max-width: 300px; }
+.footer-logo { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 700; color: var(--tx); margin-bottom: 14px; }
+.footer-logo-mark { display: flex; color: var(--brand); }
+.footer-tagline { font-size: 15px; line-height: 1.55; color: var(--tm); margin: 0 0 16px; max-width: 260px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social-btn {
+  width: 38px; height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  color: var(--tx);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.footer-social-btn:hover { border-color: var(--brand); color: var(--brand); }
+.footer-social-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.footer-social-btn:disabled:hover { border-color: var(--bd); color: var(--tx); }
+
+.footer-col { display: flex; flex-direction: column; gap: 12px; }
+.footer-col h3 { font-size: 16px; font-weight: 700; color: var(--tx); margin: 0 0 4px; }
+.footer-col a, .footer-col button {
+  display: block;
+  font-size: 15px; color: var(--tm); text-decoration: none;
+  background: none; border: none; padding: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.footer-col a:hover { color: var(--brand); }
+.footer-col button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+
+.footer-legal {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 18px;
+  font-size: 14px;
+  color: var(--tm);
+}
+.footer-legal span { display: inline-flex; align-items: center; gap: 6px; }
+.footer-legal svg { color: var(--brand); }
+
+@media (max-width: 1100px) {
+  .footer-main { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; max-width: none; }
+}
+/* Alt profiles/tools showcase (docs/profile_tools-new.md) — a second, centered-hero take
+   on the same profiles+tools content, kept as its own section rather than replacing
+   .pt-* above (see index.html: it sits directly after #profiles). */
+.pt2-inner { max-width: 1360px; text-align: center; }
+/* .pt2-top, .pt2-divider and .pt2 .pt-tools share one flat background so the whole
+   profiles->tools block reads as a single continuous surface instead of two visibly
+   different grey bands with a hard seam at the divider. */
+.pt2-top { background: #F7F7FB; padding: 72px 0 24px; border-top: 1px solid var(--bd); }
+.pt2-badge {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 9999px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  box-shadow: var(--sh-sm);
+  font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--brand);
+}
+.pt2-headline {
+  margin: 20px 0 0;
+  font-size: clamp(30px, 4.2vw, 44px); font-weight: 700; line-height: 1.08; letter-spacing: -0.02em;
+  color: var(--tx);
+}
+.pt2-sub {
+  margin: 16px auto 0;
+  max-width: 600px;
+  font-size: 19px; line-height: 1.55; color: var(--tm);
+}
+/* Profile card slider — auto-scrolling infinite loop (replaced an earlier stacked
+   grid). See the matching comment above the markup in index.html for how the loop's
+   exact pixel math works; the short version: cards are pinned to a known width/gap
+   below so `@keyframes pt2-slide` can translate by an exact pixel constant equal to
+   one full 9-card set's width, which is what makes the wraparound seamless. */
+.pt2-slider-wrap {
+  margin-top: 56px;
+  /* Without this the Pause button sat right on top of the "Or fine-tune anything"
+     section boundary below — .pt2 .pt-tools only has 20px of its own top padding,
+     nowhere near the 56px of breathing room the slider gets above it. */
+  margin-bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  /* 6 cards fully visible at once on a normal desktop viewport, not a full-bleed
+     edge-to-edge strip: 6 * (220px card + 20px gap) - 20px (no trailing gap) = 1420px,
+     plus room for the two 64px edge-fade zones (see .pt2-slider's mask below) to eat
+     into a peeking 7th card instead of clipping into the 6th. */
+  max-width: 1560px;
+  padding-inline: 24px;
+  margin-inline: auto;
+}
+.pt2-slider {
+  width: 100%;
+  overflow: hidden;
+  /* Fades the strip out at both edges instead of hard-clipping mid-card. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+}
+.pt2-slider-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: pt2-slide 48s linear infinite;
+}
+/* Hover OR keyboard focus inside the strip pauses it (mouse users), and the explicit
+   toggle button below covers everyone else (keyboard-only, per WCAG 2.2.2 — any
+   auto-moving content needs a way to stop it that doesn't depend on hover). */
+.pt2-slider:hover .pt2-slider-track,
+.pt2-slider:focus-within .pt2-slider-track,
+.pt2-slider-track.is-paused {
+  animation-play-state: paused;
+}
+.pt2-slider-track .pt2-card {
+  /* Fixed width/flex-basis, not the grid version's implicit sizing — the keyframe
+     below depends on this being an exact known constant (220px card + 20px gap). */
+  flex: 0 0 220px;
+  width: 220px;
+}
+@keyframes pt2-slide {
+  from { transform: translateX(0); }
+  /* 9 cards * (220px width + 20px gap) = one full set's width — see index.html's
+     comment on why this must be an exact px constant, not translateX(-50%). */
+  to { transform: translateX(-2160px); }
+}
+.pt2-slider-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--bd);
+  background: var(--sf);
+  color: var(--tm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pt2-slider-toggle:hover { color: var(--tx); border-color: color-mix(in srgb, var(--tx) 20%, var(--bd)); }
+.pt2-slider-toggle svg { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* No animation at all — becomes a plain manually-scrollable strip. The duplicate
+     (aria-hidden) set exists only to make the auto-scroll loop seamless; with the
+     loop off it would just be a visually confusing repeat of the same 9 cards, so
+     it's hidden here too. */
+  .pt2-slider { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .pt2-slider-track { animation: none; }
+  .pt2-slider-track [aria-hidden="true"] { display: none; }
+  .pt2-slider-toggle { display: none; }
+}
+/* No responsive card-width override on this component (unlike the old grid) — a
+   horizontally-scrolling strip doesn't need to reflow per breakpoint the way a grid
+   does, and the keyframe above depends on the 280px card width being constant at
+   every viewport size for the loop's pixel math to stay exact. */
+
+.pt2-card {
+  position: relative;
+  background: color-mix(in srgb, var(--pt2-tint) 55%, #fff);
+  border: 1px solid color-mix(in srgb, var(--pt2-accent) 14%, transparent);
+  border-radius: var(--r-xl);
+  padding: 26px 20px 24px;
+  box-shadow: var(--sh-sm);
+  text-align: center;
+}
+.pt2-card::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 72px; height: 4px;
+  border-radius: 4px;
+  background: var(--pt2-accent);
+}
+.pt2-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 68px; height: 68px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--pt2-accent) 10%, transparent);
+  color: var(--pt2-accent);
+}
+.pt2-icon-solid { background: var(--pt2-accent); color: #fff; }
+.pt2-card h3 { font-size: 20px; font-weight: 700; color: var(--tx); margin: 0 0 10px; }
+.pt2-card p { font-size: 14.5px; line-height: 1.55; color: var(--mu); margin: 0 0 22px; }
+
+.pt2 .pt-tools { background: #F7F7FB; padding: 20px 0 72px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-chip { transition: none; }
+}
+
+@media (max-width: 560px) {
+  .footer-main { grid-template-columns: 1fr; }
+  .footer-legal { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+/* --- Legal / doc content pages (License, Privacy, Terms, Accessibility Guide) --------- */
+.legal-page { padding: 56px 0 88px; }
+.legal-inner { max-width: 760px; }
+.legal-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 600;
+  color: var(--mu);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.15s;
+}
+.legal-back:hover { color: var(--brand); }
+.legal-back svg { flex-shrink: 0; }
+.legal-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--bd); }
+.legal-title { font-size: clamp(28px, 4vw, 38px); font-weight: 700; letter-spacing: -0.02em; color: var(--tx); margin: 0 0 10px; }
+.legal-meta { font-size: 14px; color: var(--mu); margin: 0; }
+.legal-body h2 { font-size: 20px; font-weight: 700; color: var(--tx); margin: 36px 0 12px; }
+.legal-body h2:first-child { margin-top: 0; }
+.legal-body h3 { font-size: 16px; font-weight: 700; color: var(--tx); margin: 24px 0 10px; }
+.legal-body p { font-size: 15.5px; line-height: 1.7; color: var(--tm); margin: 0 0 16px; }
+.legal-body ul { margin: 0 0 16px; padding-left: 22px; }
+.legal-body li { font-size: 15.5px; line-height: 1.7; color: var(--tm); margin-bottom: 8px; }
+.legal-body a { color: var(--brand); font-weight: 600; text-decoration: none; }
+.legal-body a:hover { text-decoration: underline; }
+.legal-body code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.9em; background: var(--sf2); padding: 2px 6px; border-radius: 5px; color: var(--tx); }
+.legal-body pre {
+  background: #0e0e1a;
+  color: #e6e6f0;
+  border-radius: 12px;
+  padding: 20px 22px;
+  overflow-x: auto;
+  font-size: 13px; line-height: 1.6;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  margin: 0 0 20px;
+}
+.legal-table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 14.5px; }
+.legal-table th, .legal-table td { text-align: left; padding: 10px 14px; border: 1px solid var(--bd); }
+.legal-table th { background: var(--sf2); font-weight: 700; color: var(--tx); }
+.legal-table td { color: var(--tm); }
+
+/* Integration Guide — one stack's docs visible at a time via top-level tabs
+   (Vanilla / React / Angular / Reference), each self-contained, distinct from the
+   single-column .legal-page shell the static policy pages use. */
+.docs-page { padding: 44px 0 100px; }
+.docs-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.docs-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13.5px; font-weight: 600; color: var(--mu);
+  text-decoration: none; margin-bottom: 22px;
+}
+.docs-back:hover { color: var(--brand); }
+.docs-back svg { flex-shrink: 0; }
+
+.docs-hero { margin-bottom: 8px; }
+.docs-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--brand); background: var(--sf2); border: 1px solid var(--bd);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 16px;
+}
+.docs-title { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -0.02em; color: var(--tx); margin: 0 0 10px; }
+.docs-sub { font-size: 16px; line-height: 1.6; color: var(--tm); margin: 0; max-width: 720px; }
+
+/* Top-level section switcher — one .docs-tabpanel visible at a time (see docs.ts).
+   Underline style, same visual language as .qc-platform-tab elsewhere on the site,
+   kept as its own ruleset since main.ts's global .qc-platform-tab listener would
+   otherwise also try to drive these buttons. */
+.docs-tabs {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--bd);
+  margin: 28px 0 32px;
+}
+.docs-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 12px 16px;
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  color: var(--tm);
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.docs-tab svg { flex-shrink: 0; opacity: 0.7; }
+.docs-tab:hover { color: var(--tx); }
+.docs-tab.is-active { color: var(--brand); border-bottom-color: var(--brand); }
+.docs-tab.is-active svg { opacity: 1; }
+.docs-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+
+.docs-tabpanel { display: none; }
+.docs-tabpanel.is-active { display: block; }
+
+/* Content + right-hand "On this page" nav, Bootstrap-docs style. Only .docs-content
+   is required; .docs-onpage is populated per active tab by docs.ts and hidden below
+   the breakpoint where there's no room for a third column. */
+.docs-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 64px;
+  align-items: start;
+}
+.docs-content { min-width: 0; }
+.docs-section { margin-bottom: 48px; }
+.docs-section:last-child { margin-bottom: 0; }
+
+.docs-onpage { position: sticky; top: 96px; padding-top: 4px; }
+.docs-onpage-title { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mu); margin: 0 0 10px; }
+.docs-onpage-links { display: flex; flex-direction: column; gap: 1px; border-left: 1px solid var(--bd); }
+.docs-onpage-links a {
+  font-size: 13px; color: var(--tm); text-decoration: none; line-height: 1.4;
+  padding: 5px 0 5px 14px;
+  border-left: 2px solid transparent;
+  margin-left: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.docs-onpage-links a:hover { color: var(--tx); }
+.docs-onpage-links a.is-active { color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
+.docs-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.docs-section-icon {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--sf2); color: var(--brand);
+}
+.docs-content h2 { font-size: 22px; font-weight: 700; color: var(--tx); margin: 0; letter-spacing: -0.01em; scroll-margin-top: 96px; }
+.docs-content h3 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 700; color: var(--tx); margin: 28px 0 10px; scroll-margin-top: 96px;
+}
+.docs-content h3:first-of-type { margin-top: 22px; }
+/* Bootstrap-docs-style hover permalink: hidden until the heading is hovered/focused,
+   so headings don't read as cluttered with a visible "#" at rest. */
+.docs-anchor {
+  opacity: 0; font-weight: 400; font-size: 0.85em; color: var(--mu) !important;
+  text-decoration: none !important; transition: opacity 0.12s;
+}
+.docs-content h3:hover .docs-anchor,
+.docs-anchor:focus-visible { opacity: 1; }
+.docs-lede { font-size: 15.5px; line-height: 1.7; color: var(--tm); margin: 14px 0 22px; max-width: 720px; }
+.docs-content p { font-size: 15px; line-height: 1.7; color: var(--tm); margin: 0 0 16px; }
+.docs-content ul { margin: 0 0 16px; padding-left: 20px; }
+.docs-content li { font-size: 15px; line-height: 1.7; color: var(--tm); margin-bottom: 6px; }
+.docs-content a { color: var(--brand); font-weight: 600; text-decoration: none; }
+.docs-content a:hover { text-decoration: underline; }
+.docs-content code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.88em; background: var(--sf2); padding: 2px 6px; border-radius: 5px; color: var(--tx); }
+/* .code-block's own <code> (inside the dark .code-panel snippets) must win over the
+   inline-mention style above. Equal-specificity + later-in-cascade let the rule above
+   leak into code panels: `white-space: pre` plus a `<code>` background/padding paints
+   a separate highlighted box per visual line, exactly like text stuck mid-selection,
+   and the first boxed line sitting under the real dark header reads as a second
+   header bar. Scope it out here instead, at higher specificity, rather than relying
+   on source order. */
+.docs-content .code-block code {
+  font-size: inherit; background: none; padding: 0; border-radius: 0; color: inherit;
+}
+
+.docs-table-wrap { overflow-x: auto; margin: 0 0 24px; border: 1px solid var(--bd); border-radius: var(--r-md); }
+.docs-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+.docs-table th, .docs-table td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--bd); vertical-align: top; }
+.docs-table tr:last-child td { border-bottom: none; }
+.docs-table th { background: var(--sf2); font-weight: 700; color: var(--tx); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+.docs-table td { color: var(--tm); }
+.docs-table td code { white-space: nowrap; }
+/* Give the trailing "Does" / description column room to breathe instead of being
+   squeezed by the other columns' auto-sized widths, regardless of how many columns
+   a given table has (last column is always the explanatory one across these tables). */
+.docs-table th:last-child, .docs-table td:last-child { min-width: 240px; }
+
+.docs-callout {
+  display: flex; gap: 12px;
+  background: var(--sf2); border: 1px solid var(--bd); border-radius: var(--r-md);
+  padding: 14px 16px; margin: 0 0 20px;
+}
+.docs-callout svg { flex-shrink: 0; color: var(--brand); margin-top: 1px; }
+.docs-callout p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--tm); }
+.docs-callout p code { background: var(--sf); }
+
+@media (max-width: 880px) {
+  .docs-body { grid-template-columns: 1fr; }
+  .docs-onpage { display: none; }
+}
+@media (max-width: 560px) {
+  .docs-title { font-size: 26px; }
+  .docs-tab { padding: 10px 12px; font-size: 13px; }
+}
