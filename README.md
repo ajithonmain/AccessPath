@@ -1,66 +1,122 @@
 # AccessPath
 
-Framework-agnostic, embeddable **accessibility control panel** — text size, motion,
-contrast, spacing, dyslexia font, saturation, highlight links, hide images, big cursor,
-text align, read aloud, a page structure navigator, dictionary lookups, sitewide tooltips,
-and a reading guide overlay — with nine preset profiles, `localStorage` persistence,
-keyboard support (focus trap, Escape-to-close, focus return), and OS-level
-`prefers-reduced-motion` auto-detect.
+**AccessPath is a free, open source accessibility widget for websites.** It adds a floating
+button that opens a control panel with real, working tools: bigger text, less motion, more
+contrast, more spacing, a dyslexia friendly font, text to speech, and more. It also includes
+a built in WCAG accessibility checker that scans your page for issues, right in the browser.
 
-One core, three ways to consume it:
+You can add it to any website. It works with plain HTML, WordPress, Shopify, React, and
+Angular.
 
-| Package | Use case |
+## What it does
+
+When a visitor opens the panel, they can turn on:
+
+- Bigger text
+- Less motion (for people sensitive to animation)
+- More contrast
+- More spacing between lines and letters
+- A dyslexia friendly font
+- Lower saturation, or an inverted color mode
+- Highlighted links
+- Hidden images
+- A bigger cursor
+- Text alignment options
+- Read aloud (the page is read out loud, block by block)
+- A page structure list (jump straight to any heading)
+- Dictionary lookups (double click any word for a definition)
+- Tooltips on every icon and button, sitewide
+- A reading guide that follows the mouse and dims everything else
+
+There are also 9 ready made profiles for common needs, so a visitor doesn't have to turn
+each setting on by hand: Low Vision, Dyslexia, Seizure Safe, Motor Impaired, Color Blind,
+ADHD, Voice Over, Elderly, and Cognitive & Learning.
+
+Every choice a visitor makes is saved in their browser, so it's still set the next time they
+visit. Keyboard users get a proper focus trap, Escape closes the panel, and focus goes back
+to where it was. The panel also checks the visitor's own operating system setting for
+reduced motion, and respects it automatically.
+
+## Built in WCAG accessibility checker
+
+AccessPath also includes a free accessibility checker, sometimes called an accessibility
+scanner or audit tool. It checks your page against 66 rules based on WCAG, the standard used
+for ADA and other accessibility laws. It runs fully inside the visitor's browser. Nothing is
+sent to a server, and no third party scanning service is used.
+
+It checks things like:
+
+- Missing alt text on images
+- Form fields with no label
+- Buttons and links with no readable name
+- Color contrast (using the real WCAG math, not a guess)
+- Touch target size
+- Heading order and page structure
+- ARIA roles and attributes
+- Table structure
+- List structure
+- And more
+
+When a check can't be judged automatically (like text sitting on top of a background image),
+it's marked as "needs manual review" instead of being hidden or counted as a false pass.
+Running a scan opens a full report with a score, a breakdown by category, and a plain
+English fix for every issue found.
+
+No automated tool can catch everything. This one is honest about that limit right in the
+report, instead of claiming to be a full compliance certification.
+
+This checker is meant for site owners and developers, so it's turned off by default. Turn it
+on with the `sections` option (or `data-sections` for the plain script version).
+
+## One core, four ways to add it to your site
+
+| Package | What it's for |
 |---|---|
-| `packages/core` | Framework-agnostic state + vanilla-DOM panel UI. Everything else builds on this. |
-| `packages/embed` | Zero-build `<script>` tag for WordPress/Shopify/static HTML — mounts in a Shadow DOM. |
-| `packages/react` | `<AccessPathPanel>` component + `useAccessPath()` hook. |
-| `packages/angular` | `AccessibilityPanelComponent` — thin wrapper over core, same public API as before. |
-| `packages/site` | Public marketing/docs page (static, Vite build) — the polished public-facing page. |
+| `packages/core` | The engine. All the state and the panel UI, built in plain JavaScript with no framework needed. Everything else is built on top of this. |
+| `packages/embed` | A single `<script>` tag. No build step needed. Works on WordPress, Shopify, and plain HTML sites. |
+| `packages/react` | An `<AccessPathPanel>` component and a `useAccessPath()` hook for React apps. |
+| `packages/angular` | An `AccessibilityPanelComponent` for Angular apps. |
+| `packages/site` | The public AccessPath website itself. |
 
-Root of the repo is also a runnable Angular demo app (`src/app/`) wired up to `packages/angular`.
-That app, plus `packages/embed/demo` and `packages/react/demo`, are dev/test fixtures — `packages/site`
-is the one meant to be shown to actual visitors.
-
-## Run it
+## Getting started
 
 ```bash
-npm install                 # installs root + all workspace packages
-npm run build:core          # packages/angular and packages/embed/react both need core built first
-npm start                    # ng serve — http://localhost:4200 (Angular demo)
+npm install               # installs everything
+npm run build:core        # build this first, the other packages depend on it
+npm start                  # runs the public site at http://localhost:5173
 ```
 
-Package-specific demos:
+To work on one of the individual packages:
 
 ```bash
-npm run build:embed && open packages/embed/demo/index.html   # serve over http:// (not file://)
-npm run demo -w @accesspath/react                             # http://localhost:5174
-npm run dev:site                                               # public site, http://localhost:5173
+npm run build:embed && open packages/embed/demo/index.html   # open over http://, not file://
+npm run demo -w @accesspath/react                              # http://localhost:5174
 ```
 
-## Build
+## Building for production
 
 ```bash
-npm run build:all      # core, embed, react, angular library, site — in that order
-npm run build           # just the root Angular demo app
+npm run build:all      # builds core, embed, react, the angular library, and the site
 ```
+
+Each package also has its own `build:<name>` script.
 
 ## Project layout
 
 ```
 packages/
-  core/        # A11yPrefs, 9 profiles, AccessPathState, applyClasses, focus-trap, vanilla panel-dom
-  embed/       # IIFE bundle: Shadow DOM mount, data-* attribute config, floating trigger
-  react/       # AccessPathPanel component + useAccessPath hook
-  angular/     # AccessibilityPanelComponent (ng-packagr library, consumes packages/core)
-  site/        # Public marketing/docs page — static Vite build, deployable to Vercel/Cloudflare Pages
-src/app/       # Angular demo app (dev/test fixture) — imports AccessibilityPanelComponent from @accesspath/angular
+  core/    the state, the panel, and the accessibility checker (no framework dependencies)
+  embed/   the plain script tag version, mounts inside a Shadow DOM
+  react/   the React component and hook
+  angular/ the Angular component, built as a library on top of core
+  site/    the public AccessPath website
 ```
 
-## Using the embed script (no build step)
+## Adding the script tag (no build step)
+
+Host your own copy of `dist/embed.js` from `@accesspath/embed` and point a script tag at it:
 
 ```html
-<!-- Not published to a CDN yet — host dist/embed.js from @accesspath/embed yourself and
-     point src at that path until then. -->
 <script src="/embed.js"
         data-profiles="dyslexia,motor,low-vision"
         data-theme="light"
@@ -73,22 +129,28 @@ src/app/       # Angular demo app (dev/test fixture) — imports AccessibilityPa
 </script>
 ```
 
-- `data-profiles` — comma list restricting which of the 6 preset profile buttons render: `low-vision`,
-  `dyslexia`, `seizure`, `motor`, `colorblind`, `adhd` (default: all).
-- `data-theme` — `light` (default) or `dark`, styles the panel's own chrome.
-- `data-storage-key` — localStorage key (default `accesspath-prefs`).
-- `data-position` — floating trigger position: `bottom-right` (default), `bottom-left`, `top-right`, `top-left`.
-- `data-shape` — trigger shape: `circle` (default), `rounded-square`, `pill`.
-- `data-icon` — trigger icon: `accessibility` (default), `motion`, `contrast`, `spacing`.
-- `data-draggable` — `"true"` lets visitors drag the trigger; its final position persists to
-  `localStorage` under `${storageKey}-trigger-pos` (default `false`).
-- `data-target` — CSS selector for the element the effect classes apply to (default `<html>`).
+Every attribute below is optional.
 
-The embed script mounts its own floating circular trigger button automatically
-(`createTriggerButton()` from `@accesspath/core`) — React and Angular don't ship a built-in trigger,
-you wire your own button to call `open()`.
+| Attribute | What it does |
+|---|---|
+| `data-profiles` | Which profile cards to show, comma separated. Any of `low-vision`, `dyslexia`, `seizure`, `motor`, `colorblind`, `adhd`, `voice-over`, `elderly`, `cognitive`. Shows all 9 by default. |
+| `data-theme` | `light` (default) or `dark`. This is the panel's own look, not your site's. |
+| `data-storage-key` | The browser storage key used to save settings. Defaults to `accesspath-prefs`. |
+| `data-position` | Where the floating button sits: `bottom-right` (default), `bottom-left`, `top-right`, `top-left`. |
+| `data-shape` | Button shape: `circle` (default), `rounded-square`, `pill`. |
+| `data-icon` | Button icon: `accessibility` (default), `motion`, `contrast`, `spacing`, `motor`, `badge`, `logo`. |
+| `data-draggable` | Set to `"true"` to let visitors drag the button to a new spot. It remembers where they leave it. |
+| `data-target` | A CSS selector for the part of the page the effects apply to. Defaults to the whole page. |
+| `data-brand` | A hex color code, like `"#4928F3"`, used as the panel's accent color. |
+| `data-actions` | A JSON list of extra footer buttons, like `'[{"id":"support","label":"Support"}]'`. |
+| `data-locale` | Panel language: `en`, `es`, `fr`, `de`, or `pt`. Defaults to `en`. |
+| `data-labels` | A JSON object to override any text label in the panel. |
+| `data-sections` | Which sections to show, comma separated: `profiles`, `quick`, `controls`, `actions`, `audit`. The accessibility checker (`audit`) is off by default. |
+| `data-control-categories` | Which control groups to show under "All Controls". |
+| `data-hide-trigger` | Set to `"true"` to hide the built in floating button, if you'd rather use your own. Call `window.AccessPath.open()`, `.close()`, or `.toggle()` from your own button. |
+| `data-report-url` | A link shown in the panel's footer. |
 
-## Using the React package
+## Adding it to a React app
 
 ```tsx
 import { AccessPathPanel, useAccessPath } from '@accesspath/react';
@@ -96,32 +158,40 @@ import '@accesspath/core/styles/a11y-effects.css';
 import '@accesspath/core/styles/panel.css';
 
 const panelRef = useRef<AccessPathPanelHandle>(null);
+
 <AccessPathPanel ref={panelRef} container={rootEl} isDarkTheme={isDark} storageKey="accesspath-prefs" />
 <button onClick={() => panelRef.current?.open()}>Accessibility</button>
 ```
 
-`useAccessPath(storageKey)` exposes `{ open, close, reset, prefs, activeProfile, isOpen }` reactively —
-it shares state with any mounted `<AccessPathPanel>` using the same `storageKey`.
+`useAccessPath(storageKey)` gives you `{ open, close, reset, prefs, activeProfile, isOpen }`.
+Any component using the same `storageKey` shares the same state.
 
-## Using the Angular package
+## Adding it to an Angular app
 
 ```html
 <app-accessibility-panel #a11yPanel [container]="root" [isDarkTheme]="isDark"></app-accessibility-panel>
 <button (click)="a11yPanel.open()">Accessibility</button>
 ```
 
-Same public API as before the restructure (`[container]`, `[isDarkTheme]`, `[storageKey]`, `open()`,
-`close()`, `reset()`) — only the implementation moved to consume `@accesspath/core`.
+Same inputs and methods it's always had: `[container]`, `[isDarkTheme]`, `[storageKey]`,
+`open()`, `close()`, `reset()`.
 
-## Theme tokens
+## Making it match your brand
 
-Both effect classes (`a11y-effects.css`) and the panel's own chrome (`panel.css`) read CSS variables
-with sane fallbacks — override them to match your design system:
-`--brand --brand-soft --brand-border --tx --tm --mu --bd --sf --sf2 --sf3`.
+The panel reads CSS variables with safe fallback values, so it looks fine even if you don't
+set any of them. To match your own colors, override these:
 
-Full detail, WCAG mapping, and testing checklist: [accessibility.md](accessibility.md).
+```
+--ap-brand --ap-brand-2 --ap-brand-soft --ap-brand-border --ap-brand-text
+--ap-tx --ap-tm --ap-mu --ap-bd --ap-sf --ap-sf2
+```
 
-## Origin
+They all start with `--ap-` on purpose. A plain name like `--brand` is exactly the kind of
+variable a website is likely already using for its own design, and setting it globally could
+break the site's own styling by accident.
 
-Originally extracted from an in-widget accessibility panel built for the ChatBistro chat widget
-(`chatbistroui-newUiV4`), then restructured into this framework-agnostic monorepo.
+## Where AccessPath came from
+
+AccessPath started as an accessibility panel built directly inside a chat widget project. It
+has since been rebuilt from the ground up as its own free, open source project, so any
+website can use it.
