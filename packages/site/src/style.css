@@ -1056,6 +1056,32 @@ body.embed-failed .hero-status-fallback { display: flex; }
 .qc-platform-panel { display: none; }
 .qc-platform-panel.is-active { display: block; }
 
+.qc-html-note { font-size: 13.5px; color: var(--tm); margin: 12px 0 0; }
+.qc-html-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 12px;
+}
+.qc-html-cdn-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  padding: 5px 6px 5px 9px;
+  max-width: 100%;
+}
+.qc-html-cdn {
+  font-size: 12.5px;
+  color: var(--mu);
+  overflow-wrap: anywhere;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* Footer banner ("All CSS theming tokens") — a details/summary row instead of the
    original inline collapsible, matching the mockup's icon + text + CTA layout. */
 .qc-tokens {
@@ -1094,17 +1120,30 @@ body.embed-failed .hero-status-fallback { display: flex; }
 }
 .qc-tokens summary:hover .qc-tokens-cta { background: var(--brand-soft); }
 .qc-tokens[open] .token-table { margin: 0 0 20px; }
+/* On a phone the icon + wrapped text + pill crammed onto one row looks broken. Stack:
+   icon and text on top, full-width "Explore tokens" pill below. */
+@media (max-width: 600px) {
+  .qc-tokens { padding: 6px 18px; }
+  .qc-tokens summary { flex-wrap: wrap; min-height: 0; padding: 18px 0; gap: 12px 14px; }
+  .qc-tokens-text { flex: 1 1 140px; }
+  .qc-tokens-cta { margin-left: 0; flex-basis: 100%; justify-content: center; }
+}
 
 @media (max-width: 860px) {
   .qc-card .builder { grid-template-columns: 1fr; }
   .qc-card .builder-controls { border-right: none; border-bottom: 1px solid var(--bd); padding: 0 0 24px; margin-bottom: 24px; }
+  /* Stacked under the controls, the preview doesn't need to match a tall control
+     column any more — let it size to its content instead of a 460px floor. */
+  .qc-preview-body { min-height: 300px; }
 }
 @media (max-width: 640px) {
   .qc-inner { padding: 0 24px; }
   .qc-row-2 { grid-template-columns: 1fr; }
   .qc-card { padding: 20px; }
-  .qc-preview-content { flex-direction: column; }
-  .qc-preview-image { width: 100%; flex: none; }
+  /* Phone: the mock's decorative image blocks just make it scroll forever. Show only
+     the heading + text bars, and drop the min-height floor entirely. */
+  .qc-preview-body { min-height: 0; padding: 18px; gap: 16px; }
+  .qc-preview-image { display: none; }
 }
 
 /* Profiles + Tools — one combined section (docs/profile_tools.md / profile_tools.png):
@@ -1143,7 +1182,16 @@ body.embed-failed .hero-status-fallback { display: flex; }
 }
 @media (prefers-reduced-motion: reduce) { .pt-chip:hover { transform: none; } }
 @media (max-width: 640px) {
-  .pt-chip { height: 40px; padding: 0 14px; font-size: 13.5px; }
+  /* The centered wrap-rows read as a ragged staircase on a phone. Dissolve the rows
+     (display: contents) and lay every chip out in an even 2-column grid instead. */
+  .pt-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pt-chip-row { display: contents; }
+  .pt-chip {
+    height: auto; min-height: 44px;
+    padding: 8px 10px;
+    justify-content: center; text-align: center;
+    font-size: 13px; line-height: 1.2;
+  }
 }
 
 /* Quick start platform tab bar + code blocks — shared underline-tab styling. */
@@ -1229,6 +1277,18 @@ body.embed-failed .hero-status-fallback { display: flex; }
 }
 .code-copy-btn:hover { background: rgba(255,255,255,0.16); color: #e7e8f5; }
 .code-copy-btn.is-copied { background: var(--acc-teal); color: var(--brand-2); }
+
+/* Overrides .code-copy-btn's dark-panel colors for the light .qc-html-cdn-row pill —
+   must come after .code-copy-btn in source order since both are single-class selectors
+   of equal specificity and makeCopyButton() applies both classes to the same button. */
+.qc-html-cdn-copy {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--mu);
+}
+.qc-html-cdn-copy:hover { background: var(--sf); color: var(--tx); }
+.qc-html-cdn-copy.is-copied { background: var(--acc-teal); color: var(--brand-2); }
 
 /* Customize builder — an interactive config replaces a wall of six separate code
    blocks: pick options on the left, get a live preview + generated code on the right.
@@ -1495,7 +1555,10 @@ body.embed-failed .hero-status-fallback { display: flex; }
 @media (max-width: 560px) {
   .nav-star-btn, .nav-npm-btn { display: none; }
 }
-@media (max-width: 700px) {
+/* Hamburger takes over at 840, not 700: between ~700 and ~800 the full inline nav
+   (4 links + the two CTA buttons) is wider than the viewport and pushed the page into
+   a horizontal scroll. */
+@media (max-width: 840px) {
   .nav-toggle { display: flex; }
   .nav-links {
     display: flex;
@@ -1512,6 +1575,8 @@ body.embed-failed .hero-status-fallback { display: flex; }
   }
   .nav-links:not(.is-open) { display: none; }
   .nav-links a, .nav-link-disabled { padding: 12px 4px; font-size: 16px; }
+}
+@media (max-width: 700px) {
   .token-row { grid-template-columns: 1fr; }
 }
 
@@ -1680,6 +1745,7 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
 
 .faq-more {
   display: flex; align-items: center; justify-content: center; gap: 8px;
+  flex-wrap: wrap; row-gap: 4px;
   margin: 30px 0 0;
   font-size: 16px; font-weight: 500;
   color: var(--tx);
@@ -1762,50 +1828,47 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
 
 .cta-divider { width: 1px; align-self: stretch; background: rgba(255,255,255,0.1); flex-shrink: 0; }
 
-/* Right: a fixed-size stage sized to match the left column's height — deliberately
-   NOT sized to fit the cup. Note, cup, and button are all position: absolute, pinned
-   to exact spots inside this box, so none of them contribute to its size; the box's
-   own height (which drives the panel's height) stays fixed regardless of how big the
-   cup graphic is. The cup is a background-image (not an <img>) precisely so it can
-   be sized bigger than its box and bleed past the box's own top edge — clipped by
-   the panel's overflow: hidden — without the panel growing to fit it.
-   Note + button sit in a column pinned to the left edge of this box; the cup sits
-   pinned to the right edge and bottom-anchored, so its bottom (the coaster) stays in
-   place and only the top bleeds/clips as the cup graphic gets taller. */
+/* Right column: the "buy me a coffee" note, the cup graphic, then the button, in a
+   plain centered vertical stack. (This used to be three position:absolute children
+   pinned inside a fixed-size box; that pinned the button on top of the cup at every
+   width and left a large empty gap in the panel between ~950 and 1100px. A flex
+   column can't overlap and needs no per-breakpoint repositioning.) The cup is a
+   background-image, not an <img>, so `background-size: contain` scales it to the box
+   without it ever forcing the box wider than `width`. */
+/* Compact "tip jar": small script label, small down-arrow, small cup, small button.
+   It's a secondary ask sitting next to the real CTA, so it's deliberately modest in
+   size — an oversized illustration made the panel 700-830px tall on tablet/mobile. */
 .cta-right {
-  position: relative;
   flex: 0 0 auto;
-  width: 340px;
-  height: 260px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 .cta-coffee-note {
-  position: absolute;
-  top: 4px; left: 0;
-  display: flex; flex-direction: column; align-items: flex-start;
+  display: flex; flex-direction: column; align-items: center;
   color: #fff;
 }
-.cta-coffee-script { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 600; line-height: 1.15; }
-.cta-coffee-arrow { color: #fff; opacity: 0.9; margin-left: 10px; margin-top: 2px; transform: rotate(30deg); }
+.cta-coffee-script { font-family: 'Caveat', cursive; font-size: 21px; font-weight: 600; line-height: 1.1; text-align: center; }
+.cta-coffee-arrow { color: #fff; opacity: 0.85; width: 44px; height: auto; margin-top: 2px; transform: rotate(62deg); }
 .cta-coffee-cup {
-  position: absolute;
-  right: 0; bottom: -48px;
-  width: 257px;
-  height: 420px;
+  width: 150px;
+  height: 150px;
   background-image: url('/images/teacup-cta.png');
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center bottom;
   background-size: contain;
 }
 .cta-coffee-btn {
-  position: absolute;
-  left: 0; bottom: 24px;
+  margin-top: 4px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 28px;
+  padding: 11px 20px;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #ffdd7f;
   color: #16161d;
-  font-size: 16px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   font-family: inherit;
   text-decoration: none;
   cursor: pointer;
@@ -1815,47 +1878,62 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
 .cta-coffee-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
 @media (max-width: 1100px) {
-  .cta-panel { flex-wrap: wrap; justify-content: center; padding: 32px; text-align: center; }
-  .cta-left { flex-basis: 100%; max-width: none; }
+  /* Whole panel collapses to one centered column — no actions-left / cup-right split.
+     Narrow the band too, so the centered column doesn't float in a sea of dead space
+     on a tablet. */
+  .cta-band-inner { max-width: 640px; }
+  .cta-panel {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 32px 24px;
+    gap: 20px;
+  }
+  .cta-left { flex: 0 0 auto; max-width: 520px; }
   .cta-sub { margin-left: auto; margin-right: auto; }
-  .cta-actions { justify-content: center; }
+  .cta-actions { justify-content: center; flex-wrap: wrap; }
   .cta-divider { display: none; }
-  .cta-right { width: 380px; height: 260px; margin: 16px auto 0; }
-  .cta-coffee-cup { width: 240px; height: 300px; }
-  .cta-coffee-btn { bottom: 8px; }
 }
 @media (max-width: 640px) {
-  .cta-actions { flex-direction: column; width: 100%; align-items: stretch; }
-  .cta-action { align-items: center; }
-  .cta-btn { width: 100%; }
-
-  /* Below 640px there's no room for the side-by-side note/cup arrangement — fall
-     back to a simple centered stack: note, then cup, then button. */
-  .cta-right { width: 220px; height: 260px; }
-  .cta-coffee-note { left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
-  .cta-coffee-cup { left: 50%; right: auto; transform: translateX(-50%); width: 190px; height: 250px; }
-  .cta-coffee-btn { left: 50%; transform: translateX(-50%); }
+  .cta-actions { flex-direction: column; width: 100%; max-width: 300px; align-items: stretch; gap: 14px; }
+  .cta-action { align-items: center; gap: 8px; }
+  .cta-btn { width: 100%; min-width: 0; }
+  /* The script label sits directly above the cup here — the diagonal arrow just adds
+     height and reads oddly pointing "past" the cup. */
+  .cta-coffee-arrow { display: none; }
+  .cta-coffee-script { font-size: 20px; }
+  .cta-coffee-cup { width: 132px; height: 132px; }
 }
 
 /* --- Footer ---------------------------------------------------------------------------- */
 /* Same background as .cta-band (var(--band-a)) and no border-top — the two are meant to
    read as one continuous surface, not two sections with a visible seam and a dead gap
    of empty white space between them. */
-.site-footer { padding: 16px 0 18px; background: var(--band-a); }
+/* Modest bottom padding: the accessibility FAB (bottom-right, ~76px tall from the
+   edge) can float over this small gap, but the credit text stays out of that corner --
+   centered and short on wide screens, left-aligned on narrow ones (see media queries
+   below) -- so it's never actually covered. */
+.site-footer { padding: 18px 0 44px; background: var(--band-a); }
+/* Slim single-row footer: logo left, inline link row, social icons right — then a thin
+   legal strip. No stacked columns or tagline. */
 .footer-main {
-  display: grid;
-  grid-template-columns: 320px repeat(3, 1fr);
-  gap: 40px;
-  padding-bottom: 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--bd);
 }
-.footer-brand { max-width: 300px; }
-.footer-logo { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 700; color: var(--tx); margin-bottom: 14px; }
+.footer-logo { display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 700; color: var(--tx); }
 .footer-logo-mark { display: flex; color: var(--brand); }
-.footer-tagline { font-size: 15px; line-height: 1.55; color: var(--tm); margin: 0 0 16px; max-width: 260px; }
-.footer-social { display: flex; gap: 12px; }
+.footer-logo-mark img { width: 22px; height: auto; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; flex: 1; }
+.footer-nav a { font-size: 13.5px; color: var(--tm); text-decoration: none; }
+.footer-nav a:hover { color: var(--brand); }
+.footer-social { display: flex; gap: 8px; }
 .footer-social-btn {
-  width: 38px; height: 38px;
+  width: 30px; height: 30px;
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--bd);
@@ -1865,36 +1943,30 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
+.footer-social-btn svg { width: 14px; height: 14px; }
 .footer-social-btn:hover { border-color: var(--brand); color: var(--brand); }
 .footer-social-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .footer-social-btn:disabled:hover { border-color: var(--bd); color: var(--tx); }
 
-.footer-col { display: flex; flex-direction: column; gap: 12px; }
-.footer-col h3 { font-size: 16px; font-weight: 700; color: var(--tx); margin: 0 0 4px; }
-.footer-col a, .footer-col button {
-  display: block;
-  font-size: 15px; color: var(--tm); text-decoration: none;
-  background: none; border: none; padding: 0;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.footer-col a:hover { color: var(--brand); }
-.footer-col button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-
+/* Bottom strip is centered, not edge-justified: the accessibility FAB is fixed in the
+   bottom-right corner, so anything right-aligned there gets covered by it. Centered
+   content stays clear horizontally no matter where the FAB rests. */
 .footer-legal {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-top: 18px;
-  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 4px 12px;
+  padding-top: 12px;
+  font-size: 13px;
   color: var(--tm);
+  text-align: center;
 }
-.footer-legal span { display: inline-flex; align-items: center; gap: 6px; }
+.footer-legal > span { display: inline-flex; align-items: center; gap: 6px; }
 .footer-legal svg { color: var(--brand); }
+.footer-sep { color: var(--bd); }
+.footer-credit a { color: var(--tx); font-weight: 600; text-decoration: none; }
+.footer-credit a:hover { color: var(--brand); }
 
-@media (max-width: 1100px) {
-  .footer-main { grid-template-columns: 1fr 1fr; }
-  .footer-brand { grid-column: 1 / -1; max-width: none; }
+@media (max-width: 620px) {
+  .footer-nav { flex: 1 1 100%; order: 3; }
 }
 /* Alt profiles/tools showcase (docs/profile_tools-new.md) — a second, centered-hero take
    on the same profiles+tools content, kept as its own section rather than replacing
@@ -2047,9 +2119,17 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
   .pt-chip { transition: none; }
 }
 
-@media (max-width: 560px) {
-  .footer-main { grid-template-columns: 1fr; }
-  .footer-legal { flex-direction: column; align-items: flex-start; gap: 6px; }
+/* Below ~640px: drop the divider, stack the two parts, and left-align them. Left
+   alignment keeps every line short and anchored to the left edge, so the text never
+   reaches the bottom-right corner where the FAB sits (centered lines would). */
+@media (max-width: 640px) {
+  .footer-legal > .footer-sep { display: none; }
+  .footer-legal {
+    justify-content: flex-start;
+    text-align: left;
+    gap: 3px;
+  }
+  .footer-legal > span { flex-basis: 100%; justify-content: flex-start; }
 }
 
 /* --- Legal / doc content pages (License, Privacy, Terms, Accessibility Guide) --------- */

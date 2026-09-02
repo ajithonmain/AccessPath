@@ -106,32 +106,60 @@ export function createTriggerButton(opts: CreateTriggerButtonOptions): HTMLButto
   if (opts.draggable) wireDrag(button, opts.storageKey);
   if (opts.brandColor) applyBrandColor(button, opts.brandColor);
 
-  // A saved left/top can predate a container resize (or, for the site's preview,
-  // predate this button moving from the fixed-viewport coordinate space into
-  // qc-preview-body's own local one) and land outside the current containing block.
-  // offsetParent is only resolvable once the button is actually in the DOM, which
-  // happens right after this function returns, so defer one frame.
-  if (saved) requestAnimationFrame(() => clampToContainer(button));
+  // A saved left/top can predate a viewport/container resize (or, for the site's
+  // preview, predate this button moving from the fixed-viewport coordinate space into
+  // qc-preview-body's own local one) and land outside the visible area — e.g. a visitor
+  // drags it past the bottom edge and reloads. offsetParent is only resolvable once the
+  // button is actually in the DOM, which happens right after this function returns, so
+  // defer one frame; then persist the corrected spot so it doesn't re-clamp every load.
+  if (saved) {
+    requestAnimationFrame(() => {
+      if (clampToContainer(button) && opts.draggable && opts.storageKey) {
+        saveTriggerPosition(opts.storageKey, {
+          x: parseFloat(button.style.left),
+          y: parseFloat(button.style.top),
+        });
+      }
+    });
+  }
+
+  // Re-clamp (without re-saving — a transient resize shouldn't overwrite the chosen
+  // spot) if the viewport later shrinks below the trigger's position.
+  if (opts.draggable && !opts.absolute) {
+    window.addEventListener('resize', () => clampToContainer(button));
+  }
 
   return button;
 }
 
-/** Keeps a dragged trigger inside its containing block (offsetParent) — e.g. so it
- *  can't be dragged/inherit a stale position outside qc-preview-body in the site's
- *  Customize builder preview. No-op when the containing block is the viewport
- *  (offsetParent null, the normal case for a real position:fixed embed). */
-function clampToContainer(button: HTMLButtonElement): void {
+/** Largest left/top that still keeps the button fully inside its containing block:
+ *  the offsetParent when there is one (a transformed ancestor, or `absolute` mode),
+ *  otherwise the viewport — the normal `position:fixed` embed, where offsetParent is
+ *  null. The viewport branch is what stops a real embed from being dragged off-screen. */
+function dragBounds(button: HTMLButtonElement): { maxX: number; maxY: number } {
   const parent = button.offsetParent as HTMLElement | null;
-  if (!parent) return;
+  const width = parent ? parent.clientWidth : window.innerWidth;
+  const height = parent ? parent.clientHeight : window.innerHeight;
+  return {
+    maxX: Math.max(width - button.offsetWidth, 0),
+    maxY: Math.max(height - button.offsetHeight, 0),
+  };
+}
+
+/** Pulls a dragged trigger back inside the visible area if its current left/top sits
+ *  outside it. Returns true if it actually moved the button. No-op when left/top aren't
+ *  set (the default corner-anchored position uses bottom/right instead). */
+function clampToContainer(button: HTMLButtonElement): boolean {
   const left = parseFloat(button.style.left);
   const top = parseFloat(button.style.top);
-  if (Number.isNaN(left) || Number.isNaN(top)) return;
-  const maxX = Math.max(parent.clientWidth - button.offsetWidth, 0);
-  const maxY = Math.max(parent.clientHeight - button.offsetHeight, 0);
+  if (Number.isNaN(left) || Number.isNaN(top)) return false;
+  const { maxX, maxY } = dragBounds(button);
   const clampedLeft = Math.min(Math.max(left, 0), maxX);
   const clampedTop = Math.min(Math.max(top, 0), maxY);
-  if (clampedLeft !== left) button.style.left = `${clampedLeft}px`;
-  if (clampedTop !== top) button.style.top = `${clampedTop}px`;
+  if (clampedLeft === left && clampedTop === top) return false;
+  button.style.left = `${clampedLeft}px`;
+  button.style.top = `${clampedTop}px`;
+  return true;
 }
 
 /** button.style.left/top are resolved against its CSS containing block, which for a
@@ -150,59 +178,72 @@ function containingBlockOffset(button: HTMLButtonElement): { x: number; y: numbe
   return { x: rect.left - parentRect.left, y: rect.top - parentRect.top };
 }
 
+/** Pointer travel (px, from the pointerdown point) before a press is treated as a drag
+ *  rather than a click. Small pointer jitter during a tap — common on trackpads and
+ *  touch — must stay under this so the panel still opens on a normal click. */
+const DRAG_THRESHOLD = 6;
+
 function wireDrag(button: HTMLButtonElement, storageKey?: string): void {
   let dragging = false;
   let moved = false;
-  let startX = 0;
-  let startY = 0;
-  let originX = 0;
-  let originY = 0;
+  // Fixed for the whole gesture: the pointerdown point, and the button's offset within
+  // its containing block at that moment. Position is always recomputed as base + total
+  // delta from downX/downY — never accumulated per-move — so sub-threshold jitter on a
+  // click can't nudge the button.
+  let downX = 0;
+  let downY = 0;
+  let baseX = 0;
+  let baseY = 0;
 
   button.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
     dragging = true;
     moved = false;
-    startX = e.clientX;
-    startY = e.clientY;
-    ({ x: originX, y: originY } = containingBlockOffset(button));
+    downX = e.clientX;
+    downY = e.clientY;
+    ({ x: baseX, y: baseY } = containingBlockOffset(button));
     button.setPointerCapture(e.pointerId);
   });
 
   button.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    if (Math.abs(dx) < 3 && Math.abs(dy) < 3 && !moved) return;
+    const dx = e.clientX - downX;
+    const dy = e.clientY - downY;
+    if (!moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
     moved = true;
-    originX += dx;
-    originY += dy;
-    const parent = button.offsetParent as HTMLElement | null;
-    if (parent) {
-      originX = Math.min(Math.max(originX, 0), Math.max(parent.clientWidth - button.offsetWidth, 0));
-      originY = Math.min(Math.max(originY, 0), Math.max(parent.clientHeight - button.offsetHeight, 0));
-    }
-    button.style.left = `${originX}px`;
-    button.style.top = `${originY}px`;
+    // Clamp against the viewport (or offsetParent, in absolute/transformed-ancestor
+    // mode) so the trigger can never be dragged out of the visible area.
+    const { maxX, maxY } = dragBounds(button);
+    const x = Math.min(Math.max(baseX + dx, 0), maxX);
+    const y = Math.min(Math.max(baseY + dy, 0), maxY);
+    button.style.left = `${x}px`;
+    button.style.top = `${y}px`;
     button.style.right = 'auto';
     button.style.bottom = 'auto';
-    startX = e.clientX;
-    startY = e.clientY;
   });
 
-  button.addEventListener('pointerup', (e) => {
+  const endGesture = (e: PointerEvent) => {
+    if (!dragging) return;
     dragging = false;
-    button.releasePointerCapture(e.pointerId);
+    try { button.releasePointerCapture(e.pointerId); } catch { /* already released */ }
     if (!moved) return;
     if (storageKey) {
-      saveTriggerPosition(storageKey, { x: originX, y: originY });
+      saveTriggerPosition(storageKey, {
+        x: parseFloat(button.style.left),
+        y: parseFloat(button.style.top),
+      });
     }
-    // Swallow the click that immediately follows a drag release so it doesn't open the panel.
-    button.addEventListener(
-      'click',
-      (ce) => {
-        ce.stopPropagation();
-        ce.preventDefault();
-      },
-      { capture: true, once: true }
-    );
-  });
+    // Swallow the click that immediately follows a drag release so it doesn't open the
+    // panel — but only briefly, so a genuine click a moment later still works even if
+    // no click event ever followed the drag.
+    const swallow = (ce: Event) => {
+      ce.stopPropagation();
+      ce.preventDefault();
+    };
+    button.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => button.removeEventListener('click', swallow, { capture: true } as EventListenerOptions), 300);
+  };
+
+  button.addEventListener('pointerup', endGesture);
+  button.addEventListener('pointercancel', endGesture);
 }
