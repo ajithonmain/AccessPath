@@ -11,21 +11,28 @@ export type LookupResult =
   | { status: 'none' }
   | { status: 'error' };
 
-/** Free, keyless dictionary API — never throws. Aborts after `timeoutMs` so a slow or
- *  unreachable API can't leave the popover stuck on "Looking up…" forever. */
-export async function lookupWord(word: string, timeoutMs = 4000): Promise<LookupResult> {
+/** Wiktionary's definition endpoint — keyless, CORS-enabled, and served off Wikimedia's
+ *  CDN, so it's far more reliable than the community dictionaryapi.dev (which this used
+ *  to call and which is frequently down). Never throws; aborts after `timeoutMs` so a
+ *  slow network can't leave the popover stuck on "Looking up…". */
+export async function lookupWord(word: string, timeoutMs = 3000): Promise<LookupResult> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`,
-      { signal: ctrl.signal }
+      `https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word.toLowerCase())}`,
+      { signal: ctrl.signal, headers: { accept: 'application/json' } }
     );
     if (res.status === 404) return { status: 'none' };
     if (!res.ok) return { status: 'error' };
     const data = await res.json();
-    const def = data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition;
-    return typeof def === 'string' ? { status: 'ok', definition: def } : { status: 'none' };
+    const entries: Array<{ definition?: string }> = data?.en?.[0]?.definitions ?? [];
+    for (const entry of entries) {
+      // Definitions come back with inline <a>/<i> markup — strip to plain text.
+      const text = (entry.definition ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      if (text) return { status: 'ok', definition: text };
+    }
+    return { status: 'none' };
   } catch {
     return { status: 'error' };
   } finally {
