@@ -176,22 +176,9 @@
 .a11y-target.a11y-align-center :not(:has(*)) { text-align: center !important; }
 .a11y-target.a11y-align-right  :not(:has(*)) { text-align: right !important; }
 
-/* Dictionary popover — created by dictionary.ts, appended to the panel's own root */
-.a11y-dict-popover {
-  position: fixed;
-  z-index: 2147483003; /* above the drawer (2147483002), backdrop (2147483001) and trigger (2147483000) */
-  max-width: 260px;
-  background: var(--ap-sf, #fff);
-  color: var(--ap-tx, #111);
-  border: 1px solid var(--ap-bd, rgba(0,0,0,0.12));
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-  padding: 10px 12px;
-  font-size: 13px;
-  line-height: 1.4;
-}
-.a11y-dict-word { font-weight: 700; margin-bottom: 4px; text-transform: capitalize; }
-.a11y-dict-def { color: var(--ap-tm, #555); }
+/* The dictionary popover is created by dictionary.ts and appended to the panel's own
+   root, so its styles live in panel.css (which the embed injects into the Shadow DOM
+   where that root actually is) — not here. */
 
 /* Reading Guide — host-page-level overlay, not scoped to .a11y-target since it dims the
    whole viewport regardless of which element the panel's other effects target.

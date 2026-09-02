@@ -81,7 +81,15 @@ export interface Labels {
     bigCursor: { label: string; aria: string; hint: string };
     cursorColor: { label: string; black: string; white: string };
     textAlign: { label: string; default: string; left: string; center: string; right: string };
-    dictionary: { label: string; aria: string; hint: string; noDefinition: string };
+    dictionary: {
+      label: string;
+      aria: string;
+      hint: string;
+      activeHint: string;
+      lookingUp: string;
+      noDefinition: string;
+      timedOut: string;
+    };
     virtualKeyboard: { label: string; aria: string };
   };
   navigation: {

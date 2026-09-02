@@ -5,13 +5,13 @@ import { resolveLabels, Labels, LocaleKey, LabelOverrides } from './i18n';
 import { createFocusTrap } from './focus-trap';
 import { isSpeechSupported, speak, stopSpeaking } from './tts';
 import { scanHeadings } from './heading-scan';
-import { lookupWord, showDictionaryPopover, closeDictionaryPopover } from './dictionary';
+import { lookupWord, showDictionaryPopover, resolveDictionaryPopover, closeDictionaryPopover } from './dictionary';
+import { createHintTooltips } from './hint-tooltip';
 import { enableTooltips, disableTooltips } from './tooltips';
 import { createReadingGuide, ReadingGuideHandle } from './reading-guide';
 import { createVoiceOver, getVoices, VoiceOverHandle, collectReadableText } from './voice-over';
 import { applyBrandColor } from './brand-color';
 import { saveDarkTheme, loadDarkTheme } from './panel-theme';
-import { generateStatement } from './statement';
 import { ScanResult } from './a11y-scanner';
 import { openReportAndScan } from './report-page';
 import { ACCESSPATH_LOGO_DATA_URI } from './logo';
@@ -166,7 +166,7 @@ function createCard(icon: Node, label: string, ariaLabel: string, hint: string |
   button.className = 'a11y-card';
   button.setAttribute('aria-pressed', 'false');
   button.setAttribute('aria-label', ariaLabel);
-  if (hint) button.title = hint;
+  if (hint) button.dataset.tip = hint;
   const iconWrap = document.createElement('span');
   iconWrap.className = 'a11y-card-icon';
   iconWrap.appendChild(icon);
@@ -592,8 +592,10 @@ function topSection(title: string, hint: string, contentEls: HTMLElement[], acti
   left.textContent = title;
   const info = document.createElement('span');
   info.className = 'a11y-info-icon';
-  info.title = hint;
+  info.dataset.tip = hint;
   info.setAttribute('aria-label', hint);
+  info.setAttribute('tabindex', '0');
+  info.setAttribute('role', 'button');
   info.appendChild(infoIcon());
   left.appendChild(info);
 
@@ -973,7 +975,10 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
         updateReadAloudCard();
       } else {
         const selected = window.getSelection()?.toString().trim();
-        const text = selected && selected.length > 0 ? selected : collectReadableText(container);
+        // With nothing selected, prefer the page's <main> so it doesn't start by
+        // reading the nav/header aloud; fall back to the whole container.
+        const readTarget = container.querySelector<HTMLElement>('main') ?? container;
+        const text = selected && selected.length > 0 ? selected : collectReadableText(readTarget);
         isSpeaking = true;
         updateReadAloudCard();
         speak(
@@ -1152,6 +1157,20 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     L.reading.dictionary.hint,
     () => state.toggle('dictionaryEnabled')
   );
+  // Shown under the card grid whenever Dictionary is on, so a visitor actually knows
+  // the interaction is "double-click a word on the page".
+  const dictionaryHint = document.createElement('p');
+  dictionaryHint.className = 'a11y-inline-hint';
+  dictionaryHint.hidden = true;
+  dictionaryHint.appendChild(dictionaryIcon());
+  const dictionaryHintText = document.createElement('span');
+  dictionaryHintText.textContent = L.reading.dictionary.activeHint;
+  dictionaryHint.appendChild(dictionaryHintText);
+  const dictLabels = {
+    lookingUp: L.reading.dictionary.lookingUp,
+    noDefinition: L.reading.dictionary.noDefinition,
+    timedOut: L.reading.dictionary.timedOut,
+  };
   let dictAttached = false;
   function onWordDblClick(): void {
     const word = window.getSelection()?.toString().trim();
@@ -1159,12 +1178,12 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     const range = window.getSelection()?.rangeCount ? window.getSelection()!.getRangeAt(0) : null;
     const anchorRect = range?.getBoundingClientRect();
     if (!anchorRect) return;
-    lookupWord(word).then((definition) =>
-      showDictionaryPopover(root, word, definition, anchorRect, L.reading.dictionary.noDefinition)
-    );
+    showDictionaryPopover(root, word, anchorRect, dictLabels);
+    lookupWord(word).then((result) => resolveDictionaryPopover(word, result, dictLabels));
   }
   function syncDictionaryListener(): void {
     const on = state.prefs.dictionaryEnabled;
+    dictionaryHint.hidden = !on;
     if (on && !dictAttached) {
       container.addEventListener('dblclick', onWordDblClick);
       dictAttached = true;
@@ -1209,6 +1228,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       hideImagesCard,
       bigCursorCard,
     ]),
+    dictionaryHint,
     voiceRateRange.row,
     voicePitchRange.row,
     voiceSelectRow,
@@ -1514,43 +1534,11 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
 
   statusRow.append(statusInfo, resetBtn);
 
-  // Accessibility Statement — generateStatement() (statement.ts) is a pure function,
-  // no DOM/network access; the generated HTML is entirely our own static template +
-  // profile labels we control (no host-page or user input flows into it), so
-  // innerHTML here carries no XSS risk.
-  const statementBtn = document.createElement('button');
-  statementBtn.type = 'button';
-  statementBtn.className = 'a11y-ftr-statement-btn';
-  statementBtn.textContent = L.footer.statementLink;
-
-  const statementModal = document.createElement('div');
-  statementModal.className = 'a11y-statement-modal';
-  statementModal.hidden = true;
-  statementModal.setAttribute('role', 'dialog');
-  statementModal.setAttribute('aria-modal', 'true');
-  statementModal.setAttribute('aria-label', L.statement.title);
-  const statementModalHdr = document.createElement('div');
-  statementModalHdr.className = 'a11y-statement-modal-hdr';
-  const statementModalTitle = document.createElement('span');
-  statementModalTitle.className = 'a11y-statement-modal-title';
-  statementModalTitle.textContent = L.statement.title;
-  const statementCloseBtn = document.createElement('button');
-  statementCloseBtn.type = 'button';
-  statementCloseBtn.className = 'a11y-statement-modal-close';
-  statementCloseBtn.setAttribute('aria-label', L.statement.closeAria);
-  statementCloseBtn.appendChild(closeIcon());
-  statementModalHdr.append(statementModalTitle, statementCloseBtn);
-  const statementModalBody = document.createElement('div');
-  statementModalBody.className = 'a11y-statement-modal-body';
-  statementModal.append(statementModalHdr, statementModalBody);
-
-  statementBtn.addEventListener('click', () => {
-    statementModalBody.innerHTML = generateStatement({ siteName: document.title || location.hostname });
-    statementModal.hidden = false;
-  });
-  statementCloseBtn.addEventListener('click', () => {
-    statementModal.hidden = true;
-  });
+  // (An auto-generated "Accessibility Statement" button used to live here. It was
+  // removed: a widget-generated statement asserts a WCAG conformance level the host
+  // site may not actually meet, which is a liability rather than a feature. The
+  // generateStatement() helper is still exported for hosts that want to render one on
+  // their own statement page.)
 
   const brandRow = document.createElement('div');
   brandRow.className = 'a11y-ftr-brand';
@@ -1567,17 +1555,21 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
   // 3-hop threading as brandColor. Omitted entirely when unset.
   const reportLink = opts.reportUrl ? document.createElement('a') : null;
   if (reportLink) {
-    reportLink.className = 'a11y-ftr-statement-btn';
+    reportLink.className = 'a11y-ftr-link';
     reportLink.href = opts.reportUrl!;
     reportLink.target = '_blank';
     reportLink.rel = 'noopener noreferrer';
     reportLink.textContent = L.footer.reportProblem;
   }
 
-  footer.append(statusRow, statementBtn, ...(reportLink ? [reportLink] : []), brandRow);
+  footer.append(statusRow, ...(reportLink ? [reportLink] : []), brandRow);
 
-  pnl.append(hdr, body, footer, statementModal);
+  pnl.append(hdr, body, footer);
   root.append(backdrop, pnl);
+
+  // Replace every native `title` hint (invisible on touch, slow/unstyled on desktop)
+  // with a real tooltip shown on hover, focus, and tap.
+  createHintTooltips(root).attachAll();
 
   function doReset(): void {
     stopSpeaking();
@@ -1593,15 +1585,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
   }
 
   const trap = createFocusTrap(pnl, {
-    onEscape: () => {
-      // Escape closes the statement modal first if it's open, rather than
-      // closing the whole panel out from under it.
-      if (!statementModal.hidden) {
-        statementModal.hidden = true;
-        return;
-      }
-      state.close();
-    },
+    onEscape: () => state.close(),
   });
 
   // Global shortcut — Ctrl+U toggles the panel open/closed from anywhere on the page.
@@ -1617,7 +1601,6 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     pnl.classList.toggle('open', state.isOpen);
     pnl.classList.toggle('a11y-pnl--left', state.side === 'left');
     backdrop.classList.toggle('show', state.isOpen);
-    if (!state.isOpen) statementModal.hidden = true;
     updateSideBtn();
 
     setRangeValue(fontSizeRange.input, state.prefs.fontSizeLevel);

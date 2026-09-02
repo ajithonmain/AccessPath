@@ -209,9 +209,15 @@
     letter-spacing: 0.08em;
 }
 .accesspath-panel .a11y-info-icon {
-    display: inline-flex; color: var(--ap-mu, #6F7580);
+    display: inline-flex; align-items: center;
+    color: var(--ap-mu, #6F7580);
     cursor: help;
+    border-radius: 50%;
+    transition: color 0.15s;
 }
+.accesspath-panel .a11y-info-icon:hover,
+.accesspath-panel .a11y-info-icon:focus-visible { color: var(--ap-brand, #4928F3); }
+.accesspath-panel .a11y-info-icon:focus-visible { outline: 2px solid var(--ap-brand, #4928F3); outline-offset: 2px; }
 .accesspath-panel .a11y-info-icon svg { width: 13px; height: 13px; }
 .accesspath-panel .a11y-top-action {
     background: none; border: none; cursor: pointer;
@@ -839,7 +845,7 @@
     flex-shrink: 0;
 }
 
-.accesspath-panel .a11y-ftr-statement-btn {
+.accesspath-panel .a11y-ftr-link {
     display: block;
     width: 100%;
     margin-top: 10px;
@@ -851,59 +857,71 @@
     color: var(--ap-brand, #4928F3);
     cursor: pointer;
     transition: opacity 0.15s;
+    text-decoration: none;
 }
-.accesspath-panel .a11y-ftr-statement-btn:hover { opacity: 0.75; }
+.accesspath-panel .a11y-ftr-link:hover { opacity: 0.75; }
 
-/* Accessibility Statement modal — a lightweight in-panel overlay (not a separate
-   browser dialog), positioned absolute within .a11y-pnl (which is itself
-   position:fixed, so it establishes the containing block this needs). Escape
-   closes this before it closes the whole panel — see the focus trap's onEscape
-   in panel-dom.ts. */
-.accesspath-panel .a11y-statement-modal {
+/* Hint tooltip — one shared bubble (hint-tooltip.ts) shown on hover / focus / tap for
+   every [data-tip] element. position: fixed still anchors to the viewport from inside
+   the embed's Shadow DOM. */
+.accesspath-panel .a11y-tip {
+    position: fixed;
+    z-index: 2147483004;
+    max-width: 220px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: var(--ap-tx, #040D29);
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px; font-weight: 500; line-height: 1.35;
+    text-transform: none; letter-spacing: normal;
+    box-shadow: 0 6px 20px rgba(4, 13, 41, 0.28);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+.accesspath-panel .a11y-tip.show { opacity: 1; }
+/* Visually-hidden hint copy carried inside each trigger for assistive tech
+   (aria-describedby points here). */
+.accesspath-panel .a11y-tip-sr {
     position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: none; flex-direction: column;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Inline "how it works" note under a control that's active (e.g. Dictionary on). */
+.accesspath-panel .a11y-inline-hint {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 10px 0 2px;
+    padding: 9px 11px;
+    border-radius: 9px;
+    background: var(--ap-brand-soft, #F0EDFF);
+    color: var(--ap-brand-text, var(--ap-brand, #4928F3));
+    font-size: 12px; line-height: 1.45; font-weight: 500;
+}
+.accesspath-panel .a11y-inline-hint svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* Dictionary lookup popover — created by dictionary.ts, appended to .accesspath-panel.
+   Lives here (not a11y-effects.css) because that root is inside the embed's Shadow DOM,
+   which outer page styles can't reach. */
+.accesspath-panel .a11y-dict-popover {
+    position: fixed;
+    z-index: 2147483003;
+    max-width: 260px;
     background: var(--ap-sf, #fff);
+    color: var(--ap-tx, #111);
+    border: 1px solid var(--ap-bd, rgba(0, 0, 0, 0.12));
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
 }
-.accesspath-panel .a11y-statement-modal:not([hidden]) {
-    display: flex;
-}
-.accesspath-panel .a11y-statement-modal-hdr {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--ap-bd, #E8E7ED);
-}
-.accesspath-panel .a11y-statement-modal-title {
-    font-size: 15px; font-weight: 700;
-    color: var(--ap-tx, #040D29);
-}
-.accesspath-panel .a11y-statement-modal-close {
-    display: flex; align-items: center; justify-content: center;
-    width: 30px; height: 30px;
-    border: none;
-    border-radius: 50%;
-    background: var(--ap-sf2, #F4F1F9);
-    color: var(--ap-tm, #3C4255);
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background-color 0.15s, color 0.15s;
-}
-.accesspath-panel .a11y-statement-modal-close:hover { background: var(--ap-brand-soft, #F0EDFF); color: var(--ap-brand, #4928F3); }
-.accesspath-panel .a11y-statement-modal-close svg { width: 15px; height: 15px; }
-.accesspath-panel .a11y-statement-modal-body {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 20px;
-    font-size: 13.5px; line-height: 1.6;
-    color: var(--ap-tm, #3C4255);
-}
-.accesspath-panel .a11y-statement-modal-body h2 { font-size: 16px; font-weight: 700; color: var(--ap-tx, #040D29); margin: 0 0 10px; }
-.accesspath-panel .a11y-statement-modal-body h3 { font-size: 13px; font-weight: 700; color: var(--ap-tx, #040D29); margin: 18px 0 8px; }
-.accesspath-panel .a11y-statement-modal-body p { margin: 0 0 12px; }
-.accesspath-panel .a11y-statement-modal-body ul { margin: 0 0 12px; padding-left: 20px; }
-.accesspath-panel .a11y-statement-modal-body li { margin-bottom: 4px; }
+.accesspath-panel .a11y-dict-word { font-weight: 700; margin-bottom: 4px; text-transform: capitalize; }
+.accesspath-panel .a11y-dict-def { color: var(--ap-tm, #555); }
 
 /* Note: the panel deliberately does NOT self-respond to the a11y-* effect classes.
    Toggling a preference only changes the host page's own content (via `container` in
