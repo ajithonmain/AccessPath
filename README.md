@@ -8,6 +8,13 @@ a built in WCAG accessibility checker that scans your page for issues, right in 
 You can add it to any website. It works with plain HTML, WordPress, Shopify, React, and
 Angular.
 
+**Live site and docs:** https://accesspath-6ur.pages.dev
+&nbsp;·&nbsp; **npm:** [`@accesspath/embed`](https://www.npmjs.com/package/@accesspath/embed),
+[`@accesspath/react`](https://www.npmjs.com/package/@accesspath/react),
+[`@accesspath/angular`](https://www.npmjs.com/package/@accesspath/angular),
+[`@accesspath/core`](https://www.npmjs.com/package/@accesspath/core)
+&nbsp;·&nbsp; MIT licensed
+
 ## What it does
 
 When a visitor opens the panel, they can turn on:

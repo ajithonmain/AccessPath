@@ -5,14 +5,41 @@
   "description": "Framework-agnostic accessibility widget engine: state, panel UI, effects, and a built-in WCAG scanner.",
   "license": "MIT",
   "author": "Ajith M Jose",
-  "homepage": "https://github.com/ajithonmain/AccessPath",
+  "homepage": "https://accesspath-6ur.pages.dev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ajithonmain/AccessPath.git"
+    "url": "git+https://github.com/ajithonmain/AccessPath.git",
+    "directory": "packages/core"
   },
-  "keywords": ["accessibility", "a11y", "wcag", "accessibility-widget", "ada"],
-  "publishConfig": { "access": "public" },
-  "sideEffects": ["*.css", "styles/*.css"],
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "ada",
+    "accessibility-widget",
+    "accessibility-overlay",
+    "accessibility-toolbar",
+    "accessibility-panel",
+    "web-accessibility",
+    "wcag-widget",
+    "ada-compliance",
+    "dyslexia",
+    "screen-reader",
+    "self-hosted",
+    "open-source",
+    "userway-alternative",
+    "accessibe-alternative",
+    "framework-agnostic",
+    "vanilla-js",
+    "typescript"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "*.css",
+    "styles/*.css"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,5 +61,8 @@
   "devDependencies": {
     "typescript": "~5.1.3",
     "vite": "^5.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/ajithonmain/AccessPath/issues"
   }
 }

@@ -11,6 +11,7 @@ export default defineConfig({
         terms: resolve(__dirname, 'terms.html'),
         accessibilityGuide: resolve(__dirname, 'accessibility-guide.html'),
         integrationGuide: resolve(__dirname, 'integration-guide.html'),
+        notFound: resolve(__dirname, '404.html'),
       },
     },
   },

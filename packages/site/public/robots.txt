@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://accesspath.dev/sitemap.xml
+Sitemap: https://accesspath-6ur.pages.dev/sitemap.xml
