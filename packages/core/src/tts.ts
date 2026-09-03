@@ -4,6 +4,12 @@ export function isSpeechSupported(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
 }
 
+/** True once the engine has at least one voice. When false, no site can produce
+ *  speech — the device has no TTS voice installed. */
+export function hasVoices(): boolean {
+  return isSpeechSupported() && window.speechSynthesis.getVoices().length > 0;
+}
+
 export interface SpeakSettings {
   /** A11yPrefs.voiceRateLevel, 0-100 — same 2**((level-50)/50) mapping as voice-over.ts. */
   rateLevel?: number;

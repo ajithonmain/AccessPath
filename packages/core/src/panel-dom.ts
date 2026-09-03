@@ -3,7 +3,7 @@ import { PROFILES, PROFILE_COLORS } from './profiles';
 import { AccessPathState } from './state';
 import { resolveLabels, Labels, LocaleKey, LabelOverrides } from './i18n';
 import { createFocusTrap } from './focus-trap';
-import { isSpeechSupported, speak, stopSpeaking } from './tts';
+import { isSpeechSupported, hasVoices, speak, stopSpeaking } from './tts';
 import { scanHeadings } from './heading-scan';
 import { lookupWord, showDictionaryPopover, resolveDictionaryPopover, closeDictionaryPopover } from './dictionary';
 import { createHintTooltips } from './hint-tooltip';
@@ -963,15 +963,27 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
 
   // Reading
   let isSpeaking = false;
-  // Shown if the browser refuses to speak (Brave blocks the Web Speech API; a machine
-  // with no installed voice can't either). Covers Read Aloud and Voice Over.
+  // Shown to the *visitor* if Read Aloud / Voice Over produced no sound, with guidance
+  // matched to the likely cause (no installed voice / Brave Shields / generic block).
   const speechNote = document.createElement('p');
   speechNote.className = 'a11y-inline-hint a11y-inline-hint--warn';
   speechNote.hidden = true;
   speechNote.appendChild(readAloudIcon());
   const speechNoteText = document.createElement('span');
-  speechNoteText.textContent = L.reading.speechBlocked;
   speechNote.appendChild(speechNoteText);
+  let braveDetected = false;
+  (navigator as unknown as { brave?: { isBrave?: () => Promise<boolean> } })
+    .brave?.isBrave?.()
+    .then((b) => { braveDetected = b; })
+    .catch(() => {});
+  function showSpeechNote(): void {
+    speechNoteText.textContent = !hasVoices()
+      ? L.reading.speechNoVoice
+      : braveDetected
+        ? L.reading.speechBrave
+        : L.reading.speechBlocked;
+    speechNote.hidden = false;
+  }
   const readAloudCard = createCard(
     readAloudIcon(),
     L.reading.readAloud.label,
@@ -1003,7 +1015,9 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
             updateReadAloudCard();
           },
           () => {
-            speechNote.hidden = false;
+            isSpeaking = false;
+            updateReadAloudCard();
+            showSpeechNote();
           }
         );
       }
@@ -1034,7 +1048,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       if (isSpeechSupported() && liveActivation) {
         window.setTimeout(() => {
           if (state.prefs.voiceOver && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-            speechNote.hidden = false;
+            showSpeechNote();
           }
         }, 1800);
       }

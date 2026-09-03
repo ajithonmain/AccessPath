@@ -70,7 +70,9 @@ export const fr: Labels = {
   reading: {
     title: 'Lecture',
     desc: 'Lecture à voix haute, dictionnaire, surligner liens/titres/survol/focus, masquer les images, grand curseur, alignement du texte, clavier virtuel',
-    speechBlocked: 'La synthèse vocale n’a pas démarré. Votre navigateur la bloque peut-être (Brave la bloque par défaut) ou aucune voix n’est installée sur cet appareil.',
+    speechBlocked: 'La lecture à voix haute n’a pas démarré. Vérifiez que l’appareil n’est pas en sourdine et que la synthèse vocale est activée dans les réglages du système.',
+    speechBrave: 'Brave bloque la lecture à voix haute par défaut. Cliquez sur l’icône Brave Shields dans la barre d’adresse et autorisez-la pour ce site, puis réessayez.',
+    speechNoVoice: 'Aucune voix de synthèse n’est disponible sur cet appareil. Ajoutez-en une dans les réglages de voix ou d’accessibilité du système.',
     readAloud: {
       label: 'Lire à voix haute',
       stopLabel: 'Arrêter la lecture',

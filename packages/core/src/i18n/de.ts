@@ -70,7 +70,9 @@ export const de: Labels = {
   reading: {
     title: 'Lesen',
     desc: 'Vorlesen, Wörterbuch, Links/Titel/Hover/Fokus hervorheben, Bilder ausblenden, großer Cursor, Textausrichtung, Bildschirmtastatur',
-    speechBlocked: 'Die Sprachausgabe wurde nicht gestartet. Möglicherweise blockiert Ihr Browser sie (Brave blockiert sie standardmäßig) oder es ist keine Stimme auf diesem Gerät installiert.',
+    speechBlocked: 'Das Vorlesen wurde nicht gestartet. Prüfen Sie, ob das Gerät stummgeschaltet ist und ob die Sprachausgabe in den Systemeinstellungen aktiviert ist.',
+    speechBrave: 'Brave blockiert das Vorlesen standardmäßig. Klicken Sie auf das Brave-Shields-Symbol in der Adressleiste und erlauben Sie es für diese Website, dann erneut versuchen.',
+    speechNoVoice: 'Auf diesem Gerät ist keine Stimme für die Sprachausgabe verfügbar. Fügen Sie eine in den Sprach- oder Barrierefreiheitseinstellungen des Systems hinzu.',
     readAloud: {
       label: 'Vorlesen',
       stopLabel: 'Vorlesen stoppen',

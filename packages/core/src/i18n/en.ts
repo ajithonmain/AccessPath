@@ -79,7 +79,9 @@ export const en: Labels = {
   reading: {
     title: 'Reading',
     desc: 'Read aloud, dictionary, highlight links/titles/hover/focus, hide images, big cursor, text align, virtual keyboard',
-    speechBlocked: 'Text-to-speech didn’t start. Your browser may be blocking it (Brave blocks it by default), or no speech voice is installed on this device.',
+    speechBlocked: 'Read aloud didn’t start. Check that this device isn’t muted and that text-to-speech is turned on in your system settings.',
+    speechBrave: 'Brave blocks read aloud by default. Click the Brave Shields icon in the address bar and allow it for this site, then try again.',
+    speechNoVoice: 'No text-to-speech voice is available on this device. Add one in your system’s speech or accessibility settings.',
     readAloud: {
       label: 'Read Aloud',
       stopLabel: 'Stop Reading',
