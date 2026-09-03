@@ -1,6 +1,6 @@
 {
   "name": "@accesspath/angular",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Angular component for the AccessPath accessibility widget.",
   "license": "MIT",
   "author": "Ajith M Jose",
@@ -38,7 +38,7 @@
   "peerDependencies": {
     "@angular/common": ">=16.2.0 <21",
     "@angular/core": ">=16.2.0 <21",
-    "@accesspath/core": "^0.1.0"
+    "@accesspath/core": "^0.1.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
