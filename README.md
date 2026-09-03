@@ -37,6 +37,13 @@ visit. Keyboard users get a proper focus trap, Escape closes the panel, and focu
 to where it was. The panel also checks the visitor's own operating system setting for
 reduced motion, and respects it automatically.
 
+A note for Safari/iOS visitors: by default, Safari only lets the Tab key reach text fields
+and dropdowns, skipping plain buttons — a setting Safari itself controls (System Settings →
+Keyboard → "Full Keyboard Access"), not something this panel or any other website can turn on
+for you. With it off, Tab won't reach most of the panel's buttons in Safari specifically; every
+other browser tabs through the whole panel normally. Turning that setting on fixes it for every
+button-based site you visit, not just this one.
+
 ## Built in WCAG accessibility checker
 
 AccessPath also includes a free accessibility checker, sometimes called an accessibility
@@ -89,8 +96,8 @@ npm start                  # runs the public site at http://localhost:5173
 To work on one of the individual packages:
 
 ```bash
-npm run build:embed && open packages/embed/demo/index.html   # open over http://, not file://
-npm run demo -w @accesspath/react                              # http://localhost:5174
+npm run build:embed && npx serve packages/embed   # then visit /demo/ — needs http://, not file://
+npm run demo -w @accesspath/react                 # http://localhost:5174
 ```
 
 ## Building for production
@@ -100,6 +107,19 @@ npm run build:all      # builds core, embed, react, the angular library, and the
 ```
 
 Each package also has its own `build:<name>` script.
+
+## Deploying the public site
+
+`packages/site` embeds a live copy of the widget synced from `packages/embed/dist`, so its build
+needs core and embed built first. On Vercel, Netlify, or Cloudflare Pages, set the project's
+build command to:
+
+```bash
+npm run build:core && npm run build:embed && npm run build:site
+```
+
+and the output/publish directory to `packages/site/dist`. A plain `npm run build:site` on a
+fresh clone fails on purpose (the embed bundle it needs isn't checked into git).
 
 ## Project layout
 
@@ -153,7 +173,9 @@ Every attribute below is optional.
 ## Adding it to a React app
 
 ```tsx
+import { useRef } from 'react';
 import { AccessPathPanel, useAccessPath } from '@accesspath/react';
+import type { AccessPathPanelHandle } from '@accesspath/react';
 import '@accesspath/core/styles/a11y-effects.css';
 import '@accesspath/core/styles/panel.css';
 
@@ -163,10 +185,30 @@ const panelRef = useRef<AccessPathPanelHandle>(null);
 <button onClick={() => panelRef.current?.open()}>Accessibility</button>
 ```
 
-`useAccessPath(storageKey)` gives you `{ open, close, reset, prefs, activeProfile, isOpen }`.
-Any component using the same `storageKey` shares the same state.
+`useAccessPath(storageKey)` gives you `{ open, close, reset, prefs, activeProfiles, isOpen }`.
+`activeProfiles` is an array, since more than one profile can be on at once. Any component
+using the same `storageKey` shares the same state.
 
 ## Adding it to an Angular app
+
+The component is standalone, so import it directly:
+
+```ts
+import { AccessibilityPanelComponent } from '@accesspath/angular';
+
+@Component({
+  standalone: true,
+  imports: [AccessibilityPanelComponent],
+  // ...
+})
+```
+
+Add the two core stylesheets to your global styles (for example in `styles.css`):
+
+```css
+@import '@accesspath/core/styles/a11y-effects.css';
+@import '@accesspath/core/styles/panel.css';
+```
 
 ```html
 <app-accessibility-panel #a11yPanel [container]="root" [isDarkTheme]="isDark"></app-accessibility-panel>

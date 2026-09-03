@@ -2,6 +2,7 @@ import { A11yPrefs, ProfileKey } from './types';
 import { syncHeadingScale } from './heading-scale';
 import { bigCursorUrlFragment } from './cursor-color';
 import { ensureColorBlindFilters } from './colorblind-filters';
+import { ensureDyslexiaFont } from './dyslexia-font';
 
 /** Toggles the a11y-* effect classes on every element in `targets` — call this with only
  *  your host `container`, never `panel.root`/the trigger button. The panel's own chrome is
@@ -18,8 +19,15 @@ export function applyClasses(
   // wrappers, which already pass state.activeProfiles as this argument.
   activeProfiles: ProfileKey[]
 ): void {
+  if (prefs.dyslexia) ensureDyslexiaFont();
   for (const target of targets) {
     if (!target) continue;
+    // Every a11y-* effect rule in a11y-effects.css is scoped .a11y-target.a11y-*, so a
+    // target without this class silently gets none of them. Adding it here, not just in
+    // the embed script, means React/Angular consumers don't need to remember to add it to
+    // whatever element they pass as `container` — this is the single place all three
+    // wrappers already funnel through. Idempotent (classList.add is a no-op if present).
+    target.classList.add('a11y-target');
     target.classList.toggle('a11y-fontsize',   prefs.fontSizeLevel > 0);
     target.style.setProperty('--a11y-fontsize-level', String(prefs.fontSizeLevel));
     syncHeadingScale(target, prefs.fontSizeLevel);

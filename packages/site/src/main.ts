@@ -162,18 +162,33 @@ function highlightCode(raw: string): string {
 
 const COPY_ICON_SVG =
   '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>';
+const CHECK_ICON_SVG =
+  '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6"/></svg>';
 
-function makeCopyButton(getText: () => string): HTMLButtonElement {
+/** Swaps a copy button's icon to a checkmark and its accessible name to "Copied" for a
+ *  beat, then restores both — shared by every copy button on the page (the dynamically
+ *  created ones from makeCopyButton() below, and the builder's own #qc-builder-copy). */
+function flashCopied(btn: HTMLElement, restoreIconHTML: string, restoreAriaLabel: string): void {
+  btn.innerHTML = CHECK_ICON_SVG;
+  btn.setAttribute('aria-label', 'Copied');
+  btn.classList.add('is-copied');
+  window.setTimeout(() => {
+    btn.innerHTML = restoreIconHTML;
+    btn.setAttribute('aria-label', restoreAriaLabel);
+    btn.classList.remove('is-copied');
+  }, 1400);
+}
+
+function makeCopyButton(getText: () => string, ariaLabel = 'Copy code'): HTMLButtonElement {
   const copyBtn = document.createElement('button');
   copyBtn.type = 'button';
   copyBtn.className = 'code-copy-btn';
-  copyBtn.setAttribute('aria-label', 'Copy code');
+  copyBtn.setAttribute('aria-label', ariaLabel);
   copyBtn.innerHTML = COPY_ICON_SVG;
   copyBtn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(getText());
-      copyBtn.classList.add('is-copied');
-      window.setTimeout(() => copyBtn.classList.remove('is-copied'), 1400);
+      flashCopied(copyBtn, COPY_ICON_SVG, ariaLabel);
     } catch {
       // Clipboard API can be blocked (permissions, insecure context) — the code is
       // already selectable/visible in the block, so this is a silent no-op fallback.
@@ -211,6 +226,18 @@ for (const block of staticCodeBlocks) {
   block.parentElement?.insertBefore(panel, block);
   panel.appendChild(head);
   panel.appendChild(block);
+}
+
+// CDN snippet next to the HTML/WordPress download button — not a .code-block (it's a
+// one-line pill, not a code panel), so it needs its own copy button rather than the
+// generic wrapping loop above. Styled for a light pill background via .qc-html-cdn-copy,
+// unlike .code-copy-btn which assumes a dark .code-panel-head.
+const cdnRow = document.getElementById('qc-html-cdn-row');
+const cdnCode = cdnRow?.querySelector<HTMLElement>('.qc-html-cdn');
+if (cdnRow && cdnCode) {
+  const cdnCopyBtn = makeCopyButton(() => cdnCode.textContent ?? '', 'Copy CDN URL');
+  cdnCopyBtn.classList.add('qc-html-cdn-copy');
+  cdnRow.appendChild(cdnCopyBtn);
 }
 
 
@@ -693,15 +720,15 @@ function createBuilder(els: BuilderEls): void {
     renderActionRows();
     renderBuilder();
   });
-  // Same icon-only .code-copy-btn behavior as the static Quick start snippets'
-  // makeCopyButton() above — a brief background-color flip via .is-copied, no text
-  // swap (there's no text on this button to swap).
+  // Same icon-swap-to-checkmark behavior as the static Quick start snippets'
+  // makeCopyButton() above, via the shared flashCopied() helper.
   els.copyBtn?.addEventListener('click', async () => {
     const text = els.codeInner?.textContent ?? '';
+    const btn = els.copyBtn;
+    if (!btn) return;
     try {
       await navigator.clipboard.writeText(text);
-      els.copyBtn?.classList.add('is-copied');
-      window.setTimeout(() => els.copyBtn?.classList.remove('is-copied'), 1400);
+      flashCopied(btn, COPY_ICON_SVG, 'Copy code');
     } catch {
       // Clipboard API can be blocked (permissions, insecure context) — the code is
       // already selectable/visible in the <pre>, so this is a silent no-op fallback.

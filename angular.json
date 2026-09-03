@@ -29,6 +29,53 @@
           "defaultConfiguration": "production"
         }
       }
+    },
+    "accesspath-angular-demo": {
+      "projectType": "application",
+      "root": "packages/angular/demo",
+      "sourceRoot": "packages/angular/demo",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/angular-demo",
+            "index": "packages/angular/demo/index.html",
+            "main": "packages/angular/demo/main.ts",
+            "tsConfig": "packages/angular/demo/tsconfig.app.json",
+            "styles": [
+              "packages/core/styles/a11y-effects.css",
+              "packages/core/styles/panel.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "port": 4300
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "accesspath-angular-demo:build:production"
+            },
+            "development": {
+              "buildTarget": "accesspath-angular-demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   }
 }

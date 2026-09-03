@@ -1,14 +1,29 @@
 {
   "name": "@accesspath/embed",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "type": "module",
+  "description": "Drop-in accessibility widget for any website via a single script tag. No build step.",
+  "license": "MIT",
+  "author": "Ajith M Jose",
+  "homepage": "https://github.com/ajithonmain/AccessPath",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajithonmain/AccessPath.git"
+  },
+  "keywords": ["accessibility", "a11y", "wcag", "accessibility-widget", "ada"],
+  "publishConfig": { "access": "public" },
+  "main": "./dist/embed.js",
+  "unpkg": "./dist/embed.js",
+  "jsdelivr": "./dist/embed.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@accesspath/core": "*"
+    "@accesspath/core": "^0.1.0"
   },
   "devDependencies": {
     "typescript": "~5.1.3",

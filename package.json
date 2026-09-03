@@ -14,7 +14,12 @@
     "build:angular-lib": "ng build accesspath-angular",
     "build:site": "npm run build -w @accesspath/site",
     "dev:site": "npm run dev -w @accesspath/site",
-    "build:all": "npm run build:core && npm run build:embed && npm run build:react && npm run build:angular-lib && npm run build:site"
+    "demo:angular": "npm run build:core && ng serve accesspath-angular-demo",
+    "build:all": "npm run build:core && npm run build:embed && npm run build:react && npm run build:angular-lib && npm run build:site",
+    "publish:core": "npm run build:core && npm publish -w @accesspath/core",
+    "publish:embed": "npm run build:core && npm run build:embed && npm publish -w @accesspath/embed",
+    "publish:react": "npm run build:core && npm run build:react && npm publish -w @accesspath/react",
+    "publish:angular": "npm run build:core && npm run build:angular-lib && cp LICENSE packages/angular/README.md dist/accesspath-angular/ && npm publish dist/accesspath-angular"
   },
   "dependencies": {
     "@angular/animations": "^16.2.0",

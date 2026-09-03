@@ -1,8 +1,18 @@
 {
   "name": "@accesspath/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "type": "module",
+  "description": "Framework-agnostic accessibility widget engine: state, panel UI, effects, and a built-in WCAG scanner.",
+  "license": "MIT",
+  "author": "Ajith M Jose",
+  "homepage": "https://github.com/ajithonmain/AccessPath",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajithonmain/AccessPath.git"
+  },
+  "keywords": ["accessibility", "a11y", "wcag", "accessibility-widget", "ada"],
+  "publishConfig": { "access": "public" },
+  "sideEffects": ["*.css", "styles/*.css"],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +28,7 @@
     "styles"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json --emitDeclarationOnly && vite build",
+    "build": "rm -rf dist && tsc -p tsconfig.json --emitDeclarationOnly && vite build",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

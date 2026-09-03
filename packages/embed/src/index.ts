@@ -126,27 +126,6 @@ function injectEffectsStyles(): void {
   document.head.appendChild(style);
 }
 
-const DYSLEXIA_FONT_LINK_ID = 'accesspath-dyslexia-font';
-
-// The .a11y-dyslexia rule in a11y-effects.css sets font-family: 'OpenDyslexic', but never
-// loads that face itself — React/Angular consumers are expected to @import it in their own
-// global styles (see docs/features-and-profiles.md), same as any other CSS dependency of a
-// component they render. The embed script has no such host stylesheet to piggyback on (its
-// whole pitch is "no-build sites"), so without this the Dyslexia Friendly toggle silently
-// falls back to sans-serif on every embed-only site. Injected lazily (only once dyslexia is
-// actually turned on) rather than unconditionally on mount, so sites that never touch the
-// toggle don't pay for a font nobody uses. Same "graceful degradation" contract as the
-// dictionary lookup's api.dictionaryapi.dev call: if the CDN request fails, the CSS
-// font-family fallback (sans-serif) still applies, nothing else breaks.
-function ensureDyslexiaFont(): void {
-  if (document.getElementById(DYSLEXIA_FONT_LINK_ID)) return;
-  const link = document.createElement('link');
-  link.id = DYSLEXIA_FONT_LINK_ID;
-  link.rel = 'stylesheet';
-  link.href = 'https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/index.css';
-  document.head.appendChild(link);
-}
-
 function mount(): void {
   const cfg = readConfig(scriptEl);
 
@@ -156,7 +135,8 @@ function mount(): void {
   // filter-free or the drawer/trigger would inherit the filter along with the rest of the page.
   const container =
     (cfg.target ? document.querySelector<HTMLElement>(cfg.target) : document.body) ?? document.body;
-  container.classList.add('a11y-target');
+  // applyClasses() (called below via applyToTargets()) adds the a11y-target class itself now
+  // — no need to do it here too.
 
   injectEffectsStyles();
 
@@ -208,7 +188,6 @@ function mount(): void {
   };
 
   const applyToTargets = () => {
-    if (state.prefs.dyslexia) ensureDyslexiaFont();
     applyClasses([container], state.prefs, state.activeProfiles);
   };
   state.subscribe(applyToTargets);
