@@ -134,10 +134,11 @@ packages/
 
 ## Adding the script tag (no build step)
 
-Host your own copy of `dist/embed.js` from `@accesspath/embed` and point a script tag at it:
+Drop one script tag on any page — loads from jsDelivr (pinned to `@0`), or self-host
+`dist/embed.js` from `@accesspath/embed` and point `src` at your own copy:
 
 ```html
-<script src="/embed.js"
+<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js"
         data-profiles="dyslexia,motor,low-vision"
         data-theme="light"
         data-storage-key="accesspath-prefs"

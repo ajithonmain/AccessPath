@@ -850,19 +850,19 @@
           </div>
 
           <div class="qc-platform-panel is-active" id="qc-tab-html" role="tabpanel" aria-labelledby="qc-tabbtn-html">
-            <pre class="code-block" data-lang="html"><code>&lt;script src="/embed.js"
+            <pre class="code-block" data-lang="html"><code>&lt;script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js"
         data-theme="light"
         data-storage-key="accesspath-prefs"
         data-position="bottom-right"&gt;
 &lt;/script&gt;</code></pre>
-            <p class="qc-html-note">Host your own copy of <code>embed.js</code> at that path (works on WordPress, Shopify, or any plain HTML site — just paste the tag into your theme or a custom-HTML block), or point <code>src</code> straight at a CDN copy instead.</p>
+            <p class="qc-html-note">Paste this into your theme or a custom-HTML block (WordPress, Shopify, Wix, plain HTML). It loads from jsDelivr &mdash; pinned to <code>@0</code> so a future major release can't change it under you. Prefer to self-host? Download <code>embed.js</code> and point <code>src</code> at your own path.</p>
             <div class="qc-html-actions">
               <a href="/embed.js" download="embed.js" class="btn btn-secondary btn-sm">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H19a2.5 2.5 0 0 0 0-5H6.5A2.5 2.5 0 0 0 4 19.5z"/></svg>
                 Download embed.js
               </a>
               <div class="qc-html-cdn-row" id="qc-html-cdn-row">
-                <code class="qc-html-cdn">https://cdn.jsdelivr.net/npm/@accesspath/embed/dist/embed.js</code>
+                <code class="qc-html-cdn">npm i @accesspath/embed</code>
               </div>
             </div>
           </div>

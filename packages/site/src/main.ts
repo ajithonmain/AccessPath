@@ -235,7 +235,7 @@ for (const block of staticCodeBlocks) {
 const cdnRow = document.getElementById('qc-html-cdn-row');
 const cdnCode = cdnRow?.querySelector<HTMLElement>('.qc-html-cdn');
 if (cdnRow && cdnCode) {
-  const cdnCopyBtn = makeCopyButton(() => cdnCode.textContent ?? '', 'Copy CDN URL');
+  const cdnCopyBtn = makeCopyButton(() => cdnCode.textContent ?? '', 'Copy npm install command');
   cdnCopyBtn.classList.add('qc-html-cdn-copy');
   cdnRow.appendChild(cdnCopyBtn);
 }
@@ -364,7 +364,7 @@ function generateBuilderCode(s: BuilderState): string {
     const hideTriggerNote = s.hideTrigger
       ? '\n\n<!-- Open it from your own button: <button onclick="window.AccessPath.open()">Accessibility</button> -->'
       : '';
-    return `<script src="/embed.js"\n${attrs.join('\n')}>\n</script>${otherNote}${hideTriggerNote}\n\n${CUSTOM_SECTIONS_NOTE_HTML}`;
+    return `<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js"\n${attrs.join('\n')}>\n</script>${otherNote}${hideTriggerNote}\n\n${CUSTOM_SECTIONS_NOTE_HTML}`;
   }
 
   if (s.platform === 'react') {
