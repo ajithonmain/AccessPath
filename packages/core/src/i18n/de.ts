@@ -70,6 +70,7 @@ export const de: Labels = {
   reading: {
     title: 'Lesen',
     desc: 'Vorlesen, Wörterbuch, Links/Titel/Hover/Fokus hervorheben, Bilder ausblenden, großer Cursor, Textausrichtung, Bildschirmtastatur',
+    speechBlocked: 'Die Sprachausgabe wurde nicht gestartet. Möglicherweise blockiert Ihr Browser sie (Brave blockiert sie standardmäßig) oder es ist keine Stimme auf diesem Gerät installiert.',
     readAloud: {
       label: 'Vorlesen',
       stopLabel: 'Vorlesen stoppen',

@@ -1,5 +1,5 @@
 import { closeIcon, pauseIcon, playIcon, restartIcon } from './icons';
-import { isSpeechSupported } from './tts';
+import { isSpeechSupported, pickVoice } from './tts';
 
 /** Sequential whole-page reader for the Voice Over profile (A11yPrefs.voiceOver).
  *
@@ -136,10 +136,9 @@ export function createVoiceOver(
     const s = getSettings();
     u.rate = levelToFactor(s.rateLevel);
     u.pitch = Math.max(0, Math.min(2, levelToFactor(s.pitchLevel)));
-    if (s.voiceURI) {
-      const match = window.speechSynthesis.getVoices().find((v) => v.voiceURI === s.voiceURI);
-      if (match) u.voice = match;
-    }
+    // Always set an explicit voice — macOS Chrome often stays silent with u.voice unset.
+    const voice = pickVoice(s.voiceURI);
+    if (voice) u.voice = voice;
     return u;
   }
 
@@ -340,13 +339,21 @@ export function createVoiceOver(
   updateStatus();
 
   // Speak the navigation hint first, then fall through to reading the content.
-  const intro = makeUtterance(strings.nav);
   const startContent = () => {
     if (!destroyed && !paused && generation === 0) speakCurrent(false);
   };
-  intro.onend = startContent;
-  intro.onerror = (e) => {
-    if (e.error !== 'interrupted' && e.error !== 'canceled') startContent();
+  let introSpoken = false;
+  const speakIntro = () => {
+    if (destroyed || introSpoken) return;
+    introSpoken = true;
+    // Build the utterance now (not at createVoiceOver() time) so pickVoice() sees a
+    // populated getVoices() — an unset u.voice leaves macOS Chrome silent.
+    const intro = makeUtterance(strings.nav);
+    intro.onend = startContent;
+    intro.onerror = (e) => {
+      if (e.error !== 'interrupted' && e.error !== 'canceled') startContent();
+    };
+    speakNow(intro, true);
   };
 
   // Browsers block speechSynthesis.speak() unless there is a live user activation.
@@ -358,7 +365,18 @@ export function createVoiceOver(
   const begin = () => {
     unbindGesture?.();
     unbindGesture = undefined;
-    if (!destroyed) speakNow(intro, true);
+    if (destroyed) return;
+    // getVoices() can be empty until 'voiceschanged' fires (Chrome, first use).
+    if (window.speechSynthesis.getVoices().length) {
+      speakIntro();
+    } else {
+      const onVoices = () => {
+        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
+        speakIntro();
+      };
+      window.speechSynthesis.addEventListener('voiceschanged', onVoices);
+      window.setTimeout(speakIntro, 300);
+    }
   };
   if (navigator.userActivation ? navigator.userActivation.isActive : true) {
     begin();

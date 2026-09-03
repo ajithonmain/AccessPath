@@ -963,6 +963,15 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
 
   // Reading
   let isSpeaking = false;
+  // Shown if the browser refuses to speak (Brave blocks the Web Speech API; a machine
+  // with no installed voice can't either). Covers Read Aloud and Voice Over.
+  const speechNote = document.createElement('p');
+  speechNote.className = 'a11y-inline-hint a11y-inline-hint--warn';
+  speechNote.hidden = true;
+  speechNote.appendChild(readAloudIcon());
+  const speechNoteText = document.createElement('span');
+  speechNoteText.textContent = L.reading.speechBlocked;
+  speechNote.appendChild(speechNoteText);
   const readAloudCard = createCard(
     readAloudIcon(),
     L.reading.readAloud.label,
@@ -974,6 +983,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
         isSpeaking = false;
         updateReadAloudCard();
       } else {
+        speechNote.hidden = true;
         const selected = window.getSelection()?.toString().trim();
         // With nothing selected, prefer the page's <main> so it doesn't start by
         // reading the nav/header aloud; fall back to the whole container.
@@ -991,6 +1001,9 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
           () => {
             isSpeaking = false;
             updateReadAloudCard();
+          },
+          () => {
+            speechNote.hidden = false;
           }
         );
       }
@@ -1014,6 +1027,17 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
   function syncVoiceOver(): void {
     const on = state.prefs.voiceOver;
     if (on && !voiceOverHandle) {
+      speechNote.hidden = true;
+      // Only watchdog when this turn-on came from a real click (not a page-load
+      // restore, where voice-over.ts deliberately waits for the next gesture).
+      const liveActivation = !navigator.userActivation || navigator.userActivation.isActive;
+      if (isSpeechSupported() && liveActivation) {
+        window.setTimeout(() => {
+          if (state.prefs.voiceOver && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            speechNote.hidden = false;
+          }
+        }, 1800);
+      }
       voiceOverHandle = createVoiceOver(
         container,
         {
@@ -1228,6 +1252,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       hideImagesCard,
       bigCursorCard,
     ]),
+    speechNote,
     dictionaryHint,
     voiceRateRange.row,
     voicePitchRange.row,

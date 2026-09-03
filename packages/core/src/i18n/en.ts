@@ -79,6 +79,7 @@ export const en: Labels = {
   reading: {
     title: 'Reading',
     desc: 'Read aloud, dictionary, highlight links/titles/hover/focus, hide images, big cursor, text align, virtual keyboard',
+    speechBlocked: 'Text-to-speech didn’t start. Your browser may be blocking it (Brave blocks it by default), or no speech voice is installed on this device.',
     readAloud: {
       label: 'Read Aloud',
       stopLabel: 'Stop Reading',

@@ -64,6 +64,7 @@ export interface Labels {
   reading: {
     title: string;
     desc: string;
+    speechBlocked: string;
     readAloud: { label: string; stopLabel: string; aria: string; hintSupported: string; hintUnsupported: string };
     voiceOver: {
       label: string; aria: string; hint: string;

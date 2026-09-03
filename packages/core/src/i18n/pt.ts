@@ -70,6 +70,7 @@ export const pt: Labels = {
   reading: {
     title: 'Leitura',
     desc: 'Ler em voz alta, dicionário, destacar links/títulos/hover/foco, ocultar imagens, cursor grande, alinhamento de texto, teclado virtual',
+    speechBlocked: 'A leitura por voz não iniciou. Seu navegador pode estar bloqueando (o Brave bloqueia por padrão) ou não há nenhuma voz instalada neste dispositivo.',
     readAloud: {
       label: 'Ler em voz alta',
       stopLabel: 'Parar leitura',

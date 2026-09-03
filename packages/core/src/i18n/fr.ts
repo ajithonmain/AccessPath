@@ -70,6 +70,7 @@ export const fr: Labels = {
   reading: {
     title: 'Lecture',
     desc: 'Lecture à voix haute, dictionnaire, surligner liens/titres/survol/focus, masquer les images, grand curseur, alignement du texte, clavier virtuel',
+    speechBlocked: 'La synthèse vocale n’a pas démarré. Votre navigateur la bloque peut-être (Brave la bloque par défaut) ou aucune voix n’est installée sur cet appareil.',
     readAloud: {
       label: 'Lire à voix haute',
       stopLabel: 'Arrêter la lecture',

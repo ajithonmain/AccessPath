@@ -910,6 +910,12 @@
     font-size: 12px; line-height: 1.45; font-weight: 500;
 }
 .accesspath-panel .a11y-inline-hint svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
+/* Warning variant — e.g. "text-to-speech didn't start". Amber, not brand-violet. */
+.accesspath-panel .a11y-inline-hint--warn {
+    background: #FFF4E5;
+    color: #8A5A00;
+}
+.accesspath-panel .a11y-inline-hint--warn svg { color: #B9770E; }
 
 /* Dictionary lookup popover — created by dictionary.ts, appended to .accesspath-panel.
    Lives here (not a11y-effects.css) because that root is inside the embed's Shadow DOM,
