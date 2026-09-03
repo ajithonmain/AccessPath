@@ -977,11 +977,12 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     .then((b) => { braveDetected = b; })
     .catch(() => {});
   function showSpeechNote(): void {
-    speechNoteText.textContent = !hasVoices()
-      ? L.reading.speechNoVoice
-      : braveDetected
-        ? L.reading.speechBrave
-        : L.reading.speechBlocked;
+    speechNoteText.textContent =
+      (!hasVoices()
+        ? L.reading.speechNoVoice
+        : braveDetected
+          ? L.reading.speechBrave
+          : L.reading.speechBlocked) || L.reading.speechBlocked;
     speechNote.hidden = false;
   }
   const readAloudCard = createCard(
@@ -1029,29 +1030,34 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     if (label) label.textContent = isSpeaking ? L.reading.readAloud.stopLabel : L.reading.readAloud.label;
     setActive(readAloudCard, isSpeaking);
   }
+  // Armed only by an actual click on the Voice Over card — never by a page-load
+  // restore (voice-over.ts defers speech to the next gesture in that case, so a
+  // watchdog would false-fire and show the note for no reason).
+  let voiceOverJustClicked = false;
   const voiceOverCard = createCard(
     readAloudIcon(),
     L.reading.voiceOver.label,
     L.reading.voiceOver.aria,
     isSpeechSupported() ? L.reading.voiceOver.hint : L.reading.readAloud.hintUnsupported,
-    () => state.toggle('voiceOver')
+    () => {
+      speechNote.hidden = true;
+      if (!state.prefs.voiceOver) voiceOverJustClicked = true;
+      state.toggle('voiceOver');
+    }
   );
   if (!isSpeechSupported()) voiceOverCard.button.disabled = true;
   let voiceOverHandle: VoiceOverHandle | null = null;
   function syncVoiceOver(): void {
     const on = state.prefs.voiceOver;
     if (on && !voiceOverHandle) {
-      speechNote.hidden = true;
-      // Only watchdog when this turn-on came from a real click (not a page-load
-      // restore, where voice-over.ts deliberately waits for the next gesture).
-      const liveActivation = !navigator.userActivation || navigator.userActivation.isActive;
-      if (isSpeechSupported() && liveActivation) {
+      if (voiceOverJustClicked && isSpeechSupported()) {
         window.setTimeout(() => {
           if (state.prefs.voiceOver && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
             showSpeechNote();
           }
         }, 1800);
       }
+      voiceOverJustClicked = false;
       voiceOverHandle = createVoiceOver(
         container,
         {
@@ -1640,6 +1646,9 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     pnl.classList.toggle('open', state.isOpen);
     pnl.classList.toggle('a11y-pnl--left', state.side === 'left');
     backdrop.classList.toggle('show', state.isOpen);
+    // The speech-failed note is transient — clear it whenever the panel closes so it
+    // never greets the visitor on a later open.
+    if (!state.isOpen) speechNote.hidden = true;
     updateSideBtn();
 
     setRangeValue(fontSizeRange.input, state.prefs.fontSizeLevel);
