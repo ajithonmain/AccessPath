@@ -72,7 +72,7 @@ export interface ScanCheck {
   /** Short machine tags in the style axe-core/most scanners use, e.g. ['wcag2aa', 'wcag143']
    *  — 'best-practice' for rules with no single numbered success criterion. */
   tags: string[];
-  /** Which of AccessPath's own 6 profiles genuinely relate to this check — empty for
+  /** Which of AccessPath's own 9 profiles genuinely relate to this check — empty for
    *  pure markup/semantic-correctness checks (alt text, ARIA validity, labels,
    *  landmarks) that no AccessPath profile addresses. The Voice Over profile reads
    *  the page aloud but is not a screen reader (see features-and-profiles.md), so

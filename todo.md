@@ -255,14 +255,16 @@ font-size/contrast changes in a real browser, not just by reading CSS.
 
 ### 16. Profile/tool counts stale everywhere
 
-- `README.md` line ~51: "6 profiles" → 9.
+- DONE: `README.md` already says 9. `packages/site/` aligned to "9 profiles · 30+ tools"
+  across all page copy, meta/OG/Twitter tags, JSON-LD, the accessibility-guide profile table,
+  and code comments in `a11y-scanner.ts` / `packages/site/src/style.css`.
 - `docs/profile_tools-new.md` and `docs/profile_tools.md`: "6 PROFILES · 13+ TOOLS" badge spec —
-  these are build specs for the marketing site; update the copy to the real counts (9 profiles,
-  count the tools from the panel before writing a number) and check whether
-  `packages/site/src/main.ts` renders a matching badge that also needs updating.
+  these are build specs for the marketing site; the shipped `index.html` badge already reads
+  "9 PROFILES · 30+ TOOLS" and `packages/site/src/main.ts` has all 9 keys. The doc specs are
+  the only stale bit left — historical, low priority.
 - `CLAUDE.md`: says `src/app/` is the Angular demo run by `npm start` — `src/` is deleted and
   `npm start` now runs `dev:site`. Also update its section list (separate "Focus" section no
-  longer exists) and the "6 preset profiles" phrase in the intro.
+  longer exists). (The intro already says "9 preset profiles".)
 
 ---
 

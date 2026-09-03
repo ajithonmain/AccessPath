@@ -1455,7 +1455,7 @@ body.embed-failed .hero-status-fallback { display: flex; }
   line-height: 1;
 }
 /* Each profile keeps its own accent (matching the .pt-card accents used for the same
-   six profiles earlier on the page) instead of one uniform violet — set as custom
+   nine profiles earlier on the page) instead of one uniform violet — set as custom
    properties here, read by the checked-state rule below. */
 .check-chip:has(input[value="low-vision"]) { --chip-ink: #6B55F2; --chip-tint: #F0EDFF; }
 .check-chip:has(input[value="dyslexia"]) { --chip-ink: #2F6FED; --chip-tint: #EAF1FE; }

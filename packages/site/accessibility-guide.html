@@ -4,15 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Accessibility Guide — AccessPath</title>
-<meta name="description" content="What AccessPath does and doesn't do: the 6 profiles, 13+ individual tools, and an honest note on WCAG/ADA compliance.">
-<meta name="robots" content="index, follow">
+<meta name="description" content="What AccessPath does and doesn't do: the 9 profiles, 30+ individual tools, and an honest note on WCAG/ADA compliance.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="AccessPath">
 <link rel="canonical" href="https://accesspath.dev/accessibility-guide.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AccessPath">
+<meta property="og:title" content="Accessibility Guide — AccessPath">
+<meta property="og:description" content="What AccessPath does and doesn't do: the 9 profiles, 30+ individual tools, and an honest note on WCAG/ADA compliance.">
+<meta property="og:url" content="https://accesspath.dev/accessibility-guide.html">
+<meta property="og:image" content="https://accesspath.dev/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AccessPath — make any site accessible in one line.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Accessibility Guide — AccessPath">
+<meta name="twitter:description" content="The 9 profiles, 30+ tools, and an honest note on WCAG/ADA compliance.">
+<meta name="twitter:image" content="https://accesspath.dev/og-image.png">
+
+<meta name="theme-color" content="#4928F3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap">
 <link rel="stylesheet" href="/src/style.css">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Accessibility Guide — AccessPath",
+      "description": "What AccessPath does and doesn't do: the 9 profiles, 30+ individual tools, and an honest note on WCAG/ADA compliance.",
+      "inLanguage": "en",
+      "url": "https://accesspath.dev/accessibility-guide.html",
+      "image": "https://accesspath.dev/og-image.png",
+      "author": { "@type": "Person", "name": "vibecoderaj", "url": "https://www.ajithmjose.com" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AccessPath",
+        "url": "https://accesspath.dev/",
+        "logo": "https://accesspath.dev/images/logo.png"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "AccessPath", "item": "https://accesspath.dev/" },
+        { "@type": "ListItem", "position": 2, "name": "Accessibility Guide", "item": "https://accesspath.dev/accessibility-guide.html" }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -63,20 +111,31 @@
         <p>AccessPath is a floating control panel that a site owner installs once. It gives every visitor real, immediate control over how the page looks and behaves for them — text size, contrast, motion, spacing, fonts, and more — without the site owner having to build any of those controls themselves.</p>
 
         <h2>Start with a profile, or build your own</h2>
-        <p>Six preset profiles bundle the settings people with a specific need tend to reach for, so you don't have to configure anything by hand:</p>
+        <p>Nine preset profiles bundle the settings people with a specific need tend to reach for, so you don't have to configure anything by hand:</p>
         <table class="legal-table">
           <tr><th>Profile</th><th>Turns on</th></tr>
           <tr><td>Low Vision</td><td>Larger text, pause animations, higher saturation</td></tr>
           <tr><td>Dyslexia</td><td>Dyslexia-friendly font, wider letter/word spacing, taller line height</td></tr>
-          <tr><td>Seizure Safe</td><td>Pause animations, reduced saturation</td></tr>
+          <tr><td>Seizure Safe</td><td>Pause animations, reduced saturation, mute sounds</td></tr>
           <tr><td>Motor Impaired</td><td>Larger text, pause animations</td></tr>
-          <tr><td>Color Blind</td><td>Desaturated colors, higher contrast, wider spacing</td></tr>
-          <tr><td>ADHD</td><td>Pause animations, wider spacing</td></tr>
+          <tr><td>Color Blind</td><td>Opens the color-blindness simulation picker (Protanopia, Deuteranopia, Tritanopia, Achromatopsia)</td></tr>
+          <tr><td>ADHD</td><td>Pause animations, wider spacing, reading guide</td></tr>
+          <tr><td>Voice Over</td><td>Reads the page aloud block by block, and announces each control as you Tab to it</td></tr>
+          <tr><td>Elderly</td><td>Larger text, taller line height, big cursor, high contrast</td></tr>
+          <tr><td>Cognitive &amp; Learning</td><td>Pause animations, wider spacing, taller line height, stronger focus outline</td></tr>
         </table>
         <p>Every setting a profile turns on can also be adjusted individually — profiles are a starting point, not a limit.</p>
 
-        <h2>13+ individual tools</h2>
-        <p>Beyond the profiles, every control is available on its own: text size, contrast, saturation, spacing, line height, dyslexia font, pause animations, invert colors, highlight links, hide images, big cursor, text align, reading guide, page structure navigation, read aloud, and dictionary lookups. Each one is a real change applied directly to the page — not a static preview.</p>
+        <h2>30+ individual tools</h2>
+        <p>Beyond the profiles, every control is available on its own, grouped into five categories:</p>
+        <ul>
+          <li><strong>Vision</strong> — text size, contrast, contrast mode (Light/Dark/High/Smart), invert colors, monochrome, saturation, color-blindness simulation, custom background/text/title colors</li>
+          <li><strong>Text &amp; Content</strong> — letter and word spacing, line height, dyslexia-friendly font, text align, sitewide tooltips</li>
+          <li><strong>Motion</strong> — pause animations, mute sounds</li>
+          <li><strong>Reading</strong> — read aloud, Voice Over (whole-page narration plus focus announcements), voice rate/pitch/voice picker, dictionary double-click lookups, highlight links, hide images, big cursor and cursor color</li>
+          <li><strong>Navigation &amp; Focus</strong> — page structure navigator, reading guide, highlight titles, highlight hover, highlight focus</li>
+        </ul>
+        <p>Plus a virtual keyboard, a per-visitor move-widget-side toggle, and an on-device accessibility checker for developers. Each control is a real change applied directly to the page — not a static preview.</p>
 
         <h2>Everything stays on your device</h2>
         <p>Preferences are saved to the browser's own storage, on the visitor's device. Nothing is sent to a server, and nothing is tracked. See the <a href="privacy.html">Privacy Policy</a> for the full detail.</p>

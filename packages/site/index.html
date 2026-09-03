@@ -4,28 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AccessPath: Free, Open-Source Accessibility Widget for Any Website</title>
-<meta name="description" content="Free, open-source accessibility widget for any website. 6 preset profiles, 13+ assistive tools, self-hosted in one line of code. MIT licensed, no tracking.">
+<meta name="description" content="Free, open-source accessibility widget for any website. 9 preset profiles, 30+ assistive tools, self-hosted in one line of code. MIT licensed, no tracking.">
 <meta name="keywords" content="accessibility widget, ADA compliance widget, WCAG accessibility tool, web accessibility overlay, accessibility panel, screen reader friendly, open source accessibility, self-hosted accessibility widget, React accessibility component, Angular accessibility component">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="author" content="AccessPath">
+<meta name="creator" content="vibecoderaj">
 <link rel="canonical" href="https://accesspath.dev/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AccessPath">
 <meta property="og:title" content="AccessPath: Free, Open-Source Accessibility Widget for Any Website">
-<meta property="og:description" content="6 preset profiles, 13+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
+<meta property="og:description" content="9 preset profiles, 30+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
 <meta property="og:url" content="https://accesspath.dev/">
-<meta property="og:image" content="https://accesspath.dev/og-image.svg">
+<meta property="og:image" content="https://accesspath.dev/og-image.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AccessPath — make any site accessible in one line. 9 profiles, 30+ assistive tools, open source.">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AccessPath: Free, Open-Source Accessibility Widget for Any Website">
-<meta name="twitter:description" content="6 preset profiles, 13+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
-<meta name="twitter:image" content="https://accesspath.dev/og-image.svg">
+<meta name="twitter:description" content="9 preset profiles, 30+ assistive tools, one line to install. Self-hosted, MIT licensed, framework-agnostic.">
+<meta name="twitter:image" content="https://accesspath.dev/og-image.png">
+<meta name="twitter:image:alt" content="AccessPath — make any site accessible in one line.">
 
 <meta name="theme-color" content="#4928F3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +45,7 @@
   "@type": "SoftwareApplication",
   "name": "AccessPath",
   "url": "https://accesspath.dev/",
-  "description": "A framework-agnostic accessibility control panel with 6 preset profiles and 13+ assistive tools covering vision, motion, reading, navigation, and focus. Ships as a script tag, a React component, or an Angular component from one shared core.",
+  "description": "A framework-agnostic accessibility control panel with 9 preset profiles and 30+ assistive tools covering vision, motion, reading, navigation, and focus. Ships as a script tag, a React component, or an Angular component from one shared core.",
   "applicationCategory": "WebApplication",
   "operatingSystem": "Any",
   "offers": {
@@ -50,7 +54,14 @@
     "priceCurrency": "USD"
   },
   "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
   "softwareVersion": "0.0.0",
+  "image": "https://accesspath.dev/og-image.png",
+  "author": {
+    "@type": "Person",
+    "name": "vibecoderaj",
+    "url": "https://www.ajithmjose.com"
+  },
   "featureList": [
     "Low Vision profile",
     "Dyslexia profile",
@@ -58,12 +69,31 @@
     "Motor Impaired profile",
     "Color Blind profile",
     "ADHD profile",
+    "Voice Over profile",
+    "Elderly profile",
+    "Cognitive & Learning profile",
     "Text size and contrast controls",
     "Reading guide",
     "Page structure navigator",
     "Read aloud",
     "Dictionary lookup"
   ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "AccessPath",
+  "url": "https://accesspath.dev/",
+  "description": "Free, open-source, framework-agnostic accessibility control panel you can add to any website in one line of code.",
+  "inLanguage": "en",
+  "publisher": {
+    "@type": "Organization",
+    "name": "AccessPath",
+    "url": "https://accesspath.dev/",
+    "logo": "https://accesspath.dev/images/logo.png"
+  }
 }
 </script>
 </head>
@@ -1115,55 +1145,55 @@ import '@accesspath/core/styles/panel.css';
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Is AccessPath an overlay that replaces real accessibility work?",
+      "name": "Does AccessPath make my site compliant?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. It's a control panel that lets visitors adjust text size, contrast, motion, spacing, and more themselves. It doesn't rewrite your markup or claim WCAG conformance on your behalf. Semantic HTML and proper ARIA on your own components still matter."
+        "text": "AccessPath is a user-controlled accessibility layer. It helps visitors customize their experience, but it doesn't replace good code, semantic HTML, or legal compliance."
       }
     },
     {
       "@type": "Question",
-      "name": "Does it change my page's source code?",
+      "name": "Will it slow down my website?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. It toggles a11y-* classes on the elements you pass to applyClasses() (your container and the panel's own root). Your source files stay untouched. Effects apply live in the DOM."
+        "text": "No. The whole widget is a tiny script that loads asynchronously and makes no external network calls after that, so it won't block or slow down the rest of your page."
       }
     },
     {
       "@type": "Question",
-      "name": "Which frameworks does it support?",
+      "name": "Does it collect or store user data?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Plain HTML/WordPress/Shopify/Wix via a script tag (@accesspath/embed), React (@accesspath/react), and Angular (@accesspath/angular). All three delegate to the same @accesspath/core, so behavior is identical across them."
+        "text": "No analytics and no tracking. Visitor preferences are saved only in their own browser's localStorage, under a storage key you control."
       }
     },
     {
       "@type": "Question",
-      "name": "Can I theme the panel to match my brand?",
+      "name": "Can I self-host AccessPath?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Set CSS variables like --ap-brand, --ap-sf, and --ap-bd on your container, plus pick the trigger button's shape, icon, and corner."
+        "text": "Yes. AccessPath is open source and MIT licensed, so you can build it yourself and serve the bundle from your own infrastructure, no external dependency required."
       }
     },
     {
       "@type": "Question",
-      "name": "Does it persist a visitor's preferences?",
+      "name": "Will it work with my framework or CMS?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, to localStorage under a configurable storageKey, so repeat visitors keep their settings without re-selecting a profile."
+        "text": "Yes. A framework-agnostic core ships as a script tag for any HTML site, WordPress, Shopify or Wix, plus dedicated React and Angular components for those stacks."
       }
     },
     {
       "@type": "Question",
-      "name": "Is it free and open source?",
+      "name": "Is AccessPath really free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. MIT licensed, self-hosted, no per-visitor pricing or third-party call-home."
+        "text": "Yes. Free and MIT licensed, with no per-visitor pricing, paid tiers, or premium features held back."
       }
     },
     {
       "@type": "Question",
-      "name": "How is AccessPath different from a paid accessibility overlay?",
+      "name": "How is this different from a paid accessibility overlay?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Paid overlay widgets run as a hosted, closed-source script and charge per visitor or per month. AccessPath is free, open source, and self-hosted: you own the code, there's no vendor to depend on, and no recurring fee tied to your traffic."
