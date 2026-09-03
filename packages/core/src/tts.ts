@@ -9,22 +9,19 @@ export interface SpeakSettings {
   rateLevel?: number;
   /** A11yPrefs.voicePitchLevel, 0-100, same mapping, clamped to the valid 0-2 pitch range. */
   pitchLevel?: number;
-  /** A11yPrefs.voiceURI, or omitted/null for "let this module pick a sensible default". */
+  /** A11yPrefs.voiceURI, or omitted/null for "let the platform pick". */
   voiceURI?: string | null;
 }
 
-/** 0-100 level -> a 0.5x..2x multiplier centred on 1x at level 50 — mirrors
- *  levelToFactor() in voice-over.ts (kept duplicated: tts.ts stays a standalone
- *  Web Speech wrapper with no dependency on the voice-over module). */
 function levelToFactor(level: number): number {
   return 2 ** ((level - 50) / 50);
 }
 
-/** Picks a voice to set explicitly on the utterance. On macOS, Chrome frequently
- *  produces NO audio when `utterance.voice` is left unset — it needs a concrete voice
- *  object even to use "the default". So Read Aloud / Voice Over always set one:
- *  the caller's chosen voiceURI if it matches, else the engine default, else the first
- *  voice matching the page/browser language, else just the first available voice. */
+/** Picks a voice to set explicitly on the utterance — but only if the voice list is
+ *  already populated. On macOS, Chrome often produces NO audio with `utterance.voice`
+ *  unset, so we set one when we can. On Android, `getVoices()` is frequently empty at
+ *  click time; there we leave it unset and let the platform default handle it (setting
+ *  a stale/guessed voice is worse than not setting one). Never blocks or defers. */
 export function pickVoice(voiceURI?: string | null): SpeechSynthesisVoice | null {
   if (!isSpeechSupported()) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -37,8 +34,6 @@ export function pickVoice(voiceURI?: string | null): SpeechSynthesisVoice | null
   const base = lang.slice(0, 2);
   const sameLang = voices.filter((v) => v.lang.toLowerCase().startsWith(base));
   return (
-    // Prefer the page's language over the OS default voice — reading English text with
-    // a French default voice sounds broken. Within the language, honour .default.
     sameLang.find((v) => v.default) ??
     sameLang.find((v) => v.lang.toLowerCase() === lang) ??
     sameLang[0] ??
@@ -47,29 +42,9 @@ export function pickVoice(voiceURI?: string | null): SpeechSynthesisVoice | null
   );
 }
 
-/** Run `fn` once voices are available — immediately if they already are, otherwise
- *  after the first `voiceschanged` (which some engines, notably Chrome, fire async on
- *  first use), with a short timeout fallback so it still runs even if that never fires. */
-function whenVoicesReady(fn: () => void): void {
-  if (!isSpeechSupported()) return;
-  if (window.speechSynthesis.getVoices().length) {
-    fn();
-    return;
-  }
-  let done = false;
-  const go = (): void => {
-    if (done) return;
-    done = true;
-    window.speechSynthesis.removeEventListener('voiceschanged', go);
-    fn();
-  };
-  window.speechSynthesis.addEventListener('voiceschanged', go);
-  window.setTimeout(go, 250);
-}
-
-/** Split into chunks no single utterance runs long enough to hit Chrome's ~15s
+/** Split into chunks so no single utterance runs long enough to hit Chrome's ~15s
  *  single-utterance cutoff (past which it silently stops mid-read). */
-function chunkText(text: string, max = 220): string[] {
+function chunkText(text: string, max = 200): string[] {
   if (text.length <= max) return [text];
   const parts: string[] = [];
   let buf = '';
@@ -85,18 +60,18 @@ function chunkText(text: string, max = 220): string[] {
   return parts;
 }
 
-/** Speaks `text`, applying the same rate/pitch/voice prefs Voice Over uses so Read Aloud
- *  and Voice Over sound consistent. Long text is sentence-chunked and queued.
+/** Speaks `text`. Long text is sentence-chunked and queued.
  *
- *  `onEnd` fires once the whole thing finishes or errors (not on a deliberate
+ *  MUST be called directly inside a user-gesture handler (a click) — Android Chrome
+ *  in particular blocks `speechSynthesis.speak()` that isn't synchronous with a live
+ *  user activation, which is why this never defers the first `speak()` behind a
+ *  timeout or `voiceschanged` listener.
+ *
+ *  `onEnd` fires when the whole thing finishes or errors (not on a deliberate
  *  stopSpeaking()/re-speak). `onFail` fires if the browser refused to speak at all —
- *  no `start` event within a beat AND the engine reports nothing playing, or an
- *  outright synthesis error — so the caller can tell the user (common with Brave, or
- *  a machine with no installed voice).
- *
- *  Cancel discipline: only cancel() when something is actually speaking/pending (calling
- *  it on an idle engine wedges Chrome), and never speak() in the same tick as cancel()
- *  (Chrome silently drops that speak()). */
+ *  nothing started within ~1.2s and the engine reports nothing playing, or an outright
+ *  synthesis error before any audio — so the caller can tell the user (common with
+ *  Brave, or a device with no installed voice). */
 export function speak(
   text: string,
   settings?: SpeakSettings,
@@ -105,58 +80,53 @@ export function speak(
 ): void {
   if (!isSpeechSupported() || !text.trim()) return;
   const synth = window.speechSynthesis;
+  // Some engines need a nudge before getVoices() populates; harmless if already loaded.
+  synth.getVoices();
 
-  const startSpeaking = (): void => {
-    const voice = pickVoice(settings?.voiceURI);
-    const chunks = chunkText(text.replace(/\s+/g, ' ').trim());
-    let i = 0;
-    let started = false;
-    let finished = false;
+  const voice = pickVoice(settings?.voiceURI);
+  const chunks = chunkText(text.replace(/\s+/g, ' ').trim());
+  let i = 0;
+  let started = false;
+  let finished = false;
 
-    const done = (): void => {
-      if (finished) return;
-      finished = true;
-      onEnd?.();
-    };
-
-    const speakChunk = (): void => {
-      if (i >= chunks.length) {
-        done();
-        return;
-      }
-      const u = new SpeechSynthesisUtterance(chunks[i++]);
-      if (voice) u.voice = voice;
-      if (settings?.rateLevel != null) u.rate = levelToFactor(settings.rateLevel);
-      if (settings?.pitchLevel != null) u.pitch = Math.max(0, Math.min(2, levelToFactor(settings.pitchLevel)));
-      u.onstart = () => { started = true; };
-      u.onend = speakChunk;
-      u.onerror = (e) => {
-        // interrupted/canceled = our own stopSpeaking()/re-speak; the caller knows.
-        if (e.error === 'interrupted' || e.error === 'canceled') return;
-        if (!started) onFail?.();
-        done();
-      };
-      synth.speak(u);
-    };
-
-    synth.resume();
-    if (synth.speaking || synth.pending) {
-      synth.cancel();
-      window.setTimeout(speakChunk, 120);
-    } else {
-      speakChunk();
-    }
-
-    // If nothing has started speaking shortly after we asked, the browser blocked it.
-    window.setTimeout(() => {
-      if (!started && !finished && !synth.speaking && !synth.pending) {
-        onFail?.();
-        done();
-      }
-    }, 1200);
+  const done = (): void => {
+    if (finished) return;
+    finished = true;
+    onEnd?.();
   };
 
-  whenVoicesReady(startSpeaking);
+  const speakChunk = (): void => {
+    if (i >= chunks.length) {
+      done();
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(chunks[i++]);
+    if (voice) u.voice = voice;
+    if (settings?.rateLevel != null) u.rate = levelToFactor(settings.rateLevel);
+    if (settings?.pitchLevel != null) u.pitch = Math.max(0, Math.min(2, levelToFactor(settings.pitchLevel)));
+    u.onstart = () => { started = true; };
+    u.onend = speakChunk;
+    u.onerror = (e) => {
+      if (e.error === 'interrupted' || e.error === 'canceled') return;
+      if (!started) onFail?.();
+      done();
+    };
+    synth.speak(u);
+  };
+
+  // Speak synchronously in the caller's gesture. Only interrupt if something is
+  // genuinely mid-utterance (calling cancel() on an idle engine wedges desktop Chrome).
+  synth.resume();
+  if (synth.speaking || synth.pending) synth.cancel();
+  speakChunk();
+
+  // Nothing started shortly after we asked -> the browser blocked it.
+  window.setTimeout(() => {
+    if (!started && !finished && !synth.speaking && !synth.pending) {
+      onFail?.();
+      done();
+    }
+  }, 1200);
 }
 
 export function stopSpeaking(): void {

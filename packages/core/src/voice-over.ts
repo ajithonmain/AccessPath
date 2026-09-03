@@ -342,12 +342,12 @@ export function createVoiceOver(
   const startContent = () => {
     if (!destroyed && !paused && generation === 0) speakCurrent(false);
   };
-  let introSpoken = false;
   const speakIntro = () => {
-    if (destroyed || introSpoken) return;
-    introSpoken = true;
-    // Build the utterance now (not at createVoiceOver() time) so pickVoice() sees a
-    // populated getVoices() — an unset u.voice leaves macOS Chrome silent.
+    if (destroyed) return;
+    // Build the utterance here, not at createVoiceOver() time, so pickVoice() gets a
+    // chance to see a populated getVoices() (macOS Chrome stays silent with u.voice
+    // unset — but on Android getVoices() is often still empty, so makeUtterance leaves
+    // it unset and the platform default takes over).
     const intro = makeUtterance(strings.nav);
     intro.onend = startContent;
     intro.onerror = (e) => {
@@ -356,27 +356,16 @@ export function createVoiceOver(
     speakNow(intro, true);
   };
 
-  // Browsers block speechSynthesis.speak() unless there is a live user activation.
-  // Toggling the Voice Over card *is* one, so we normally speak immediately. But when
-  // the pref was restored on page load there is no activation yet and the call is
-  // dropped silently ("no sound at all") — so in that case wait for the visitor's next
-  // click or keypress and start then.
+  // Browsers block speechSynthesis.speak() unless there is a live user activation, and
+  // Android Chrome requires the call to be synchronous with the gesture — so when we do
+  // have an activation, speak() runs right now, not behind any timeout. Toggling the
+  // Voice Over card *is* an activation; a page-load restore is not, so in that case we
+  // wait for the visitor's next click/keypress and speak then.
   let unbindGesture: (() => void) | undefined;
   const begin = () => {
     unbindGesture?.();
     unbindGesture = undefined;
-    if (destroyed) return;
-    // getVoices() can be empty until 'voiceschanged' fires (Chrome, first use).
-    if (window.speechSynthesis.getVoices().length) {
-      speakIntro();
-    } else {
-      const onVoices = () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-        speakIntro();
-      };
-      window.speechSynthesis.addEventListener('voiceschanged', onVoices);
-      window.setTimeout(speakIntro, 300);
-    }
+    speakIntro();
   };
   if (navigator.userActivation ? navigator.userActivation.isActive : true) {
     begin();
