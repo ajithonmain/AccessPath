@@ -19,7 +19,7 @@
     "publish:core": "npm run build:core && npm publish -w @accesspath/core",
     "publish:embed": "npm run build:core && npm run build:embed && npm publish -w @accesspath/embed",
     "publish:react": "npm run build:core && npm run build:react && npm publish -w @accesspath/react",
-    "publish:angular": "npm run build:core && npm run build:angular-lib && cp LICENSE packages/angular/README.md dist/accesspath-angular/ && npm publish dist/accesspath-angular"
+    "publish:angular": "npm run build:core && npm run build:angular-lib && cp LICENSE packages/angular/README.md dist/accesspath-angular/ && npm publish ./dist/accesspath-angular"
   },
   "dependencies": {
     "@angular/animations": "^16.2.0",
