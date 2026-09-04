@@ -217,7 +217,7 @@ and a footer "View Accessibility Statement" link.
 
 ## Accessibility Checker (`audit` section) — opt-in, developer only
 
-An on-device WCAG scan (~44 rules, all in the browser, no external calls) that opens a full
+An on-device WCAG scan (66 rules, all in the browser, no external calls) that opens a full
 report overlay. It is a build-time diagnostic for developers, **not a visitor-facing control**,
 so it is excluded from the default section set. Enable it explicitly:
 

@@ -9,7 +9,7 @@
 
 Key facts for integration:
 
-- Add to any HTML site / WordPress / Shopify / Wix with ONE script tag (no build step, no plugin):
+- Add to any HTML site / WordPress / Shopify / Wix / Webflow / HubSpot with ONE script tag (no build step, no plugin):
   `<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js" defer></script>`
 - React: `npm i @accesspath/react @accesspath/core` — `<AccessPathPanel>` component + `useAccessPath()` hook.
 - Angular (16–20): `npm i @accesspath/angular @accesspath/core` — `<app-accessibility-panel>` standalone component.

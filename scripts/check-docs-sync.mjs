@@ -21,6 +21,7 @@ const read = (p) => readFileSync(join(root, p), 'utf8');
 const profilesTs = read('packages/core/src/profiles.ts');
 const panelTs = read('packages/core/src/panel-dom.ts');
 const embedTs = read('packages/embed/src/index.ts');
+const scannerTs = read('packages/core/src/a11y-scanner.ts');
 const guide = read('packages/site/integration-guide.html');
 const llms = read('packages/site/public/llms-full.txt');
 
@@ -85,6 +86,19 @@ for (const attr of dataAttrs) {
 
 // --- audit section: opt-in, mentioned ------------------------------------------
 check(/audit/i.test(guide) && /audit/i.test(llms), 'the opt-in "audit" section is not documented in both files');
+
+// --- scanner rule count -------------------------------------------------------
+// a11y-scanner.ts is the source of truth for the rule list; each rule is `{ id: '...' `.
+// The docs restate the count in prose ("an on-page WCAG scan (N rules ...)"), which drifts
+// silently every time a rule batch lands. Guard the number and the known-stale phrasings.
+const scannerRuleCount = [...scannerTs.matchAll(/^\s*(?:id|ID):\s*'[a-z0-9-]+'/gm)].length;
+check(scannerRuleCount > 0, 'could not count scanner rules in a11y-scanner.ts');
+for (const [name, txt] of [['integration-guide.html', guide], ['llms-full.txt', llms]]) {
+  check(!/~?\s*44\s+rules|~?\s*12\s+checks/i.test(txt),
+    `${name} still cites a stale scanner rule count (44 rules / 12 checks) — the real count is ${scannerRuleCount}`);
+  check(new RegExp(`\\b${scannerRuleCount}\\s+rules\\b`).test(txt),
+    `${name} does not state the real scanner rule count ("${scannerRuleCount} rules")`);
+}
 
 // --- report ------------------------------------------------------------------
 if (errors.length) {

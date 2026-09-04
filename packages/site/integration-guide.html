@@ -171,6 +171,24 @@
           <p>Loads from jsDelivr, pinned to <code>@0</code> so a future major release can't change it under you. To self-host instead, install <code>@accesspath/embed</code> (or download <code>dist/embed.js</code>) and point <code>src</code> at your own copy.</p>
           </div>
 
+          <h3 id="vanilla-placement">Where to paste it (per platform)<a class="docs-anchor" href="#vanilla-placement" aria-label="Link to this section">#</a></h3>
+          <p>The same tag works anywhere HTML can be injected site-wide. It belongs before <code>&lt;/body&gt;</code> (the <code>&lt;head&gt;</code> is fine too).</p>
+          <div class="docs-table-wrap">
+          <table class="docs-table">
+            <thead><tr><th>Platform</th><th>Where</th><th>Plan needed</th></tr></thead>
+            <tbody>
+              <tr><td>Plain HTML</td><td>Shared header/footer include, before <code>&lt;/body&gt;</code></td><td>&mdash;</td></tr>
+              <tr><td>WordPress</td><td>A snippet plugin (WPCode), the theme's header/custom-scripts field, or a host script setting. See the <a href="wordpress.html">WordPress guide</a>.</td><td>Any</td></tr>
+              <tr><td>Shopify</td><td><code>theme.liquid</code> before <code>&lt;/body&gt;</code>, or a custom-HTML section</td><td>Any</td></tr>
+              <tr><td>Wix</td><td>Dashboard &rarr; Settings &rarr; Custom Code &rarr; Body-end, all pages</td><td>Premium + connected domain</td></tr>
+              <tr><td>Webflow</td><td>Project Settings &rarr; Custom Code &rarr; Footer Code, then publish (or an Embed component per page)</td><td>Paid Site plan</td></tr>
+              <tr><td>HubSpot</td><td>Settings &rarr; Content &rarr; Pages &rarr; Site footer HTML (or per-page Footer HTML)</td><td>Content Hub Starter+</td></tr>
+              <tr><td>Squarespace</td><td>Settings &rarr; Developer Tools &rarr; Code Injection &rarr; Footer</td><td>Business plan+</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p>Custom code on hosted builders only runs on the published site, not the editor or preview, and most gate it behind a paid tier. For a single page without those, use that platform's inline HTML embed element.</p>
+
           <h3 id="vanilla-attributes">data-* attributes<a class="docs-anchor" href="#vanilla-attributes" aria-label="Link to this section">#</a></h3>
           <div class="docs-table-wrap">
             <table class="docs-table">
@@ -450,7 +468,7 @@ export class AppComponent {
 
           <h3 id="ref-sections">Sections &amp; control categories<a class="docs-anchor" href="#ref-sections" aria-label="Link to this section">#</a></h3>
           <p><strong>SectionKey</strong> accepts <code>'profiles'</code>, <code>'quick'</code>, <code>'controls'</code>, <code>'actions'</code>, or <code>'audit'</code>, or a custom id from <code>customSections</code>. Custom section ids only work with the core, React, or Angular integration, since the embed can't carry a render callback through a data attribute.</p>
-          <p><code>'audit'</code> is the <strong>Accessibility Checker</strong>: an on-page WCAG scan (~44 rules, all in the browser, no external calls) that opens a full report overlay. It's a build-time diagnostic for developers, not a visitor control, so it's <strong>excluded from the default section set</strong> &mdash; list it explicitly (<code>sections={['profiles','quick','controls','actions','audit']}</code> or <code>data-sections="profiles,quick,controls,actions,audit"</code>) if you want it, e.g. on a staging build.</p>
+          <p><code>'audit'</code> is the <strong>Accessibility Checker</strong>: an on-page WCAG scan (66 rules, all in the browser, no external calls) that opens a full report overlay. It's a build-time diagnostic for developers, not a visitor control, so it's <strong>excluded from the default section set</strong> &mdash; list it explicitly (<code>sections={['profiles','quick','controls','actions','audit']}</code> or <code>data-sections="profiles,quick,controls,actions,audit"</code>) if you want it, e.g. on a staging build.</p>
           <p><strong>ControlCategoryKey</strong> accepts <code>'vision'</code>, <code>'content'</code>, <code>'motion'</code>, <code>'reading'</code>, or <code>'navigation'</code>, the 5 collapsible groups inside the "controls" section.</p>
 
           <h3 id="ref-locales">Locales (LocaleKey)<a class="docs-anchor" href="#ref-locales" aria-label="Link to this section">#</a></h3>
