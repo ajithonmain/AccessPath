@@ -1,8 +1,8 @@
-/* a11y-effects.css's dyslexia-friendly toggle switches to 'OpenDyslexic' — it was
-   never actually loaded anywhere on this site (only the site's own body font was), so
-   the Dyslexia profile silently fell back to the same font instead of visibly changing
-   anything. SIL OFL-1.1 licensed, served via Fontsource's jsdelivr build. */
-@import url('https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/index.css');
+/* OpenDyslexic (the font a11y-effects.css's dyslexia toggle switches to) is NOT eager-
+   loaded here anymore: @accesspath/core's ensureDyslexiaFont() (called from applyClasses)
+   injects the same Fontsource jsdelivr stylesheet on demand the first time the Dyslexia
+   toggle turns on, for both the real embed widget and the builder preview. Eager-loading
+   it cost ~112 KB on every page view for a feature that's off by default. SIL OFL-1.1. */
 
 :root {
   /* Brand palette — docs/brand.md: AccessPath Violet as the sole brand accent (~7% of

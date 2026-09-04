@@ -960,7 +960,7 @@ import '@accesspath/core/styles/panel.css';
           <h2 class="faq-headline">Short answers.<br><span class="faq-headline-hl">Real clarity.</span></h2>
           <p class="faq-sub">The most common questions we get from developers and website owners.</p>
           <div class="faq-illustration" aria-hidden="true">
-            <img src="/images/faq-bubble.png" alt="" width="300" height="200">
+            <img src="/images/faq-bubble.png" alt="" width="300" height="236" loading="lazy" decoding="async">
           </div>
         </div>
 
@@ -1118,7 +1118,7 @@ import '@accesspath/core/styles/panel.css';
       <div class="footer-main">
         <a class="footer-logo" href="index.html" style="text-decoration:none;color:inherit;">
           <span class="footer-logo-mark" aria-hidden="true">
-            <img src="/images/logo.png" width="22" height="21" alt="">
+            <img src="/images/logo.png" width="22" height="21" alt="" loading="lazy" decoding="async">
           </span>
           AccessPath
         </a>
@@ -1214,6 +1214,8 @@ import '@accesspath/core/styles/panel.css';
 </script>
 <script src="/embed.js"
         id="accesspath-embed-script"
+        defer
+        fetchpriority="low"
         data-theme="light"
         data-storage-key="accesspath-site"
         data-position="bottom-right"
