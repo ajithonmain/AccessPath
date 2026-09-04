@@ -49,5 +49,10 @@ register_activation_hook(
 		if ( false === get_option( ACCESSPATH_OPTION ) ) {
 			add_option( ACCESSPATH_OPTION, AccessPath_Config::defaults() );
 		}
+		// Shown once on the next admin screen load, then cleared — see
+		// AccessPath_Settings::maybe_show_activation_notice(). Not a redirect to a
+		// setup wizard: WordPress.org review guidelines discourage hijacking the
+		// admin on activation, and the widget already works with zero configuration.
+		set_transient( 'accesspath_show_activation_notice', 1, MINUTE_IN_SECONDS );
 	}
 );

@@ -23,9 +23,34 @@ final class AccessPath_Settings {
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'maybe_show_activation_notice' ) );
 		add_filter(
 			'plugin_action_links_' . plugin_basename( ACCESSPATH_FILE ),
 			array( __CLASS__, 'action_links' )
+		);
+	}
+
+	/**
+	 * One-time "you're all set" notice after activation, pointing at the
+	 * settings page. Not a redirect/wizard — see the comment on the
+	 * activation hook in accesspath.php for why.
+	 */
+	public static function maybe_show_activation_notice() {
+		if ( ! get_transient( 'accesspath_show_activation_notice' ) ) {
+			return;
+		}
+		delete_transient( 'accesspath_show_activation_notice' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$url = admin_url( 'options-general.php?page=' . self::PAGE );
+		printf(
+			'<div class="notice notice-success is-dismissible"><p>%s <a href="%s">%s</a></p></div>',
+			esc_html__( 'AccessPath is now live on your site — visitors will see a floating accessibility button.', 'accesspath' ),
+			esc_url( $url ),
+			esc_html__( 'Customize it', 'accesspath' )
 		);
 	}
 
