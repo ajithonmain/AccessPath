@@ -760,23 +760,8 @@
     margin: 0;
 }
 
-/* Active adjustments band — hidden entirely when nothing is set */
-.accesspath-panel .a11y-active-band {
-    display: none;
-    flex-direction: column; gap: 10px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: var(--ap-brand-soft, #F0EDFF);
-}
-.accesspath-panel .a11y-active-band.show { display: flex; }
-.accesspath-panel .a11y-active-hdr {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px;
-}
-.accesspath-panel .a11y-active-count {
-    font-size: 12.5px; font-weight: 600;
-    color: var(--ap-tx, #040D29);
-}
+/* Active adjustments — lives in the footer now (a11y-ftr-status-toggle /
+   a11y-ftr-chips-wrap below), not as its own card in the scrollable body. */
 .accesspath-panel .a11y-chips {
     display: flex; flex-wrap: wrap; gap: 6px;
 }
@@ -821,6 +806,37 @@
     color: var(--ap-mu, #6F7580);
 }
 .accesspath-panel .a11y-ftr-status-info svg { width: 15px; height: 15px; flex-shrink: 0; }
+.accesspath-panel .a11y-ftr-status-info[hidden] { display: none; }
+
+/* Replaces a11y-ftr-status-info once at least one pref is non-default — a toggle for
+   the chip list below (a11y-ftr-chips-wrap), collapsed by default. Uses the exact
+   collapse mechanism attachCollapse() gives every other collapsible region, so it
+   animates identically to the "All Controls" categories. */
+.accesspath-panel .a11y-ftr-status-toggle {
+    display: flex; align-items: center; gap: 6px;
+    min-width: 0;
+    padding: 0; border: none; background: none;
+    font-family: inherit; font-size: 12.5px; font-weight: 600;
+    color: var(--ap-tx, #040D29);
+    cursor: pointer;
+}
+.accesspath-panel .a11y-ftr-status-toggle[hidden] { display: none; }
+.accesspath-panel .a11y-ftr-status-toggle-chevron {
+    display: flex; flex-shrink: 0;
+    color: var(--ap-mu, #6F7580);
+    transition: transform 0.2s ease;
+}
+.accesspath-panel .a11y-ftr-status-toggle-chevron svg { width: 13px; height: 13px; }
+.accesspath-panel .a11y-ftr-status-toggle[aria-expanded="true"] .a11y-ftr-status-toggle-chevron { transform: rotate(90deg); }
+
+/* Collapsible chip list — same max-height transition as a11y-category-body. Zero
+   height (and no padding) when empty/collapsed so it never leaves a gap. */
+.accesspath-panel .a11y-ftr-chips-wrap {
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+}
+.accesspath-panel .a11y-ftr-chips-wrap .a11y-chips { padding-top: 12px; }
 
 .accesspath-panel .a11y-ftr-reset-btn {
     display: flex; align-items: center; gap: 5px;

@@ -630,6 +630,55 @@ function topSection(title: string, hint: string, contentEls: HTMLElement[], acti
 }
 
 
+/** Shared collapse/expand mechanism: seeds `aria-expanded` + the initial max-height,
+ *  wires headerBtn's click to animate content open/closed, and returns a setter so a
+ *  caller can also drive it programmatically (e.g. the footer's active-adjustments
+ *  list auto-collapses itself once it empties). Every collapsible region in the panel
+ *  — the "All Controls" categories, custom sections, and the footer's active-
+ *  adjustments list — goes through this one function so they animate identically and
+ *  a fix here (e.g. the "content taller than the old fixed cap" bug) covers all of
+ *  them at once. */
+function attachCollapse(
+  headerBtn: HTMLButtonElement,
+  content: HTMLElement,
+  defaultExpanded = false
+): { setExpanded: (next: boolean) => void } {
+  headerBtn.setAttribute('aria-expanded', String(defaultExpanded));
+  // 'none' (not a fixed px cap) when starting expanded — content that's already open
+  // at construction needs no animation, and a fixed cap silently clips anything taller
+  // than that cap (a tall customSections body, a category once its card grid wraps to
+  // more rows on a narrow viewport, ...).
+  content.style.maxHeight = defaultExpanded ? 'none' : '0px';
+
+  function setExpanded(next: boolean): void {
+    headerBtn.setAttribute('aria-expanded', String(next));
+    if (next) {
+      // Animate to the content's real height, then release the cap to 'none' once the
+      // transition finishes so later content growth isn't clipped by a stale
+      // measurement.
+      content.style.maxHeight = `${content.scrollHeight}px`;
+      content.addEventListener(
+        'transitionend',
+        () => {
+          if (headerBtn.getAttribute('aria-expanded') === 'true') content.style.maxHeight = 'none';
+        },
+        { once: true }
+      );
+    } else {
+      // maxHeight may currently be 'none' (fully released above) — a transition can't
+      // animate from 'none', so first snap it to the real height, force a synchronous
+      // reflow, then collapse to 0 so the transition still has a real starting value.
+      content.style.maxHeight = `${content.scrollHeight}px`;
+      void content.offsetHeight;
+      content.style.maxHeight = '0px';
+    }
+  }
+
+  headerBtn.addEventListener('click', () => setExpanded(headerBtn.getAttribute('aria-expanded') !== 'true'));
+
+  return { setExpanded };
+}
+
 /** A collapsible "All Controls" category: icon box + title + description, chevron
  *  indicator, and a max-height-transitioned body so the collapse can animate (and be
  *  disabled entirely when the panel has a11y-no-motion applied — see panel.css). */
@@ -683,37 +732,9 @@ function createCategory(icon: Node, title: string, description: string, contentE
   const content = document.createElement('div');
   content.id = bodyId;
   content.className = 'a11y-category-body';
-  // 'none' (not a fixed px cap) when starting expanded — content that's already open at
-  // construction needs no animation, and a fixed cap (the old hardcoded 900px) silently
-  // clipped anything taller (a tall customSections body, or the Reading category once its
-  // card grid wraps to more rows on a narrow viewport).
-  content.style.maxHeight = defaultExpanded ? 'none' : '0px';
   content.appendChild(inner);
 
-  headerBtn.addEventListener('click', () => {
-    const next = headerBtn.getAttribute('aria-expanded') !== 'true';
-    headerBtn.setAttribute('aria-expanded', String(next));
-    if (next) {
-      // Animate to the content's real height, then release the cap to 'none' once the
-      // transition finishes so later content growth (e.g. more headings scanned into the
-      // Navigation category) isn't clipped by a stale measurement.
-      content.style.maxHeight = `${content.scrollHeight}px`;
-      content.addEventListener(
-        'transitionend',
-        () => {
-          if (headerBtn.getAttribute('aria-expanded') === 'true') content.style.maxHeight = 'none';
-        },
-        { once: true }
-      );
-    } else {
-      // maxHeight may currently be 'none' (fully released above) — a transition can't
-      // animate from 'none', so first snap it to the real height, force a synchronous
-      // reflow, then collapse to 0 so the transition still has a real starting value.
-      content.style.maxHeight = `${content.scrollHeight}px`;
-      void content.offsetHeight;
-      content.style.maxHeight = '0px';
-    }
-  });
+  attachCollapse(headerBtn, content, defaultExpanded);
 
   category.append(headerBtn, content);
   return category;
@@ -1522,22 +1543,12 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     .map((key) => sectionMap.get(key))
     .filter((el): el is HTMLElement => Boolean(el));
 
-  // Active adjustments band — every non-default pref, each removable
-  const activeBand = document.createElement('div');
-  activeBand.className = 'a11y-active-band';
-  const activeHdr = document.createElement('div');
-  activeHdr.className = 'a11y-active-hdr';
-  const activeCount = document.createElement('span');
-  activeCount.className = 'a11y-active-count';
-  const clearAllBtn = document.createElement('button');
-  clearAllBtn.type = 'button';
-  clearAllBtn.className = 'a11y-top-action';
-  clearAllBtn.textContent = L.activeBand.clearAll;
-  clearAllBtn.addEventListener('click', () => doReset());
-  activeHdr.append(activeCount, clearAllBtn);
+  // Active adjustments — every non-default pref, each removable. Lives in the footer
+  // (see the a11y-ftr-* block below), collapsed by default behind a toggle that
+  // replaces "Synced to this device" whenever at least one pref is non-default, using
+  // the same attachCollapse() mechanism as the "All Controls" categories.
   const chips = document.createElement('div');
   chips.className = 'a11y-chips';
-  activeBand.append(activeHdr, chips);
 
   function activeAdjustments(): { label: string; clear: () => void }[] {
     const p = state.prefs;
@@ -1583,10 +1594,69 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     return list;
   }
 
+  body.append(...orderedSections);
+
+  // Footer (fixed) — a status row (synced indicator, or the active-adjustments
+  // toggle once anything is non-default) + Reset/Clear all, the collapsible chip
+  // list, then a small brand credit underneath.
+  const footer = document.createElement('div');
+  footer.className = 'a11y-ftr';
+
+  const statusRow = document.createElement('div');
+  statusRow.className = 'a11y-ftr-status';
+
+  // Shown when nothing is active.
+  const statusInfo = document.createElement('span');
+  statusInfo.className = 'a11y-ftr-status-info';
+  statusInfo.appendChild(checkCircleIcon());
+  const statusText = document.createElement('span');
+  statusText.textContent = L.footer.synced;
+  statusInfo.appendChild(statusText);
+
+  // Shown instead of statusInfo once at least one pref is non-default — replaces the
+  // status row's left side with a collapse toggle for the chip list below.
+  const chipsWrapId = `accesspath-active-chips-${++sectionIdSeq}`;
+  const activeToggleBtn = document.createElement('button');
+  activeToggleBtn.type = 'button';
+  activeToggleBtn.className = 'a11y-ftr-status-toggle';
+  activeToggleBtn.hidden = true;
+  activeToggleBtn.setAttribute('aria-controls', chipsWrapId);
+  const activeToggleChevron = document.createElement('span');
+  activeToggleChevron.className = 'a11y-ftr-status-toggle-chevron';
+  activeToggleChevron.setAttribute('aria-hidden', 'true');
+  activeToggleChevron.appendChild(chevronRightIcon());
+  const activeToggleText = document.createElement('span');
+  activeToggleBtn.append(activeToggleChevron, activeToggleText);
+
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.className = 'a11y-ftr-reset-btn';
+  resetBtn.appendChild(resetIcon());
+  const resetText = document.createElement('span');
+  resetText.textContent = L.footer.reset;
+  resetBtn.appendChild(resetText);
+  resetBtn.addEventListener('click', () => doReset());
+
+  statusRow.append(statusInfo, activeToggleBtn, resetBtn);
+
+  const chipsWrap = document.createElement('div');
+  chipsWrap.id = chipsWrapId;
+  chipsWrap.className = 'a11y-ftr-chips-wrap';
+  chipsWrap.appendChild(chips);
+  const chipsCollapse = attachCollapse(activeToggleBtn, chipsWrap, false);
+
   function renderActiveBand(): void {
     const adjustments = activeAdjustments();
-    activeBand.classList.toggle('show', adjustments.length > 0);
-    activeCount.textContent = L.activeBand.count(adjustments.length);
+    const count = adjustments.length;
+
+    statusInfo.hidden = count > 0;
+    activeToggleBtn.hidden = count === 0;
+    activeToggleText.textContent = L.activeBand.count(count);
+    resetText.textContent = count > 0 ? L.activeBand.clearAll : L.footer.reset;
+    // Nothing left to show — collapse so a later toggle-on doesn't silently start
+    // pre-expanded over an (about to be repopulated) empty list.
+    if (count === 0) chipsCollapse.setExpanded(false);
+
     chips.innerHTML = '';
     for (const adj of adjustments) {
       const chip = document.createElement('span');
@@ -1603,33 +1673,6 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       chips.appendChild(chip);
     }
   }
-
-  body.append(...orderedSections, activeBand);
-
-  // Footer (fixed) — one status line (synced indicator + Reset as its own small
-  // button, not a look-alike row) plus a small brand credit underneath.
-  const footer = document.createElement('div');
-  footer.className = 'a11y-ftr';
-
-  const statusRow = document.createElement('div');
-  statusRow.className = 'a11y-ftr-status';
-  const statusInfo = document.createElement('span');
-  statusInfo.className = 'a11y-ftr-status-info';
-  statusInfo.appendChild(checkCircleIcon());
-  const statusText = document.createElement('span');
-  statusText.textContent = L.footer.synced;
-  statusInfo.appendChild(statusText);
-
-  const resetBtn = document.createElement('button');
-  resetBtn.type = 'button';
-  resetBtn.className = 'a11y-ftr-reset-btn';
-  resetBtn.appendChild(resetIcon());
-  const resetText = document.createElement('span');
-  resetText.textContent = L.footer.reset;
-  resetBtn.appendChild(resetText);
-  resetBtn.addEventListener('click', () => doReset());
-
-  statusRow.append(statusInfo, resetBtn);
 
   // (An auto-generated "Accessibility Statement" button used to live here. It was
   // removed: a widget-generated statement asserts a WCAG conformance level the host
@@ -1659,7 +1702,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     reportLink.textContent = L.footer.reportProblem;
   }
 
-  footer.append(statusRow, ...(reportLink ? [reportLink] : []), brandRow);
+  footer.append(statusRow, chipsWrap, ...(reportLink ? [reportLink] : []), brandRow);
 
   pnl.append(hdr, body, footer);
   root.append(backdrop, pnl);
