@@ -8,6 +8,7 @@
     "sync-embed": "node scripts/sync-embed.mjs",
     "build": "npm run sync-embed && node scripts/build-zip.mjs",
     "test": "php tests/render-test.php",
+    "test:wp": "bash tests/smoke.sh",
     "lint:php": "for f in plugin/accesspath.php plugin/uninstall.php plugin/includes/*.php tests/*.php; do php -l \"$f\" || exit 1; done"
   }
 }

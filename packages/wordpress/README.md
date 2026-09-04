@@ -35,8 +35,17 @@ npm run build -w @accesspath/wordpress       # sync-embed + build dist/accesspat
 `dist/accesspath.zip` unpacks to `wp-content/plugins/accesspath/`. Upload it via
 **Plugins → Add New → Upload Plugin**, or unzip it into a local WordPress install.
 
-`npm run lint:php -w @accesspath/wordpress` runs `php -l` over every PHP file
-(requires a local `php` binary).
+## Tests
+
+| Command | What |
+|---|---|
+| `npm run lint:php -w @accesspath/wordpress` | `php -l` over every PHP file |
+| `npm run test -w @accesspath/wordpress` | `tests/render-test.php` — stubs the handful of WP functions the plugin uses, asserts the script-tag output and the sanitizer. No WordPress needed. |
+| `npm run test:wp -w @accesspath/wordpress` | `tests/smoke.sh` — downloads WordPress, builds a throwaway SQLite install, activates the plugin, and drives it with Playwright (`tests/smoke.mjs`): front-page script tag, widget mount, panel open, settings page, save round-trip, disable toggle. Needs `php`, `playwright`, `curl`, `unzip`, and network. |
+
+Verified end to end against real WordPress (SQLite) with Playwright on 2026-09-04:
+all 20 smoke checks pass, zero PHP notices from the plugin, zero browser console
+errors.
 
 ## Keeping value lists in sync
 
