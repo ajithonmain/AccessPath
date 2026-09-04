@@ -50,13 +50,7 @@ final class AccessPath_Frontend {
 			return;
 		}
 
-		$opts = AccessPath_Config::get();
-		$src  = ( 'cdn' === $opts['source'] )
-			? ACCESSPATH_CDN_URL
-			: ACCESSPATH_URL . 'assets/embed.js';
-		$ver  = ( 'cdn' === $opts['source'] ) ? null : ACCESSPATH_VERSION;
-
-		wp_enqueue_script( self::HANDLE, $src, array(), $ver, true );
+		wp_enqueue_script( self::HANDLE, ACCESSPATH_URL . 'assets/embed.js', array(), ACCESSPATH_VERSION, true );
 	}
 
 	/**

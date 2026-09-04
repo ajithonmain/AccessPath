@@ -8,7 +8,7 @@ Stable tag: 0.1.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-A free, open-source accessibility control panel for your site: text size, contrast, motion, dyslexia font, 9 profiles, and more. No account, no per-visitor fees.
+A free, open-source accessibility control panel: text size, contrast, motion, dyslexia font, and 9 one-tap profiles.
 
 == Description ==
 
@@ -46,32 +46,15 @@ https://github.com/ajithonmain/AccessPath
 
 == External services ==
 
-By default AccessPath loads its widget script from your own site (self-hosted) and
-makes no external connections. It offers **one optional** setting that calls a
-third-party service:
-
-**jsDelivr CDN (opt-in, off by default)**
-
-On **Settings → AccessPath**, "Load the script from" can be switched from
-"Self-hosted" to "jsDelivr CDN". If you turn this on, visitor browsers load
-`https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js` directly from
-jsDelivr instead of a file on your own server. This sends the visitor's IP
-address and browser user-agent to jsDelivr (a CDN operated by Prospect One /
-Fastly) as an ordinary HTTP request for that file — no other data is sent, and
-this happens only for the script file itself, not on every subsequent
-interaction with the widget.
-
-jsDelivr Terms of Service: https://www.jsdelivr.com/terms
-jsDelivr Privacy Policy: https://www.jsdelivr.com/privacy-policy-jsdelivr-net
+AccessPath makes no external connections. The widget script is served entirely
+from a copy bundled with this plugin — it never loads from a third-party CDN or
+phones home anywhere.
 
 == Installation ==
 
 1. Install and activate the plugin.
 2. Go to **Settings → AccessPath**.
 3. Adjust the options and save. The widget appears on your site immediately.
-
-The plugin ships a self-hosted copy of the widget script; nothing loads from a
-third-party CDN unless you switch "Load the script from" to jsDelivr.
 
 == Frequently Asked Questions ==
 
@@ -111,5 +94,5 @@ No. See "Not automated compliance" above.
 
 = 0.1.0 =
 * First release. Settings page for position, shape, icon, brand color, theme,
-  language, profile selection, storage key, self-hosted vs CDN, and the optional
-  WCAG checker section.
+  language, profile selection, storage key, and the optional WCAG checker
+  section. Widget script is always self-hosted, no third-party CDN.

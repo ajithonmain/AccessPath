@@ -26,7 +26,6 @@ final class AccessPath_Config {
 	public static function defaults() {
 		return array(
 			'enabled'      => true,
-			'source'       => 'self',           // self | cdn.
 			'theme'        => 'light',           // light | dark.
 			'position'     => 'bottom-right',
 			'shape'        => 'circle',
@@ -148,8 +147,7 @@ final class AccessPath_Config {
 		$out['draggable']    = ! empty( $input['draggable'] );
 		$out['show_checker'] = ! empty( $input['show_checker'] );
 
-		$out['source'] = ( isset( $input['source'] ) && 'cdn' === $input['source'] ) ? 'cdn' : 'self';
-		$out['theme']  = ( isset( $input['theme'] ) && 'dark' === $input['theme'] ) ? 'dark' : 'light';
+		$out['theme'] = ( isset( $input['theme'] ) && 'dark' === $input['theme'] ) ? 'dark' : 'light';
 
 		$out['position'] = self::pick( $input, 'position', self::positions(), $defaults['position'] );
 		$out['shape']    = self::pick( $input, 'shape', self::shapes(), $defaults['shape'] );

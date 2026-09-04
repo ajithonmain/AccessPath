@@ -54,7 +54,6 @@ define( 'ACCESSPATH_VERSION', '0.1.0' );
 define( 'ACCESSPATH_FILE', __DIR__ . '/../plugin/accesspath.php' );
 define( 'ACCESSPATH_URL', 'https://example.test/wp-content/plugins/accesspath/' );
 define( 'ACCESSPATH_OPTION', 'accesspath_settings' );
-define( 'ACCESSPATH_CDN_URL', 'https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js' );
 
 require __DIR__ . '/../plugin/includes/class-accesspath-config.php';
 require __DIR__ . '/../plugin/includes/class-accesspath-frontend.php';

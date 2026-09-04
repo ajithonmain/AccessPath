@@ -26,9 +26,6 @@ define( 'ACCESSPATH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ACCESSPATH_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACCESSPATH_OPTION', 'accesspath_settings' );
 
-/** jsDelivr URL used when the "Load from" setting is set to "CDN". Pinned to @0. */
-define( 'ACCESSPATH_CDN_URL', 'https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js' );
-
 require_once ACCESSPATH_DIR . 'includes/class-accesspath-config.php';
 require_once ACCESSPATH_DIR . 'includes/class-accesspath-frontend.php';
 

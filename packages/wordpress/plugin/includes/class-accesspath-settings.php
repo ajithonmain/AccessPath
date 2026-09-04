@@ -118,7 +118,7 @@ final class AccessPath_Settings {
 		};
 
 		$f( 'enabled', __( 'Show the widget', 'accesspath' ), array( __CLASS__, 'field_enabled' ), 'accesspath_main' );
-		$f( 'source', __( 'Load the script from', 'accesspath' ), array( __CLASS__, 'field_source' ), 'accesspath_main' );
+		$f( 'source', __( 'Script source', 'accesspath' ), array( __CLASS__, 'field_source' ), 'accesspath_main' );
 
 		$f( 'position', __( 'Position', 'accesspath' ), array( __CLASS__, 'field_position' ), 'accesspath_trigger' );
 		$f( 'shape', __( 'Shape', 'accesspath' ), array( __CLASS__, 'field_shape' ), 'accesspath_trigger' );
@@ -199,22 +199,9 @@ final class AccessPath_Settings {
 		self::checkbox( 'enabled', __( 'Display the accessibility panel on the public site.', 'accesspath' ) );
 	}
 
-	/** Script source. */
+	/** Script source. Self-hosted only — see the note on ACCESSPATH_URL in accesspath.php. */
 	public static function field_source() {
-		$current = self::val( 'source' );
-		$name    = esc_attr( self::name( 'source' ) );
-		printf(
-			'<p><label><input type="radio" name="%1$s" value="self"%2$s> %3$s</label></p>',
-			$name,
-			checked( $current, 'self', false ),
-			esc_html__( 'This plugin (self-hosted copy — recommended)', 'accesspath' )
-		);
-		printf(
-			'<p><label><input type="radio" name="%1$s" value="cdn"%2$s> %3$s</label></p>',
-			$name,
-			checked( $current, 'cdn', false ),
-			esc_html__( 'jsDelivr CDN', 'accesspath' )
-		);
+		echo '<p>' . esc_html__( 'Served from a copy bundled with this plugin. No third-party CDN, ever.', 'accesspath' ) . '</p>';
 	}
 
 	/** Position select. */
@@ -267,12 +254,12 @@ final class AccessPath_Settings {
 	/** Profiles checkboxes. */
 	public static function field_profiles() {
 		$current = (array) self::val( 'profiles' );
-		$name    = esc_attr( self::name( 'profiles' ) . '[]' );
+		$name    = self::name( 'profiles' ) . '[]';
 		echo '<fieldset>';
 		foreach ( AccessPath_Config::profiles() as $value => $label ) {
 			printf(
 				'<label style="display:inline-block;min-width:200px;margin:2px 0"><input type="checkbox" name="%s" value="%s"%s> %s</label>',
-				$name,
+				esc_attr( $name ),
 				esc_attr( $value ),
 				checked( in_array( $value, $current, true ), true, false ),
 				esc_html( $label )
