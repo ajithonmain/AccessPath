@@ -50,3 +50,6 @@ SUMMARY.md
 # Local debug/scratch screenshots — not for the public repo
 scratchpad/
 docs/
+
+# WordPress plugin: embed bundle is synced from packages/embed/dist at build time
+packages/wordpress/plugin/assets/embed.js

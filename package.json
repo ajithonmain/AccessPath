@@ -13,6 +13,7 @@
     "build:react": "npm run build -w @accesspath/react",
     "build:angular-lib": "ng build accesspath-angular",
     "build:site": "npm run build -w @accesspath/site",
+    "build:wordpress": "npm run build:embed && npm run build -w @accesspath/wordpress",
     "dev:site": "npm run dev -w @accesspath/site",
     "demo:angular": "npm run build:core && ng serve accesspath-angular-demo",
     "build:all": "npm run build:core && npm run build:embed && npm run build:react && npm run build:angular-lib && npm run build:site",
