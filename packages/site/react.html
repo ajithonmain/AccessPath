@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accessibility Widget for React — AccessPath</title>
+<meta name="description" content="Add an accessibility control panel to any React app with @accesspath/react: a component and a hook, one shared core, MIT licensed, self-hosted, no per-visitor pricing.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="AccessPath">
+<link rel="canonical" href="https://accesspath-6ur.pages.dev/react.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AccessPath">
+<meta property="og:title" content="Accessibility Widget for React — AccessPath">
+<meta property="og:description" content="Add an accessibility control panel to any React app with @accesspath/react: a component and a hook, one shared core, MIT licensed, self-hosted, no per-visitor pricing.">
+<meta property="og:url" content="https://accesspath-6ur.pages.dev/react.html">
+<meta property="og:image" content="https://accesspath-6ur.pages.dev/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AccessPath — make any site accessible in one line.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Accessibility Widget for React — AccessPath">
+<meta name="twitter:description" content="Add an accessibility control panel to any React app with @accesspath/react: a component and a hook, one shared core, MIT licensed, self-hosted, no per-visitor pricing.">
+<meta name="twitter:image" content="https://accesspath-6ur.pages.dev/og-image.png">
+
+<meta name="theme-color" content="#4928F3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/src/style.css">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Accessibility Widget for React — AccessPath",
+      "description": "Add an accessibility control panel to any React app with @accesspath/react: a component and a hook, one shared core, MIT licensed, self-hosted, no per-visitor pricing.",
+      "inLanguage": "en",
+      "url": "https://accesspath-6ur.pages.dev/react.html",
+      "image": "https://accesspath-6ur.pages.dev/og-image.png",
+      "author": {
+        "@type": "Person",
+        "name": "vibecoderaj",
+        "url": "https://www.ajithmjose.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AccessPath",
+        "url": "https://accesspath-6ur.pages.dev/",
+        "logo": "https://accesspath-6ur.pages.dev/images/logo.png"
+      },
+      "about": {
+        "@type": "SoftwareApplication",
+        "name": "AccessPath",
+        "applicationCategory": "WebApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "AccessPath",
+          "item": "https://accesspath-6ur.pages.dev/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "React",
+          "item": "https://accesspath-6ur.pages.dev/react.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does @accesspath/react work with Next.js?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The panel is a client component, so render it under a \"use client\" boundary (or in a client-only wrapper). It has no server dependencies and makes no network calls during render."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it a replacement for accessible JSX?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. AccessPath is a user-facing control layer for text size, contrast, motion, and similar presentation preferences. Semantic elements, labels, focus management, and ARIA on your own components are still your responsibility."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does it add to my bundle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The panel UI and state live in @accesspath/core, loaded once. It is ESM and tree-shakeable, and you can lazy-load the component so it is only fetched when a user opens the panel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can two components share the accessibility state?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Any component using the same storageKey shares one state instance, so a header button and a mounted panel stay in sync with no context or prop plumbing."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html" style="text-decoration:none;color:inherit;">
+      <span class="nav-logo" aria-hidden="true">
+        <img src="/images/logo.png" width="28" height="27" alt="">
+      </span>
+      AccessPath
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="index.html#profiles-showcase">Profiles</a>
+      <a href="index.html#install-quickstart-v2">Integrations</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="integration-guide.html">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="https://github.com/ajithonmain/AccessPath" target="_blank" rel="noopener" class="btn btn-secondary btn-sm nav-star-btn">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+        Star on GitHub
+      </a>
+      <a href="https://www.npmjs.com/org/accesspath" target="_blank" rel="noopener" class="btn btn-secondary btn-sm nav-npm-btn">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H3.999v-4H2.665v4h-1.33V8.667h5.33v5.331zm4.001 0H8.001V8.667h4v1.336h-1.334v4.001h-.001v.001zm.001-4H12v-1.332h-1.332v1.332zm8.001 4h-2.667v-4h-1.335v4h-1.332V8.667h5.334v5.331z"/></svg>
+        npm
+      </a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <svg class="nav-toggle-icon nav-toggle-icon-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="nav-toggle-icon nav-toggle-icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="legal-page">
+    <div class="section-inner legal-inner">
+      <a class="legal-back" href="index.html">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to AccessPath
+      </a>
+      <div class="legal-header">
+        <h1 class="legal-title">Accessibility widget for React</h1>
+        <p class="legal-meta">A drop-in accessibility control panel for React apps — component, hook, and shared state, from one npm package.</p>
+      </div>
+      <div class="legal-body">
+        <h2>What you get</h2>
+        <p><code>@accesspath/react</code> gives a React app the same floating accessibility panel the vanilla script embed provides: <strong>9 preset profiles</strong> (Low Vision, Dyslexia, Seizure Safe, Motor Impaired, Color Blind, ADHD, Voice Over, Elderly, Cognitive &amp; Learning) and <strong>30+ individual controls</strong> across vision, text, motion, reading, and navigation. All of it is a real change applied to your live DOM &mdash; not a static preview.</p>
+
+        <h2>Install</h2>
+        <pre class="code-block" data-lang="bash"><code>npm install @accesspath/react @accesspath/core</code></pre>
+
+        <h2>Use the component and the hook</h2>
+        <pre class="code-block" data-lang="tsx"><code>import { useRef } from 'react';
+import { AccessPathPanel, useAccessPath } from '@accesspath/react';
+import type { AccessPathPanelHandle } from '@accesspath/react';
+import '@accesspath/core/styles/a11y-effects.css';
+import '@accesspath/core/styles/panel.css';
+
+export function App() {
+  const panelRef = useRef&lt;AccessPathPanelHandle&gt;(null);
+  const { prefs, activeProfiles } = useAccessPath('accesspath-prefs');
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() =&gt; panelRef.current?.open()}&gt;Accessibility&lt;/button&gt;
+      &lt;AccessPathPanel ref={panelRef} storageKey="accesspath-prefs" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        <p><code>useAccessPath(storageKey)</code> returns <code>{ open, close, reset, prefs, activeProfiles, isOpen }</code>. <code>activeProfiles</code> is an array &mdash; more than one profile can be active at once.</p>
+
+        <h2>Props</h2>
+        <table class="legal-table">
+          <tr><th>Prop</th><th>Purpose</th></tr>
+          <tr><td><code>container</code></td><td>Element the <code>a11y-*</code> effect classes are applied to. Defaults to <code>document.body</code>.</td></tr>
+          <tr><td><code>isDarkTheme</code></td><td>Render the panel chrome in its dark style.</td></tr>
+          <tr><td><code>storageKey</code></td><td><code>localStorage</code> key for persisted preferences. Share it to share state across components.</td></tr>
+          <tr><td><code>profiles</code></td><td>Restrict which preset profile cards render.</td></tr>
+          <tr><td><code>brandColor</code>, <code>locale</code>, <code>labels</code>, <code>sections</code>, <code>controlCategories</code>, <code>actions</code>, <code>reportUrl</code></td><td>Theming, translation, and which parts of the panel appear.</td></tr>
+        </table>
+
+        <h2>Next.js and SSR</h2>
+        <p>The panel touches <code>window</code> and <code>document</code>, so render it on the client: put it under a <code>"use client"</code> boundary, or in a component loaded with <code>next/dynamic</code> and <code>{ ssr: false }</code>. It makes no network calls during render and has no server dependencies.</p>
+
+        <h2>What it is not</h2>
+        <p>AccessPath is a user-controlled presentation layer. It does not audit your components, rewrite your JSX, add missing labels, or make your app WCAG-conformant on its own. Keep doing the underlying work &mdash; semantic elements, focus order, ARIA, color contrast &mdash; and let AccessPath sit on top of it. See the <a href="accessibility-guide.html">Accessibility Guide</a> for an honest breakdown.</p>
+
+        <h2>Free and self-hosted</h2>
+        <p>MIT licensed, published on npm, no per-visitor pricing, no hosted script phoning home. Preferences are stored only in the visitor's browser. Full setup for every framework is in the <a href="integration-guide.html">Integration Guide</a>; the source is on <a href="https://github.com/ajithonmain/AccessPath" target="_blank" rel="noopener">GitHub</a>.</p>
+
+        <h2>FAQ</h2>
+        <h3>Does @accesspath/react work with Next.js?</h3>
+        <p>Yes. The panel is a client component, so render it under a "use client" boundary (or in a client-only wrapper). It has no server dependencies and makes no network calls during render.</p>
+        <h3>Is it a replacement for accessible JSX?</h3>
+        <p>No. AccessPath is a user-facing control layer for text size, contrast, motion, and similar presentation preferences. Semantic elements, labels, focus management, and ARIA on your own components are still your responsibility.</p>
+        <h3>How much does it add to my bundle?</h3>
+        <p>The panel UI and state live in @accesspath/core, loaded once. It is ESM and tree-shakeable, and you can lazy-load the component so it is only fetched when a user opens the panel.</p>
+        <h3>Can two components share the accessibility state?</h3>
+        <p>Yes. Any component using the same storageKey shares one state instance, so a header button and a mounted panel stay in sync with no context or prop plumbing.</p>
+      </div>
+    </div>
+  </section>
+
+<footer class="site-footer" id="site-footer">
+    <div class="section-inner footer-inner">
+      <div class="footer-main">
+        <a class="footer-logo" href="index.html" style="text-decoration:none;color:inherit;">
+          <span class="footer-logo-mark" aria-hidden="true">
+            <img src="/images/logo.png" width="22" height="21" alt="" loading="lazy" decoding="async">
+          </span>
+          AccessPath
+        </a>
+        <nav class="footer-nav" aria-label="Footer">
+          <a href="accessibility-guide.html">Accessibility Guide</a>
+          <a href="integration-guide.html">Integration Guide</a>
+          <a href="react.html">For React</a>
+          <a href="wordpress.html">For WordPress</a>
+          <a href="vs-userway.html">vs UserWay</a>
+          <a href="license.html">MIT License</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Use</a>
+        </nav>
+        <div class="footer-social">
+          <a href="https://github.com/ajithonmain/AccessPath" target="_blank" rel="noopener" class="footer-social-btn" aria-label="AccessPath on GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.77.12 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.8.55A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg></a>
+          <a href="https://www.npmjs.com/org/accesspath" target="_blank" rel="noopener" class="footer-social-btn" aria-label="AccessPath on npm"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H3.999v-4H2.665v4h-1.33V8.667h5.33v5.331zm4.001 0H8.001V8.667h4v1.336h-1.334v4.001h-.001v.001zm.001-4H12v-1.332h-1.332v1.332zm8.001 4h-2.667v-4h-1.335v4h-1.332V8.667h5.334v5.331z"/></svg></a>
+          <a href="https://accesspath-6ur.pages.dev" class="footer-social-btn" aria-label="AccessPath website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <span>&copy; 2026 AccessPath</span>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <span class="footer-credit">Built with
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.4 1.1 4.5 2.7C11.1 6.1 12.5 5 14.5 5 18 5 19.6 8.6 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+          by <a href="https://www.ajithmjose.com" target="_blank" rel="noopener">vibecoderaj</a></span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

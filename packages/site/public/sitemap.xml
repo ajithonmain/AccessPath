@@ -19,6 +19,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://accesspath-6ur.pages.dev/react.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://accesspath-6ur.pages.dev/wordpress.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://accesspath-6ur.pages.dev/vs-userway.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://accesspath-6ur.pages.dev/license.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>yearly</changefreq>
