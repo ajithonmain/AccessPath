@@ -188,5 +188,13 @@ export const en: Labels = {
     title: 'Accessibility Statement',
     closeAria: 'Close accessibility statement',
   },
+  announce: {
+    reset: 'All accessibility settings reset.',
+    profileOn: (label) => `${label} profile turned on.`,
+    profileOff: (label) => `${label} profile turned off.`,
+    scanDone: (failCount, manualCount) =>
+      `Accessibility scan complete. ${failCount} issue${failCount === 1 ? '' : 's'} found` +
+      `${manualCount ? `, ${manualCount} to review manually` : ''}.`,
+  },
   triggerAria: 'Open AccessPath accessibility controls',
 };

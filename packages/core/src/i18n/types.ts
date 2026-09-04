@@ -150,6 +150,14 @@ export interface Labels {
   };
   footer: { synced: string; reset: string; poweredBy: string; statementLink: string; reportProblem: string };
   statement: { title: string; closeAria: string };
+  /** Messages pushed to the panel's polite live region for screen-reader users when a
+   *  change happens that isn't already conveyed by a control's own aria-pressed state. */
+  announce: {
+    reset: string;
+    profileOn: (label: string) => string;
+    profileOff: (label: string) => string;
+    scanDone: (failCount: number, manualCount: number) => string;
+  };
   triggerAria: string;
 }
 

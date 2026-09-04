@@ -179,5 +179,13 @@ export const fr: Labels = {
     title: "Déclaration d'accessibilité",
     closeAria: "Fermer la déclaration d'accessibilité",
   },
+  announce: {
+    reset: "Tous les paramètres d'accessibilité ont été réinitialisés.",
+    profileOn: (label) => `Profil ${label} activé.`,
+    profileOff: (label) => `Profil ${label} désactivé.`,
+    scanDone: (failCount, manualCount) =>
+      `Analyse d'accessibilité terminée. ${failCount} problème${failCount === 1 ? '' : 's'} détecté${failCount === 1 ? '' : 's'}` +
+      `${manualCount ? `, ${manualCount} à vérifier manuellement` : ''}.`,
+  },
   triggerAria: "Ouvrir les contrôles d'accessibilité AccessPath",
 };

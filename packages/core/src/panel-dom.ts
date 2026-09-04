@@ -267,6 +267,10 @@ function profileGrid(els: HTMLElement[]): HTMLElement {
  *  off to the side of the visibly-narrower card. Making the whole card itself the one
  *  interactive control sidesteps that mismatch entirely: the chevron is a child of
  *  the card, positioned relative to the card's own real box, not a sibling's. */
+/** Monotonic counter for generated element ids (category bodies, dropdown menus, the
+ *  live-status region) — shared so ids never collide across multiple panel instances. */
+let sectionIdSeq = 0;
+
 function attachDropdownToCard<T extends string>(
   card: Toggleable,
   options: { value: T; label: string }[],
@@ -289,9 +293,14 @@ function attachDropdownToCard<T extends string>(
   card.button.setAttribute('aria-expanded', 'false');
 
   const menu = document.createElement('div');
+  const menuId = `accesspath-dd-${++sectionIdSeq}`;
+  menu.id = menuId;
   menu.className = 'a11y-custom-select-menu a11y-profile-card-dd-menu';
   menu.hidden = true;
   menu.setAttribute('role', 'listbox');
+  // Associate the trigger with the menu it controls, not just aria-haspopup — a screen
+  // reader user then knows the collapsed state maps to a specific, findable listbox.
+  card.button.setAttribute('aria-controls', menuId);
 
   // composedPath(), not e.target — the panel can be mounted inside a Shadow DOM (the
   // embed script's shadow root), and a click event crossing that boundary gets its
@@ -620,7 +629,6 @@ function topSection(title: string, hint: string, contentEls: HTMLElement[], acti
   return section;
 }
 
-let sectionIdSeq = 0;
 
 /** A collapsible "All Controls" category: icon box + title + description, chevron
  *  indicator, and a max-height-transitioned body so the collapse can animate (and be
@@ -631,11 +639,19 @@ function createCategory(icon: Node, title: string, description: string, contentE
 
   const bodyId = `accesspath-category-${++sectionIdSeq}`;
 
+  const titleId = `${bodyId}-title`;
+  const descId = `${bodyId}-desc`;
+
   const headerBtn = document.createElement('button');
   headerBtn.type = 'button';
   headerBtn.className = 'a11y-category-hdr';
   headerBtn.setAttribute('aria-expanded', String(defaultExpanded));
   headerBtn.setAttribute('aria-controls', bodyId);
+  // Name the button from the title alone; the longer "what's inside" blurb is a
+  // description, not part of the name — otherwise a screen reader announces the two
+  // run together ("Vision Invert colors, monochrome…") as one label.
+  headerBtn.setAttribute('aria-labelledby', titleId);
+  headerBtn.setAttribute('aria-describedby', descId);
 
   const iconBox = document.createElement('span');
   iconBox.className = 'a11y-category-icon-box';
@@ -645,9 +661,11 @@ function createCategory(icon: Node, title: string, description: string, contentE
   text.className = 'a11y-category-text';
   const titleEl = document.createElement('span');
   titleEl.className = 'a11y-category-title';
+  titleEl.id = titleId;
   titleEl.textContent = title;
   const descEl = document.createElement('span');
   descEl.className = 'a11y-category-desc';
+  descEl.id = descId;
   descEl.textContent = description;
   text.append(titleEl, descEl);
 
@@ -724,6 +742,24 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
   pnl.setAttribute('aria-modal', 'true');
   pnl.setAttribute('aria-label', L.header.dialogAria);
   pnl.addEventListener('click', (e) => e.stopPropagation());
+
+  // Polite live region for changes a screen reader wouldn't otherwise hear: applying or
+  // clearing a profile (flips several prefs at once), Reset, and the audit scan finishing.
+  // Per-control toggles already announce via their own aria-pressed, so they don't go here.
+  const liveRegion = document.createElement('div');
+  liveRegion.id = `accesspath-status-${++sectionIdSeq}`;
+  liveRegion.className = 'a11y-sr-only';
+  liveRegion.setAttribute('role', 'status');
+  liveRegion.setAttribute('aria-live', 'polite');
+  pnl.appendChild(liveRegion);
+  let announceTimer: ReturnType<typeof setTimeout> | undefined;
+  function announce(msg: string): void {
+    // Clear first so re-announcing the same string (e.g. toggling one profile twice) still
+    // fires a fresh live-region update.
+    liveRegion.textContent = '';
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => { liveRegion.textContent = msg; }, 60);
+  }
   // A previously-chosen theme (via the header switch below) permanently overrides the
   // isDarkTheme option on future mounts — same precedent as loadTriggerPosition()
   // overriding the position option once a visitor has dragged the trigger.
@@ -805,7 +841,17 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       key,
       L.profiles.names[key],
       L.profiles.applyAria(L.profiles.names[key]),
-      key === 'colorblind' ? () => {} : () => state.applyProfile(key)
+      key === 'colorblind'
+        ? () => {}
+        : () => {
+            state.applyProfile(key);
+            const name = L.profiles.names[key];
+            announce(
+              state.activeProfiles.includes(key)
+                ? L.announce.profileOn(name)
+                : L.announce.profileOff(name),
+            );
+          },
     );
     profilePills.set(key, card);
     if (key === 'colorblind') {
@@ -1627,6 +1673,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
     isSpeaking = false;
     updateReadAloudCard();
     state.reset();
+    announce(L.announce.reset);
   }
 
   function setSegActive<T extends string>(seg: SegmentedControl<T>, active: T): void {

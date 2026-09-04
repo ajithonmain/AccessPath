@@ -179,5 +179,13 @@ export const es: Labels = {
     title: 'Declaración de accesibilidad',
     closeAria: 'Cerrar declaración de accesibilidad',
   },
+  announce: {
+    reset: 'Se han restablecido todos los ajustes de accesibilidad.',
+    profileOn: (label) => `Perfil ${label} activado.`,
+    profileOff: (label) => `Perfil ${label} desactivado.`,
+    scanDone: (failCount, manualCount) =>
+      `Análisis de accesibilidad completado. ${failCount} problema${failCount === 1 ? '' : 's'} detectado${failCount === 1 ? '' : 's'}` +
+      `${manualCount ? `, ${manualCount} para revisar manualmente` : ''}.`,
+  },
   triggerAria: 'Abrir los controles de accesibilidad de AccessPath',
 };

@@ -891,7 +891,8 @@
 .accesspath-panel .a11y-tip.show { opacity: 1; }
 /* Visually-hidden hint copy carried inside each trigger for assistive tech
    (aria-describedby points here). */
-.accesspath-panel .a11y-tip-sr {
+.accesspath-panel .a11y-tip-sr,
+.accesspath-panel .a11y-sr-only {
     position: absolute;
     width: 1px; height: 1px;
     margin: -1px; padding: 0; border: 0;

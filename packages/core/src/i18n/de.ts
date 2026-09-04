@@ -179,5 +179,13 @@ export const de: Labels = {
     title: 'Barrierefreiheitserklärung',
     closeAria: 'Barrierefreiheitserklärung schließen',
   },
+  announce: {
+    reset: 'Alle Barrierefreiheitseinstellungen zurückgesetzt.',
+    profileOn: (label) => `Profil ${label} aktiviert.`,
+    profileOff: (label) => `Profil ${label} deaktiviert.`,
+    scanDone: (failCount, manualCount) =>
+      `Barrierefreiheitsprüfung abgeschlossen. ${failCount} Problem${failCount === 1 ? '' : 'e'} gefunden` +
+      `${manualCount ? `, ${manualCount} manuell zu prüfen` : ''}.`,
+  },
   triggerAria: 'AccessPath-Barrierefreiheitseinstellungen öffnen',
 };
