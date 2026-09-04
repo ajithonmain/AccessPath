@@ -16,6 +16,7 @@
     "dev:site": "npm run dev -w @accesspath/site",
     "demo:angular": "npm run build:core && ng serve accesspath-angular-demo",
     "build:all": "npm run build:core && npm run build:embed && npm run build:react && npm run build:angular-lib && npm run build:site",
+    "check": "node scripts/check-docs-sync.mjs",
     "publish:core": "npm run build:core && npm publish -w @accesspath/core",
     "publish:embed": "npm run build:core && npm run build:embed && npm publish -w @accesspath/embed",
     "publish:react": "npm run build:core && npm run build:react && npm publish -w @accesspath/react",
