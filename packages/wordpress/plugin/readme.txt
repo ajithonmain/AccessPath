@@ -2,7 +2,7 @@
 Contributors: accesspath
 Tags: accessibility, a11y, wcag, accessibility widget, ada
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 7.2
 Stable tag: 0.1.0
 License: MIT
@@ -44,6 +44,26 @@ Source code, issues, and the framework-agnostic core (also available as a plain
 script tag, a React component, and an Angular component) are on GitHub:
 https://github.com/ajithonmain/AccessPath
 
+== External services ==
+
+By default AccessPath loads its widget script from your own site (self-hosted) and
+makes no external connections. It offers **one optional** setting that calls a
+third-party service:
+
+**jsDelivr CDN (opt-in, off by default)**
+
+On **Settings → AccessPath**, "Load the script from" can be switched from
+"Self-hosted" to "jsDelivr CDN". If you turn this on, visitor browsers load
+`https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js` directly from
+jsDelivr instead of a file on your own server. This sends the visitor's IP
+address and browser user-agent to jsDelivr (a CDN operated by Prospect One /
+Fastly) as an ordinary HTTP request for that file — no other data is sent, and
+this happens only for the script file itself, not on every subsequent
+interaction with the widget.
+
+jsDelivr Terms of Service: https://www.jsdelivr.com/terms
+jsDelivr Privacy Policy: https://www.jsdelivr.com/privacy-policy-jsdelivr-net
+
 == Installation ==
 
 1. Install and activate the plugin.
@@ -79,6 +99,13 @@ Yes. Filters: `accesspath_should_render` (bool) and `accesspath_data_attributes`
 = Does it make my site compliant? =
 
 No. See "Not automated compliance" above.
+
+== Screenshots ==
+
+1. The AccessPath panel open on the front end, with the profile grid and
+   controls visible.
+2. The Settings → AccessPath admin screen: position, shape, icon, brand color,
+   theme, language, and profile selection.
 
 == Changelog ==
 

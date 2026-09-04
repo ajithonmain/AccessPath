@@ -23,6 +23,8 @@ plugin/                         the shippable plugin (zipped as accesspath/)
 scripts/
   sync-embed.mjs                copies the built embed bundle in
   build-zip.mjs                 stages plugin/ as accesspath/ and zips it
+assets-wp-org/                  WordPress.org SVN assets/ (icon, banner, screenshots) —
+                                 not part of the plugin zip, pushed to SVN by hand
 ```
 
 ## Build
@@ -42,6 +44,8 @@ npm run build -w @accesspath/wordpress       # sync-embed + build dist/accesspat
 | `npm run lint:php -w @accesspath/wordpress` | `php -l` over every PHP file |
 | `npm run test -w @accesspath/wordpress` | `tests/render-test.php` — stubs the handful of WP functions the plugin uses, asserts the script-tag output and the sanitizer. No WordPress needed. |
 | `npm run test:wp -w @accesspath/wordpress` | `tests/smoke.sh` — downloads WordPress, builds a throwaway SQLite install, activates the plugin, and drives it with Playwright (`tests/smoke.mjs`): front-page script tag, widget mount, panel open, settings page, save round-trip, disable toggle. Needs `php`, `playwright`, `curl`, `unzip`, and network. |
+| `tests/screenshots.sh` | Same throwaway-WordPress setup as `smoke.sh`, but captures the two WordPress.org listing screenshots (`tests/screenshots.mjs`) into `assets-wp-org/screenshot-{1,2}.png` instead of asserting. Run manually before a release. |
+| `node assets-wp-org/build-graphics.mjs` | Renders `icon-128x128.png`, `icon-256x256.png`, `banner-772x250.png`, `banner-1544x500.png` from the brand logo/palette via headless Chromium. No WordPress needed. |
 
 Verified end to end against real WordPress (SQLite) with Playwright on 2026-09-04:
 all 20 smoke checks pass, zero PHP notices from the plugin, zero browser console
