@@ -901,6 +901,12 @@
 }
 
 /* Inline "how it works" note under a control that's active (e.g. Dictionary on). */
+/* `.hidden` is the show/hide mechanism (toggled from panel-dom.ts). Without this
+   explicit override the base rule's `display: flex` (specificity 0,2,0) beats the
+   UA `[hidden] { display: none }` (0,1,0) and the note shows permanently — the
+   Read Aloud / Voice Over / Dictionary notes were all stuck visible. This
+   selector is 0,3,0, so it wins. Same cascade trap the FAQ accordion hit. */
+.accesspath-panel .a11y-inline-hint[hidden] { display: none; }
 .accesspath-panel .a11y-inline-hint {
     display: flex; align-items: flex-start; gap: 8px;
     margin: 10px 0 2px;
