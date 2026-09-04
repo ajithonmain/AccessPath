@@ -1928,8 +1928,8 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
 .footer-logo { display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 700; color: var(--tx); }
 .footer-logo-mark { display: flex; color: var(--brand); }
 .footer-logo-mark img { width: 22px; height: auto; }
-.footer-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; flex: 1; }
-.footer-nav a { font-size: 13.5px; color: var(--tm); text-decoration: none; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 8px 16px; flex: 1; min-width: 0; }
+.footer-nav a { font-size: 13px; color: var(--tm); text-decoration: none; white-space: nowrap; }
 .footer-nav a:hover { color: var(--brand); }
 .footer-social { display: flex; gap: 8px; }
 .footer-social-btn {
@@ -2166,6 +2166,17 @@ html.has-js .reveal-right.is-visible { opacity: 1; transform: none; }
   font-size: 13px; line-height: 1.6;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
   margin: 0 0 20px;
+}
+/* When main.ts wraps a .code-block in the windowed .code-panel chrome, the prose
+   `.legal-body pre` / `.legal-body code` rules above must not leak in — a padded,
+   backgrounded <code> under `white-space: pre` paints a light box per visual line
+   (same bug as .docs-content, see that reset near the top of this file). */
+.legal-body .code-panel { margin: 0 0 20px; }
+.legal-body .code-panel pre.code-block {
+  background: transparent; border-radius: 0; padding: 16px 18px; margin: 0; font-size: 13px;
+}
+.legal-body .code-panel code {
+  font-size: inherit; background: none; padding: 0; border-radius: 0; color: inherit;
 }
 .legal-table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 14.5px; }
 .legal-table th, .legal-table td { text-align: left; padding: 10px 14px; border: 1px solid var(--bd); }
