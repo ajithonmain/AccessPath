@@ -59,6 +59,12 @@ import {
  *  combinations. Works unreserved on macOS and in most other browsers. */
 const SHORTCUT_LABEL = 'CTRL+U';
 
+/** The footer's "Powered by AccessPath" credit links here — same URL as the
+ *  `homepage` field in every published package.json. Update both together if the
+ *  site ever moves off this placeholder domain (see RELEASING.md's note on the
+ *  custom-domain task). */
+const ACCESSPATH_SITE_URL = 'https://accesspath-6ur.pages.dev';
+
 /** A host-defined button rendered in the drawer's "Actions" section. Clicking it never
  *  runs host code directly — it dispatches an `accesspath:action` CustomEvent (detail:
  *  { id }) on `container`, so embed/React/Angular consumers can all react the same way
@@ -1680,8 +1686,11 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
   // generateStatement() helper is still exported for hosts that want to render one on
   // their own statement page.)
 
-  const brandRow = document.createElement('div');
+  const brandRow = document.createElement('a');
   brandRow.className = 'a11y-ftr-brand';
+  brandRow.href = ACCESSPATH_SITE_URL;
+  brandRow.target = '_blank';
+  brandRow.rel = 'noopener noreferrer';
   const brandMark = document.createElement('img');
   brandMark.className = 'a11y-ftr-brand-mark';
   brandMark.src = ACCESSPATH_LOGO_DATA_URI;

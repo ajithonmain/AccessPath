@@ -862,7 +862,11 @@
     font-size: 10.5px; font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ap-mu, #6F7580);
+    text-decoration: none;
+    transition: color 0.15s;
 }
+.accesspath-panel .a11y-ftr-brand:hover,
+.accesspath-panel .a11y-ftr-brand:focus-visible { color: var(--ap-brand-text, var(--ap-brand, #4928F3)); }
 .accesspath-panel .a11y-ftr-brand-mark {
     width: 14px; height: 14px;
     object-fit: contain;
