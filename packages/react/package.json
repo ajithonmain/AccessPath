@@ -1,6 +1,6 @@
 {
   "name": "@accesspath/react",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "React component and hook for the AccessPath accessibility widget.",
   "license": "MIT",
@@ -59,7 +59,7 @@
     "react-dom": ">=18"
   },
   "dependencies": {
-    "@accesspath/core": "^0.1.2"
+    "@accesspath/core": "^0.1.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
