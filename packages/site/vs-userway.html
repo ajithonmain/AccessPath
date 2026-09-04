@@ -28,7 +28,8 @@
 <meta name="theme-color" content="#4928F3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Caveat:wght@500;600&display=swap"></noscript>
 <link rel="stylesheet" href="/src/style.css">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -175,16 +176,16 @@
 
         <h2>Side by side</h2>
         <table class="legal-table">
-          <tr><th></th><th>AccessPath</th><th>UserWay (and similar overlays)</th></tr>
-          <tr><td>Price</td><td>Free, unlimited traffic and sites</td><td>Free tier with limits; paid plans by traffic/features</td></tr>
-          <tr><td>License</td><td>Open source (MIT)</td><td>Proprietary, closed source</td></tr>
-          <tr><td>Hosting</td><td>Self-host, or load from a public CDN you can pin</td><td>Loaded from the vendor’s servers</td></tr>
-          <tr><td>Per-visitor cost</td><td>None</td><td>Plans scale with monthly visitors</td></tr>
-          <tr><td>Data &amp; tracking</td><td>No analytics, no cookies; prefs in the visitor’s browser only</td><td>Vendor script; may load extra resources / telemetry</td></tr>
-          <tr><td>Vendor lock-in</td><td>None &mdash; you own the code</td><td>Widget stops if the account lapses</td></tr>
-          <tr><td>Frameworks</td><td>Script tag, plus first-party React and Angular packages</td><td>Script tag; framework wrappers vary</td></tr>
-          <tr><td>What it does</td><td>Text size, contrast, motion, spacing, dyslexia font, saturation, read-aloud, reading guide, 9 profiles, 30+ tools, built-in WCAG checker</td><td>Comparable presentation controls; some products also inject ARIA/DOM changes</td></tr>
-          <tr><td>Compliance claims</td><td>None &mdash; explicitly not a compliance product</td><td>Historically marketed around ADA/WCAG; widely disputed by accessibility practitioners</td></tr>
+          <tr><td></td><th scope="col">AccessPath</th><th scope="col">UserWay (and similar overlays)</th></tr>
+          <tr><th scope="row">Price</th><td>Free, unlimited traffic and sites</td><td>Free tier with limits; paid plans by traffic/features</td></tr>
+          <tr><th scope="row">License</th><td>Open source (MIT)</td><td>Proprietary, closed source</td></tr>
+          <tr><th scope="row">Hosting</th><td>Self-host, or load from a public CDN you can pin</td><td>Loaded from the vendor’s servers</td></tr>
+          <tr><th scope="row">Per-visitor cost</th><td>None</td><td>Plans scale with monthly visitors</td></tr>
+          <tr><th scope="row">Data &amp; tracking</th><td>No analytics, no cookies; prefs in the visitor’s browser only</td><td>Vendor script; may load extra resources / telemetry</td></tr>
+          <tr><th scope="row">Vendor lock-in</th><td>None &mdash; you own the code</td><td>Widget stops if the account lapses</td></tr>
+          <tr><th scope="row">Frameworks</th><td>Script tag, plus first-party React and Angular packages</td><td>Script tag; framework wrappers vary</td></tr>
+          <tr><th scope="row">What it does</th><td>Text size, contrast, motion, spacing, dyslexia font, saturation, read-aloud, reading guide, 9 profiles, 30+ tools, built-in WCAG checker</td><td>Comparable presentation controls; some products also inject ARIA/DOM changes</td></tr>
+          <tr><th scope="row">Compliance claims</th><td>None &mdash; explicitly not a compliance product</td><td>Historically marketed around ADA/WCAG; widely disputed by accessibility practitioners</td></tr>
         </table>
 
         <h2>The part both should be honest about</h2>

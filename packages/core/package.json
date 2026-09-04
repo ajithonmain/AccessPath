@@ -1,6 +1,6 @@
 {
   "name": "@accesspath/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Framework-agnostic accessibility widget engine: state, panel UI, effects, and a built-in WCAG scanner.",
   "license": "MIT",

@@ -565,12 +565,18 @@ function colorPickerRow(
   input.type = 'color';
   input.className = 'a11y-color-input';
   input.value = '#ffffff';
+  // Native <input type="color"> has no visible text of its own; the label span next to
+  // it isn't a <label for> association, so screen readers get nothing without this.
+  input.setAttribute('aria-label', label);
   input.addEventListener('input', () => onChange(input.value));
 
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'a11y-top-action';
   clearBtn.textContent = clearLabel;
+  // Visible text is just "Default" (shared across all three rows) — keep it in the
+  // accessible name (WCAG 2.5.3) but add which color it resets.
+  clearBtn.setAttribute('aria-label', `${clearLabel} — ${label}`);
   clearBtn.addEventListener('click', () => onChange(null));
 
   controls.append(input, clearBtn);
