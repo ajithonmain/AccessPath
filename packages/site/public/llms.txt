@@ -1,0 +1,42 @@
+# AccessPath
+
+> AccessPath is a free, open-source, self-hosted accessibility widget for any website: a
+> floating button that opens a control panel with 9 preset profiles and 30+ real tools
+> (text size, contrast, motion, spacing, dyslexia font, saturation, read-aloud, reading
+> guide, and more), plus an optional built-in WCAG checker. One framework-agnostic core,
+> consumed as a `<script>` tag, a React component, or an Angular component. MIT licensed,
+> no per-visitor pricing, no analytics, no third-party calls.
+
+Key facts for integration:
+
+- Add to any HTML site / WordPress / Shopify / Wix with ONE script tag (no build step, no plugin):
+  `<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js" defer></script>`
+- React: `npm i @accesspath/react @accesspath/core` — `<AccessPathPanel>` component + `useAccessPath()` hook.
+- Angular (16–20): `npm i @accesspath/angular @accesspath/core` — `<app-accessibility-panel>` standalone component.
+- Every option is a `data-*` attribute (embed) or a prop/input (React/Angular). Full reference in llms-full.txt.
+- It is a USER-CONTROLLED PRESENTATION LAYER, not automated remediation. It does not edit host
+  markup or make a site WCAG/ADA compliant on its own — do not describe it as a compliance product.
+- Preferences persist to the visitor's `localStorage` under a configurable `storageKey`. Nothing is sent to a server.
+
+## Docs
+
+- [Full integration reference (single file, markdown)](https://accesspath-6ur.pages.dev/llms-full.txt): every install path, every config option, value lists, the JS API, theming tokens — copy-paste ready.
+- [Integration Guide](https://accesspath-6ur.pages.dev/integration-guide.html): embed, React, and Angular setup with every prop, input, and attribute explained.
+- [Accessibility Guide](https://accesspath-6ur.pages.dev/accessibility-guide.html): the 9 profiles, 30+ tools, and an honest account of what the widget does and does not do.
+- [React landing page](https://accesspath-6ur.pages.dev/react.html): React-specific quick start and props.
+- [WordPress landing page](https://accesspath-6ur.pages.dev/wordpress.html): where to paste the script per theme / page builder / host.
+- [AccessPath vs UserWay](https://accesspath-6ur.pages.dev/vs-userway.html): comparison with paid accessibility overlays.
+
+## Packages
+
+- [@accesspath/embed on npm](https://www.npmjs.com/package/@accesspath/embed): the `<script>` bundle.
+- [@accesspath/react on npm](https://www.npmjs.com/package/@accesspath/react): React component + hook.
+- [@accesspath/angular on npm](https://www.npmjs.com/package/@accesspath/angular): Angular component.
+- [@accesspath/core on npm](https://www.npmjs.com/package/@accesspath/core): shared engine (state, panel UI, effects, WCAG scanner).
+- [GitHub repository](https://github.com/ajithonmain/AccessPath): source, issues, MIT license.
+
+## Legal
+
+- [Privacy Policy](https://accesspath-6ur.pages.dev/privacy.html): no analytics, no cookies, no tracking.
+- [MIT License](https://accesspath-6ur.pages.dev/license.html)
+- [Terms of Use](https://accesspath-6ur.pages.dev/terms.html)

@@ -15,6 +15,11 @@ Angular.
 [`@accesspath/core`](https://www.npmjs.com/package/@accesspath/core)
 &nbsp;·&nbsp; MIT licensed
 
+**Using an AI assistant or coding agent?** A compact, copy-paste integration reference is at
+[`/llms.txt`](https://accesspath-6ur.pages.dev/llms.txt) (map) and
+[`/llms-full.txt`](https://accesspath-6ur.pages.dev/llms-full.txt) (every install path, every
+config option, value lists, the JS API, theming tokens — one plain-markdown file).
+
 ## What it does
 
 When a visitor opens the panel, they can turn on:

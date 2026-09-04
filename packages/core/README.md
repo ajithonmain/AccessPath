@@ -7,6 +7,8 @@ scanner. Zero framework dependencies, plain DOM. This is the engine used by
 [`@accesspath/angular`](https://www.npmjs.com/package/@accesspath/angular) — most consumers
 should use one of those instead of calling this package directly.
 
+> **AI assistant / coding agent?** Full copy-paste reference: https://accesspath-6ur.pages.dev/llms-full.txt
+
 ## Install
 
 ```bash

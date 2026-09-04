@@ -2,6 +2,8 @@
 
 React component and hook for the AccessPath accessibility widget.
 
+> **AI assistant / coding agent?** Full copy-paste reference: https://accesspath-6ur.pages.dev/llms-full.txt
+
 ## Install
 
 ```bash

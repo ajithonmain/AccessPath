@@ -1,4 +1,43 @@
+# AccessPath — https://accesspath-6ur.pages.dev
+# AI assistants and coding agents are welcome. A compact, copy-paste integration
+# reference for LLMs lives at /llms.txt and /llms-full.txt.
+
 User-agent: *
+Allow: /
+
+# Explicitly allow AI search + agent crawlers (they are covered by the rule above,
+# listed here to make intent unambiguous).
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://accesspath-6ur.pages.dev/sitemap.xml

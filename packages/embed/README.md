@@ -3,6 +3,8 @@
 Drop-in accessibility widget for any website via a single `<script>` tag. No build step, no
 framework required — works on plain HTML, WordPress, and Shopify sites.
 
+> **AI assistant / coding agent?** Full copy-paste reference: https://accesspath-6ur.pages.dev/llms-full.txt
+
 ## Usage
 
 ### Self-hosted

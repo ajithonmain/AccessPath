@@ -1,0 +1,293 @@
+# AccessPath — full integration reference
+
+Free, open-source, self-hosted accessibility widget for any website. One framework-agnostic
+core; consumed as a `<script>` tag, a React component, or an Angular component.
+
+- Website: https://accesspath-6ur.pages.dev
+- Source: https://github.com/ajithonmain/AccessPath
+- License: MIT
+- Latest version: 0.1.x (pin the embed to `@0` so a future major can't change under you)
+
+---
+
+## What it is (and is not)
+
+AccessPath adds a floating button that opens an accessibility control panel. Visitors use it
+to adapt the page to their needs: larger text, higher contrast, less motion, wider spacing,
+a dyslexia-friendly font, reduced saturation or inverted colors, read-aloud, a reading guide,
+and 9 one-tap preset profiles.
+
+**It is a user-controlled presentation layer.** It toggles `a11y-*` CSS classes (and a few
+JS-driven effects) on the container element you point it at. It does NOT:
+
+- edit or rewrite the host page's HTML
+- add missing alt text, labels, landmarks, or ARIA
+- fix heading structure, focus order, or keyboard traps
+- make a website WCAG- or ADA-"compliant" on its own
+
+Do not describe AccessPath as a compliance product or an automated-remediation overlay. The
+underlying accessibility work stays the site owner's responsibility; AccessPath is a
+convenience layer on top of it. It also ships an optional in-browser WCAG checker (see
+"Accessibility Checker" below) that is a build-time diagnostic for developers, off by default.
+
+Privacy: no analytics, no cookies, no third-party network calls (the only exceptions are two
+opt-in features a visitor must actively use — dictionary lookups hit `api.dictionaryapi.dev`,
+and the dyslexia font is fetched from jsDelivr on first use). Visitor preferences are stored
+only in that visitor's browser `localStorage`, under a key you configure.
+
+---
+
+## Install
+
+### 1. Plain HTML / WordPress / Shopify / Wix / any site — one script tag, no build step
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js"
+        data-theme="light"
+        data-storage-key="accesspath-prefs"
+        data-position="bottom-right">
+</script>
+```
+
+That is the whole integration. Every option below is another `data-*` attribute on this same
+tag. There is no AccessPath WordPress plugin and you do not need one — paste the tag in your
+theme header/footer, a code-snippet plugin (WPCode etc.), a site-wide Custom HTML block, or a
+host-level script-injection setting.
+
+Self-hosting: download `embed.js` from the package (or from
+`https://accesspath-6ur.pages.dev/embed.js`), serve it from your own path, and point `src` at
+that. Nothing else changes.
+
+### 2. React (18+)
+
+```bash
+npm install @accesspath/react @accesspath/core
+```
+
+```tsx
+import { useRef } from 'react';
+import { AccessPathPanel, useAccessPath } from '@accesspath/react';
+import type { AccessPathPanelHandle } from '@accesspath/react';
+import '@accesspath/core/styles/a11y-effects.css';
+import '@accesspath/core/styles/panel.css';
+
+export function App() {
+  const panelRef = useRef<AccessPathPanelHandle>(null);
+  const { prefs, activeProfiles } = useAccessPath('accesspath-prefs');
+
+  return (
+    <div>
+      <button onClick={() => panelRef.current?.open()}>Accessibility</button>
+      <AccessPathPanel ref={panelRef} storageKey="accesspath-prefs" />
+    </div>
+  );
+}
+```
+
+- `<AccessPathPanel>` renders `null`; it creates the panel once on mount and appends it to
+  `document.documentElement` (outside your component tree, so it never inherits a CSS filter
+  applied to your container).
+- `useAccessPath(storageKey?)` returns `{ open, close, reset, prefs, activeProfiles, isOpen }`.
+  `activeProfiles` is an array — more than one profile can be active at once. Any component
+  using the same `storageKey` shares one state instance (no context/prop plumbing).
+- `AccessPathPanelHandle` (via `ref`) exposes `open()`, `close()`, `reset()`.
+- Next.js / SSR: render it on the client only — under a `"use client"` boundary, or via
+  `next/dynamic` with `{ ssr: false }`. It touches `window`/`document` and makes no network
+  calls during render.
+- ESM-only; needs a bundler (Vite, Next.js, webpack 5+).
+
+### 3. Angular (16 through 20) — standalone component
+
+```bash
+npm install @accesspath/angular @accesspath/core
+```
+
+Global styles (e.g. `styles.css`):
+
+```css
+@import '@accesspath/core/styles/a11y-effects.css';
+@import '@accesspath/core/styles/panel.css';
+```
+
+```ts
+import { Component } from '@angular/core';
+import { AccessibilityPanelComponent } from '@accesspath/angular';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [AccessibilityPanelComponent],
+  template: `
+    <button (click)="a11yPanel.open()">Accessibility</button>
+    <app-accessibility-panel #a11yPanel [isDarkTheme]="isDark"></app-accessibility-panel>
+  `,
+})
+export class App { isDark = false; }
+```
+
+Methods: `open()`, `close()`, `reset()`. Output: `(action)` — emits the clicked custom
+action's `id`. Neither the React nor the Angular wrapper renders a floating trigger button;
+call `createTriggerButton()` from `@accesspath/core` yourself if you want one, or open the
+panel from your own UI as shown.
+
+---
+
+## Configuration reference
+
+Defaults are the same across all three integrations. In the embed, values are `data-*`
+attributes (kebab-case); in React/Angular they are props/inputs (camelCase). Everything
+except `isDarkTheme` is read once, at mount — changing it later does not recreate the panel.
+
+| Embed attribute | React prop / Angular input | Type | Default | Purpose |
+|---|---|---|---|---|
+| `data-theme` | `isDarkTheme` | `light`/`dark` (embed) or `boolean` | `light` / `false` | Drawer chrome theme. The only live-updatable option. |
+| `data-storage-key` | `storageKey` | string | `accesspath-prefs` | `localStorage` key. Instances sharing a key share state. |
+| `data-target` | `container` | CSS selector (embed) / `HTMLElement` | `document.body` | Element the `a11y-*` effect classes are applied to. |
+| `data-position` | *(embed only)* | `bottom-right` \| `bottom-left` \| `top-right` \| `top-left` | `bottom-right` | Corner the floating trigger docks to. |
+| `data-shape` | *(embed only)* | `circle` \| `rounded-square` \| `pill` | `circle` | Trigger button shape. |
+| `data-icon` | *(embed only)* | `accessibility` \| `motion` \| `contrast` \| `spacing` \| `motor` \| `badge` \| `logo` | `accessibility` | Trigger button icon. |
+| `data-draggable` | *(embed only)* | `true`/`false` | `false` | Visitor can drag the trigger; dropped position persists per `storageKey`. |
+| `data-brand` | `brandColor` | hex color | `#4928F3` | Overrides the `--ap-brand-*` token set (inline on the panel, never a global `:root` override). |
+| `data-profiles` | `profiles` | comma list / `ProfileKey[]` | all 9 | Restrict which preset profile cards render. |
+| `data-sections` | `sections` | comma list / `SectionKey[]` | `profiles,quick,controls,actions` | Which top-level drawer sections render, and in what order. |
+| `data-control-categories` | `controlCategories` | comma list / `ControlCategoryKey[]` | all 5 | Which category groups render inside the "controls" section. |
+| `data-locale` | `locale` | `LocaleKey` | `en` | Bundled translation set for every panel string. |
+| `data-labels` | `labels` | JSON object / `LabelOverrides` | none | Per-string overrides layered on top of `locale`. |
+| `data-actions` | `actions` (+ `onAction` / `(action)`) | JSON array / `CustomActionConfig[]` | none | Custom buttons in the Actions section. |
+| `data-hide-trigger` | *(embed only)* | `true`/`false` | `false` | Skip the floating trigger; open via `window.AccessPath` instead. |
+| `data-report-url` | `reportUrl` | URL string | none | Shows a "Report a Problem" link in the drawer footer. |
+| *(React/Angular only)* | `customSections` | `CustomSectionConfig[]` | none | Host-supplied sections with a `render(el)` callback. Not available to the embed (a data attribute can't carry a callback). |
+
+### Value lists
+
+- **ProfileKey** (9): `low-vision`, `dyslexia`, `seizure`, `motor`, `colorblind`, `adhd`, `voice-over`, `elderly`, `cognitive`
+- **SectionKey**: `profiles`, `quick`, `controls`, `actions`, `audit`, or a custom id from `customSections`
+- **ControlCategoryKey** (5): `vision`, `content`, `motion`, `reading`, `navigation`
+- **LocaleKey** (5): `en`, `es`, `fr`, `de`, `pt` — for any other language, override strings with `labels` / `data-labels`
+- **Trigger positions**: `bottom-right`, `bottom-left`, `top-right`, `top-left`
+- **Trigger shapes**: `circle`, `rounded-square`, `pill`
+- **Trigger icons**: `accessibility`, `motion`, `contrast`, `spacing`, `motor`, `badge`, `logo`
+
+### CustomActionConfig
+
+```ts
+interface CustomActionConfig {
+  id: string;
+  label: string;
+  icon?: TriggerIconKey;   // one of the trigger icon keys above; defaults to a generic info glyph
+  ariaLabel?: string;      // defaults to `label`
+}
+```
+
+Clicking a custom action dispatches an `accesspath:action` CustomEvent (`{ detail: { id },
+bubbles: true }`) on the container. In the embed, listen on `document.body` (the default
+container) or `document`. In React use the `onAction` prop; in Angular the `(action)` output.
+
+---
+
+## The 9 preset profiles
+
+Multi-select — more than one can be active at once; bundles merge. Toggling one off restores
+only its own keys.
+
+| Profile (`key`) | Turns on |
+|---|---|
+| Low Vision (`low-vision`) | larger text, pause animations, higher saturation |
+| Dyslexia (`dyslexia`) | dyslexia-friendly font, wider letter/word spacing, taller line height |
+| Seizure Safe (`seizure`) | pause animations, reduced saturation, mute sounds |
+| Motor Impaired (`motor`) | larger text, pause animations |
+| Color Blind (`colorblind`) | opens the color-blindness simulation picker (Protanopia / Deuteranopia / Tritanopia / Achromatopsia); applies no other bundle |
+| ADHD (`adhd`) | pause animations, wider spacing, reading guide |
+| Voice Over (`voice-over`) | reads the whole page aloud block by block + announces each control as the user Tabs to it. Not a screen reader. |
+| Elderly (`elderly`) | larger text, taller line height, big cursor, high contrast |
+| Cognitive & Learning (`cognitive`) | pause animations, wider spacing, taller line height, stronger focus outline |
+
+## Individual controls (30+)
+
+Grouped into the 5 `ControlCategoryKey` categories:
+
+- **vision** — text size, contrast, contrast mode (Light/Dark/High/Smart), invert colors, monochrome, saturation, color-blindness simulation, custom background/text/title colors
+- **content** — letter & word spacing, line height, dyslexia-friendly font, text align, sitewide tooltips
+- **motion** — pause animations, mute sounds
+- **reading** — read aloud, Voice Over (whole-page narration + focus announcements), voice rate/pitch/voice picker, dictionary double-click lookups, highlight links, hide images, big cursor + cursor color, on-screen virtual keyboard
+- **navigation** — page structure navigator (heading jump-list), reading guide, highlight titles/hover/focus
+
+Plus header controls: move the panel to the left/right edge, toggle the panel's own dark theme,
+and a footer "View Accessibility Statement" link.
+
+## Accessibility Checker (`audit` section) — opt-in, developer only
+
+An on-device WCAG scan (~44 rules, all in the browser, no external calls) that opens a full
+report overlay. It is a build-time diagnostic for developers, **not a visitor-facing control**,
+so it is excluded from the default section set. Enable it explicitly:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@accesspath/embed@0/dist/embed.js"
+        data-sections="profiles,quick,controls,actions,audit">
+</script>
+```
+
+```tsx
+<AccessPathPanel sections={['profiles', 'quick', 'controls', 'actions', 'audit']} />
+```
+
+Typical use: turn it on for a staging build, off in production.
+
+---
+
+## JavaScript API (embed)
+
+The embed sets one page global:
+
+```js
+window.AccessPath.open();
+window.AccessPath.close();
+window.AccessPath.toggle();
+```
+
+Useful with `data-hide-trigger="true"` when you want to open the panel from your own button.
+
+---
+
+## Theming
+
+All colors read from namespaced CSS custom properties (never bare tokens like `--brand`, so
+AccessPath can't collide with a host design system). Set them on `:root`, or pass
+`brandColor` / `data-brand` for a one-line brand-color override.
+
+Tokens: `--ap-brand`, `--ap-brand-2`, `--ap-brand-soft`, `--ap-brand-border`, `--ap-brand-glow`,
+`--ap-tx` (text), `--ap-tm` (muted text), `--ap-mu`, `--ap-bd` (border), `--ap-sf` (surface),
+`--ap-sf2` (secondary surface). Every token has a sane fallback, so the panel renders fine if
+you set none of them.
+
+The two core stylesheets:
+
+- `@accesspath/core/styles/a11y-effects.css` — defines what the `a11y-*` classes do to host
+  content. React/Angular consumers must import this as global CSS; the embed injects it itself.
+- `@accesspath/core/styles/panel.css` — the panel's own chrome. Same import rule.
+
+---
+
+## Known constraints
+
+- **Safari/WebKit** skips plain `<button>` / `<input type="range">` in Tab order unless the
+  user has enabled "Full Keyboard Access" (System Settings → Keyboard, off by default). This
+  is a Safari-wide default, not specific to AccessPath. Every other browser tabs the whole
+  panel; Escape and focus-return work everywhere once focus is inside the panel.
+- Text scaling is leaf-only: a `<p>`/`<li>` that contains any element child (even one `<a>`
+  or `<code>`) is not scaled by the CSS rule — only its plain-text siblings and headings
+  (headings are scaled from JS).
+- `container` / `panel.root` must not be nested — the wrappers mount the panel at
+  `document.documentElement` so CSS `filter` effects (saturation, invert) on the container
+  don't bleed onto the panel. Keep `container` as `document.body` or a specific element, not
+  `<html>`.
+
+---
+
+## Links
+
+- npm: `@accesspath/embed`, `@accesspath/react`, `@accesspath/angular`, `@accesspath/core`
+  (all under https://www.npmjs.com/org/accesspath)
+- GitHub: https://github.com/ajithonmain/AccessPath
+- Integration Guide (HTML): https://accesspath-6ur.pages.dev/integration-guide.html
+- Accessibility Guide (HTML): https://accesspath-6ur.pages.dev/accessibility-guide.html

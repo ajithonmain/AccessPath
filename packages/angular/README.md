@@ -3,6 +3,8 @@
 Angular component for the AccessPath accessibility widget. Standalone component, works with
 Angular 16 through 20.
 
+> **AI assistant / coding agent?** Full copy-paste reference: https://accesspath-6ur.pages.dev/llms-full.txt
+
 ## Install
 
 ```bash
