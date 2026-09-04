@@ -183,13 +183,14 @@
               <tr><td><code>data-icon</code></td><td><code>accessibility</code> / <code>motion</code> / <code>contrast</code> / <code>spacing</code> / <code>motor</code> / <code>badge</code> / <code>logo</code></td><td><code>accessibility</code></td><td>Trigger button icon. If you need a custom SVG icon, use the core, React, or Angular integration instead, since a DOM element cannot travel through a data attribute.</td></tr>
               <tr><td><code>data-draggable</code></td><td><code>true</code> / <code>false</code></td><td><code>false</code></td><td>Lets the visitor drag the trigger; its dropped position is remembered per <code>storageKey</code>.</td></tr>
               <tr><td><code>data-brand</code></td><td>hex color</td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set.</td></tr>
-              <tr><td><code>data-profiles</code></td><td>comma list of profile keys</td><td>all 6</td><td>Restricts which preset profile pills render.</td></tr>
-              <tr><td><code>data-sections</code></td><td>comma list: <code>profiles,quick,controls,actions</code></td><td>all 4, that order</td><td>Which top-level drawer sections render, and in what order.</td></tr>
+              <tr><td><code>data-profiles</code></td><td>comma list of profile keys</td><td>all 9</td><td>Restricts which preset profile cards render.</td></tr>
+              <tr><td><code>data-sections</code></td><td>comma list: <code>profiles,quick,controls,actions</code>, plus <code>audit</code></td><td><code>profiles,quick,controls,actions</code></td><td>Which top-level drawer sections render, and in what order. <code>audit</code> (the on-page WCAG checker) is a developer diagnostic and is <strong>not</strong> included by default &mdash; add it explicitly if you want it: <code>data-sections="profiles,quick,controls,actions,audit"</code>.</td></tr>
               <tr><td><code>data-control-categories</code></td><td>comma list: <code>vision,content,motion,reading,navigation</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
               <tr><td><code>data-locale</code></td><td><code>en</code> / <code>es</code> / <code>fr</code> / <code>de</code> / <code>pt</code></td><td><code>en</code></td><td>Bundled translation set for every panel string.</td></tr>
               <tr><td><code>data-labels</code></td><td>JSON object</td><td>None</td><td>Per-string overrides layered on top of <code>data-locale</code>. Same nested shape as the <code>Labels</code> type.</td></tr>
               <tr><td><code>data-actions</code></td><td>JSON array of <code>{"id","label","icon?","ariaLabel?"}</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
               <tr><td><code>data-hide-trigger</code></td><td><code>true</code> / <code>false</code></td><td><code>false</code></td><td>Skips the floating trigger. Open the drawer from your own button via <code>window.AccessPath</code> below.</td></tr>
+              <tr><td><code>data-report-url</code></td><td>URL</td><td>None</td><td>Shows a "Report a Problem" link in the drawer footer pointing here. Omit to hide it.</td></tr>
             </table>
           </div>
 
@@ -267,16 +268,17 @@ function App() {
               <tr><th>Prop</th><th>Type</th><th>Default</th><th>Does</th></tr>
               <tr><td><code>container</code></td><td><code>HTMLElement | null</code></td><td><code>document.body</code></td><td>Element the <code>a11y-*</code> classes apply to.</td></tr>
               <tr><td><code>isDarkTheme</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Drawer chrome theme. Live-updatable after mount.</td></tr>
-              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>a11y-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
-              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 6</td><td>Restricts which preset profile buttons render.</td></tr>
+              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>accesspath-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
+              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 9</td><td>Restricts which preset profile buttons render.</td></tr>
               <tr><td><code>brandColor</code></td><td><code>string</code></td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set.</td></tr>
               <tr><td><code>actions</code></td><td><code>CustomActionConfig[]</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
               <tr><td><code>onAction</code></td><td><code>(id: string) =&gt; void</code></td><td>None</td><td>Fires when a custom action button is clicked. Sugar over listening for <code>accesspath:action</code> on <code>container</code> yourself.</td></tr>
               <tr><td><code>locale</code></td><td><code>LocaleKey</code></td><td><code>en</code></td><td>Bundled translation set.</td></tr>
               <tr><td><code>labels</code></td><td><code>LabelOverrides</code></td><td>None</td><td>Per-string overrides on top of <code>locale</code>.</td></tr>
-              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order.</td></tr>
+              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order. Add <code>'audit'</code> for the developer WCAG checker (off by default).</td></tr>
               <tr><td><code>controlCategories</code></td><td><code>ControlCategoryKey[]</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
               <tr><td><code>customSections</code></td><td><code>CustomSectionConfig[]</code></td><td>None</td><td>Host-supplied sections with a <code>render(el)</code> callback, same chrome as built-ins.</td></tr>
+              <tr><td><code>reportUrl</code></td><td><code>string</code></td><td>None</td><td>Shows a "Report a Problem" link in the drawer footer pointing here.</td></tr>
             </table>
           </div>
           <p><code>profiles</code>, <code>storageKey</code>, <code>actions</code>, <code>sections</code>, <code>controlCategories</code>, and <code>customSections</code> are only read once, at mount time. The panel is not recreated if these change identity later. Only <code>isDarkTheme</code> is live-bindable.</p>
@@ -374,15 +376,16 @@ export class AppComponent {
               <tr><th>Input</th><th>Type</th><th>Default</th><th>Does</th></tr>
               <tr><td><code>container</code></td><td><code>HTMLElement</code></td><td><code>document.body</code></td><td>Element the <code>a11y-*</code> classes apply to.</td></tr>
               <tr><td><code>isDarkTheme</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Drawer chrome theme. Live-updatable after init.</td></tr>
-              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>a11y-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
-              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 6</td><td>Restricts which preset profile buttons render.</td></tr>
+              <tr><td><code>storageKey</code></td><td><code>string</code></td><td><code>accesspath-prefs</code></td><td>localStorage key; instances sharing a key share state.</td></tr>
+              <tr><td><code>profiles</code></td><td><code>ProfileKey[]</code></td><td>all 9</td><td>Restricts which preset profile buttons render.</td></tr>
               <tr><td><code>brandColor</code></td><td><code>string</code></td><td>AccessPath violet</td><td>Overrides the <code>--ap-brand-*</code> token set. Set once, at init.</td></tr>
               <tr><td><code>actions</code></td><td><code>CustomActionConfig[]</code></td><td>None</td><td>Custom buttons in the drawer's Actions section.</td></tr>
               <tr><td><code>locale</code></td><td><code>LocaleKey</code></td><td><code>en</code></td><td>Bundled translation set.</td></tr>
               <tr><td><code>labels</code></td><td><code>LabelOverrides</code></td><td>None</td><td>Per-string overrides on top of <code>locale</code>.</td></tr>
-              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order.</td></tr>
+              <tr><td><code>sections</code></td><td><code>SectionKey[]</code></td><td><code>['profiles','quick','controls','actions']</code></td><td>Top-level sections rendered, and their order. Add <code>'audit'</code> for the developer WCAG checker (off by default).</td></tr>
               <tr><td><code>controlCategories</code></td><td><code>ControlCategoryKey[]</code></td><td>all 5</td><td>Which built-in category groups render inside "controls".</td></tr>
               <tr><td><code>customSections</code></td><td><code>CustomSectionConfig[]</code></td><td>None</td><td>Host-supplied sections with a <code>render(el)</code> callback, same chrome as built-ins.</td></tr>
+              <tr><td><code>reportUrl</code></td><td><code>string</code></td><td>None</td><td>Shows a "Report a Problem" link in the drawer footer pointing here.</td></tr>
             </table>
           </div>
           <p>The same one-shot rule from React applies here too. Everything except <code>isDarkTheme</code> is only read inside <code>ngOnInit</code>, so changing <code>profiles</code>, <code>storageKey</code>, or the other inputs later will not recreate the panel.</p>
@@ -443,7 +446,8 @@ export class AppComponent {
           </div>
 
           <h3 id="ref-sections">Sections &amp; control categories<a class="docs-anchor" href="#ref-sections" aria-label="Link to this section">#</a></h3>
-          <p><strong>SectionKey</strong> accepts <code>'profiles'</code>, <code>'quick'</code>, <code>'controls'</code>, or <code>'actions'</code>, or a custom id from <code>customSections</code>. Custom section ids only work with the core, React, or Angular integration, since the embed can't carry a render callback through a data attribute.</p>
+          <p><strong>SectionKey</strong> accepts <code>'profiles'</code>, <code>'quick'</code>, <code>'controls'</code>, <code>'actions'</code>, or <code>'audit'</code>, or a custom id from <code>customSections</code>. Custom section ids only work with the core, React, or Angular integration, since the embed can't carry a render callback through a data attribute.</p>
+          <p><code>'audit'</code> is the <strong>Accessibility Checker</strong>: an on-page WCAG scan (~44 rules, all in the browser, no external calls) that opens a full report overlay. It's a build-time diagnostic for developers, not a visitor control, so it's <strong>excluded from the default section set</strong> &mdash; list it explicitly (<code>sections={['profiles','quick','controls','actions','audit']}</code> or <code>data-sections="profiles,quick,controls,actions,audit"</code>) if you want it, e.g. on a staging build.</p>
           <p><strong>ControlCategoryKey</strong> accepts <code>'vision'</code>, <code>'content'</code>, <code>'motion'</code>, <code>'reading'</code>, or <code>'navigation'</code>, the 5 collapsible groups inside the "controls" section.</p>
 
           <h3 id="ref-locales">Locales (LocaleKey)<a class="docs-anchor" href="#ref-locales" aria-label="Link to this section">#</a></h3>

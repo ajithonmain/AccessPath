@@ -206,6 +206,7 @@ export function App() {
           <tr><td><code>profiles</code></td><td>Restrict which preset profile cards render.</td></tr>
           <tr><td><code>brandColor</code>, <code>locale</code>, <code>labels</code>, <code>sections</code>, <code>controlCategories</code>, <code>actions</code>, <code>reportUrl</code></td><td>Theming, translation, and which parts of the panel appear.</td></tr>
         </table>
+        <p>The built-in <strong>Accessibility Checker</strong> (an in-browser WCAG scan) is a developer diagnostic, so it's not in the default section set. Pass <code>sections={['profiles','quick','controls','actions','audit']}</code> to include it &mdash; handy on a dev build, off in production.</p>
 
         <h2>Next.js and SSR</h2>
         <p>The panel touches <code>window</code> and <code>document</code>, so render it on the client: put it under a <code>"use client"</code> boundary, or in a component loaded with <code>next/dynamic</code> and <code>{ ssr: false }</code>. It makes no network calls during render and has no server dependencies.</p>

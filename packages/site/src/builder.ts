@@ -104,7 +104,9 @@ function generateBuilderCode(s: BuilderState): string {
   const isCustomBrand = s.brand.toLowerCase() !== DEFAULT_BRAND.toLowerCase();
   const profilesFiltered = s.profiles.length > 0 && s.profiles.length < ALL_PROFILE_KEYS.length;
   const profilesAttr = profilesFiltered ? s.profiles.join(',') : null;
-  const sectionsFiltered = s.sections.length > 0 && s.sections.length < ALL_SECTION_KEYS.length;
+  // Emit data-sections/sections whenever the selection differs from the default four in
+  // any way — a subset, a reorder, or an extra like 'audit' (the opt-in dev checker).
+  const sectionsFiltered = s.sections.length > 0 && s.sections.join(',') !== ALL_SECTION_KEYS.join(',');
   const actionsWithIds = computeActionsWithIds(s.actions);
   const locale = effectiveLocale(s.locale);
   const isOtherLocale = s.locale === 'other';
