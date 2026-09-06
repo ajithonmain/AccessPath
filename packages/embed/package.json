@@ -1,6 +1,6 @@
 {
   "name": "@accesspath/embed",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Drop-in accessibility widget for any website via a single script tag. No build step.",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@accesspath/core": "^0.1.4"
+    "@accesspath/core": "^0.1.5"
   },
   "devDependencies": {
     "typescript": "~5.1.3",
