@@ -1553,7 +1553,12 @@ body.embed-failed .hero-status-fallback { display: flex; }
 .token-row code { background: none; padding: 0; }
 
 @media (max-width: 560px) {
-  .nav-star-btn, .nav-npm-btn { display: none; }
+  .nav-star-btn, .nav-npm-btn {
+    width: 34px; height: 34px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .nav-star-btn .nav-btn-label, .nav-npm-btn .nav-btn-label { display: none; }
 }
 /* Hamburger takes over at 840, not 700: between ~700 and ~800 the full inline nav
    (4 links + the two CTA buttons) is wider than the viewport and pushed the page into
