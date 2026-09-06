@@ -106,14 +106,19 @@ npm run publish:angular
 
 ## 5. Tag + GitHub release
 
+`.github/workflows/release.yml` creates the GitHub release automatically as soon as a
+`vX.Y.Z` tag is pushed (auto-generated notes from commits since the last tag) — so
+pushing the tag is the only manual step left here:
+
 ```
 git tag vX.Y.Z
-git push origin main --tags
-gh release create vX.Y.Z --title "vX.Y.Z" --notes-file <notes.md>
+git push origin vX.Y.Z
 ```
 
-- [ ] Release notes: install snippet, what changed, links. Keep the `@0` pin in the snippet.
-- [ ] "Set as latest release" checked.
+- [ ] Check the Actions tab for the "GitHub release" run, then the release itself —
+      auto-generated notes are a starting point; edit in the release's own page if the
+      commit list needs more context (install snippet, migration notes, etc).
+- [ ] "Set as latest release" (usually automatic for the newest semver tag, but verify).
 
 ## 6. Deploy the site
 
