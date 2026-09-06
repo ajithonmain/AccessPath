@@ -223,14 +223,18 @@ function createActionCard(action: CustomActionConfig, container: HTMLElement): H
   return button;
 }
 
-/** Profile preset card — icon in a profile-colored circle, label below. */
-function createProfileCard(key: ProfileKey, label: string, applyAria: string, onClick: () => void): Toggleable {
+/** Profile preset card — icon in a profile-colored circle, label below. `description`
+ *  goes through the shared hint-tooltip mechanism (hint-tooltip.ts, data-tip + the one
+ *  attachAll() call at the end of createPanel()) rather than a native `title`, so it
+ *  works on touch too, not just desktop hover. */
+function createProfileCard(key: ProfileKey, label: string, applyAria: string, description: string, onClick: () => void): Toggleable {
   const colors = PROFILE_COLORS[key];
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'a11y-profile-card';
   button.setAttribute('aria-pressed', 'false');
   button.setAttribute('aria-label', applyAria);
+  button.dataset.tip = description;
   button.style.setProperty('--profile-accent', colors.accent);
   button.style.setProperty('--profile-soft', colors.soft);
 
@@ -868,6 +872,7 @@ export function createPanel(opts: CreatePanelOptions): PanelHandle {
       key,
       L.profiles.names[key],
       L.profiles.applyAria(L.profiles.names[key]),
+      L.profiles.descriptions[key],
       key === 'colorblind'
         ? () => {}
         : () => {

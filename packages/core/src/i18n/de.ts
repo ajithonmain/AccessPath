@@ -25,6 +25,17 @@ export const de: Labels = {
       'elderly': 'Ältere Menschen',
       'cognitive': 'Kognition & Lernen',
     },
+    descriptions: {
+      'low-vision': 'Verbessert die Sichtbarkeit mit größerem Text, mehr Kontrast und klarerem Fokus.',
+      'dyslexia':   'Legasthenie-freundliche Schriften, breiterer Zeilenabstand und flüssigeres Lesen.',
+      'seizure':    'Reduziert Bewegung und entfernt Ablenkungen, die Anfälle auslösen könnten.',
+      'motor':      'Vereinfacht die Bedienung mit größeren Zielen und leichterer Navigation.',
+      'colorblind': 'Optimierter Kontrast und Muster, damit Farbe nie das einzige Unterscheidungsmerkmal ist.',
+      'adhd':       'Reduziert visuelle Unruhe und hebt das Wichtigste hervor.',
+      'voice-over': 'Liest die ganze Seite Block für Block laut vor, zum Zuhören statt Lesen.',
+      'elderly':    'Größerer Text, ein größerer Cursor und stärkerer Kontrast, alles zugleich.',
+      'cognitive':  'Reduziert Ablenkungen und fügt Abstand und Fokushinweise für leichteres Lesen hinzu.',
+    },
   },
   quick: {
     title: 'Schnelleinstellungen',

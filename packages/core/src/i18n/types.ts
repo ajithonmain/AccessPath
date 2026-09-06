@@ -19,6 +19,10 @@ export interface Labels {
     reset: string;
     applyAria: (profileName: string) => string;
     names: Record<ProfileKey, string>;
+    /** One-line "what this does" shown as a hover/focus/tap tooltip on each profile
+     *  card (see hint-tooltip.ts) — not just the name, since the icon + label alone
+     *  don't say what preset of settings the card actually applies. */
+    descriptions: Record<ProfileKey, string>;
   };
   quick: {
     title: string;

@@ -25,6 +25,17 @@ export const pt: Labels = {
       'elderly': 'Idosos',
       'cognitive': 'Cognitivo e aprendizagem',
     },
+    descriptions: {
+      'low-vision': 'Melhora a visibilidade com texto maior, mais contraste e foco mais nítido.',
+      'dyslexia':   'Fontes adequadas para dislexia, espaçamento maior e leitura mais fluida.',
+      'seizure':    'Reduz o movimento e remove distrações que podem provocar convulsões.',
+      'motor':      'Simplifica a interação com alvos maiores e navegação mais fácil.',
+      'colorblind': 'Contraste e padrões otimizados para que a cor nunca seja a única pista.',
+      'adhd':       'Reduz a desordem visual e destaca o que é mais importante.',
+      'voice-over': 'Lê a página inteira em voz alta, bloco por bloco, para você ouvir em vez de ler.',
+      'elderly':    'Texto maior, cursor maior e contraste mais forte, tudo ao mesmo tempo.',
+      'cognitive':  'Reduz distrações e adiciona espaçamento e pistas de foco para facilitar a leitura.',
+    },
   },
   quick: {
     title: 'Ajustes rápidos',
