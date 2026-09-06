@@ -33,6 +33,19 @@
    size — poisoning the cache with an already-wrong value on first read. */
 .a11y-target.a11y-fontsize :not(:has(*)):not(:is(h1, h2, h3, h4, h5, h6)) {
   font-size: calc(1em * var(--a11y-s)) !important;
+  /* overflow-wrap: anywhere (not the narrower `break-word`) — a host's text
+     container is very often sized by CSS Grid/Flexbox min-content, which
+     ignores break-word's soft-wrap opportunities but does honor anywhere's.
+     Without it, scaling text up on a fixed-width card/column pushes the
+     whole track wider than its container instead of just wrapping. */
+  overflow-wrap: anywhere;
+}
+/* h1-h6 are excluded from the leaf rule above (scaled from JS instead, see the
+   comment below) but still need the same overflow-wrap safeguard — a heading
+   scaled to 2x by syncHeadingScale() inside a narrow container overflows
+   exactly like scaled body text does. */
+.a11y-target.a11y-fontsize :is(h1, h2, h3, h4, h5, h6) {
+  overflow-wrap: anywhere;
 }
 /* h1-h6 are scaled from JS instead of a CSS em-multiplier (see
    syncHeadingScale() in heading-scale.ts, invoked from apply-classes.ts).
@@ -64,6 +77,7 @@
 .a11y-target.a11y-spacing {
   letter-spacing: calc(var(--a11y-spacing-level) * 0.0015em);
   word-spacing: calc(var(--a11y-spacing-level) * 0.003em);
+  overflow-wrap: anywhere;
 }
 
 /* Line height — continuous intensity (0-100), 0 -> 1.5 (readable default), 100 -> 2.3. */
@@ -83,6 +97,7 @@
   letter-spacing: 0.02em;
   word-spacing: 0.14em;
   line-height: 1.7 !important;
+  overflow-wrap: anywhere;
 }
 
 /* Saturation, Invert & Contrast — one CSS variable filter system (stackable), gated
