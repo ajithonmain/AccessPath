@@ -207,6 +207,11 @@ function wireDrag(button: HTMLButtonElement, storageKey?: string): void {
 
   button.addEventListener('pointermove', (e) => {
     if (!dragging) return;
+    // Belt-and-suspenders alongside the CSS touch-action:none on
+    // .accesspath-trigger--draggable: that's what actually stops the page from
+    // scrolling on touch, but a couple of browsers still let one frame of native pan
+    // through immediately after pointerdown before it takes effect.
+    e.preventDefault();
     const dx = e.clientX - downX;
     const dy = e.clientY - downY;
     if (!moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;

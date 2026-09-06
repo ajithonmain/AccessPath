@@ -48,7 +48,12 @@
 .accesspath-trigger:active { transform: scale(0.98); }
 .accesspath-trigger:focus-visible { outline: 2px solid var(--ap-brand, #4928F3); outline-offset: 3px; }
 .accesspath-trigger--rounded-square { border-radius: 16px; }
-.accesspath-trigger--draggable { cursor: grab; }
+/* touch-action: none — without it, a touchmove on the button is free to be interpreted
+   as a page-pan gesture by the browser's compositor before any JS (pointermove/
+   preventDefault) gets a say, so a drag on a phone/tablet scrolls the page instead of
+   (or as well as) moving the button. This opts the button itself out of native touch
+   scrolling/zooming so pointer events alone drive the drag, matching desktop. */
+.accesspath-trigger--draggable { cursor: grab; touch-action: none; }
 .accesspath-trigger--draggable:active { cursor: grabbing; }
 .accesspath-trigger--pill { width: auto; padding: 0 20px; border-radius: 999px; }
 
